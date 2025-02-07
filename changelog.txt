@@ -1,0 +1,10 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2025-02-07
+  Bugfixes:
+    - Added empty homepage string
+    - Changed line endings of info.json
+    - Fixed API key
+    - Reset version number to 0.0.0
+  Changes:
+    - First version of Tenebris Prime. No changes in this version.
