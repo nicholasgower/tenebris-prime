@@ -4,10 +4,10 @@
     "title": "Tenebris Prime",
     "author": "Big_J, MeteorSwarm",
     "description": "Adds a new planet, Tenebris, a dark planet enshrouded in a thick acidic atmosphere. Fork of the original Tenebris mod.",
-    "space_travel_required": true,
     "factorio_version": "2.0",
     "dependencies": [
         "space-age >= 2.0",
         "base >= 2.0"
-    ]
+    ],
+    "space_travel_required": true
 }
