@@ -3,14 +3,14 @@ local meld = require("meld")
 local bioluminescent_beacon = meld(table.deepcopy(data.raw["beacon"]["beacon"]), {
     name = "biobeacon",
     bioluminescent = true,
-    allowed_effects = meld.overwrite { "consumption", "speed", "pollution", "quality", "productivity" },
+    allowed_effects = meld.overwrite { "consumption", "speed", "pollution", "productivity" },
     minable = {
         mining_time = 0.2,
         result = "biobeacon"
     },
-    energy_source = meld.overwrite {
-        type = "void"
-    },
+    -- energy_source = meld.overwrite {
+    --     type = "void"
+    -- },
     integration_patch_render_layer = "light-effect",
     integration_patch = meld.overwrite {
         filename = "__tenebris-prime__/graphics/icons/item-glow.png",
