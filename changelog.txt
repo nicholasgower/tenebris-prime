@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.0
+Date: 2025-02-09
+  Features:
+    - Integrated mods "beacon_maraxsis_tenebris," "tenebris-sulfur," and "ams-acid-landfill" into mod. Maraxsis compatibility is locked behind startup setting."
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 2025-02-09
   Features:
