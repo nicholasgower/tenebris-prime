@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 2025-02-09
+  Features:
+    - Added space connection between Tenebris and Solar system edge.
+    - Replaced custom cargo drop technology with PlanetsLib-derived cargo drop technology.
+  Balancing:
+    - Removed the ability to add quality modules to biobeacons, to increase differentiation between Maraxsis' conduit and Tenebris' biobeacon.
+  Graphics:
+    - Replaced bio-luminescent science pack graphics with higher resolution, mipmapped versions.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2025-02-07
   Bugfixes:
