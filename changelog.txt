@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.2
+Date: 2025-02-09
+  Optimizations:
+    - Added options to improve performance by reducing number of segments per centipede.
+---------------------------------------------------------------------------------------------------
 Version: 1.2.1
 Date: 2025-02-09
   Compatibility:
