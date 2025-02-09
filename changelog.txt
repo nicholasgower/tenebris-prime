@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.3
+Date: 2025-02-09
+  Bugfixes:
+    - Removed all control-level code related to cargo drops, ceding that functionality to PlanetsLib.
+---------------------------------------------------------------------------------------------------
 Version: 1.2.2
 Date: 2025-02-09
   Optimizations:
