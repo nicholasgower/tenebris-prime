@@ -170,7 +170,8 @@ data:extend({
     {
         type = "technology",
         name = "bioluminescent-science-pack",
-        icon = "__tenebris-prime__/graphics/icons/bioluminescent-science-pack.png",
+        icon = "__tenebris-prime__/graphics/technology/bioluminescent-science-pack.png",
+        icon_size = 256,
         essential = true,
         effects =
         {
