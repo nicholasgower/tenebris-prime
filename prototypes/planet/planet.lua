@@ -50,6 +50,16 @@ data:extend({
         to = "tenebris",
         order = "b",
         length = 30000,
-        asteroid_spawn_definitions = asteroid_util.spawn_definitions(asteroid_util.nauvis_gleba)
+        asteroid_spawn_definitions = asteroid_util.spawn_definitions(asteroid_util.gleba_aquilo)
+    },
+    {
+        type = "space-connection",
+        name = "tenebris-solar-system-edge",
+        subgroup = "planet-connections",
+        from = "tenebris",
+        to = "solar-system-edge",
+        order = "c",
+        length = 100000,
+        asteroid_spawn_definitions = asteroid_util.spawn_definitions(asteroid_util.aquilo_solar_system_edge)
     }
 })
