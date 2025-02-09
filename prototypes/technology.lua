@@ -12,6 +12,10 @@ data:extend({
                 space_location = "tenebris",
                 use_icon_overlay_constant = true
             },
+            {
+                type = "unlock-recipe",
+                recipe = "sulfur-from-acid"
+            },
         },
         prerequisites = { "rocket-turret", "advanced-asteroid-processing",
             "heating-tower", "asteroid-reprocessing",
