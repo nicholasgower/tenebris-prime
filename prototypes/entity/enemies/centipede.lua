@@ -409,7 +409,7 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
     data:extend({ meld(table.deepcopy(data.raw["segmented-unit"]["small-demolisher"]), head_overrides) })
 end
 
-create_centipede("small", 0.2, 12, 2000, 0.1, 100, 50)
-create_centipede("medium", 0.3, 16, 5000, 0.15, 300, 300)
-create_centipede("large", 0.5, 32, 10000, 0.2, 500, 1000)
-create_centipede("giant", 1.0, 60, 30000, 0.25, 1000, 2000)
+create_centipede("small", 0.2, settings.startup["tenebris-small-centipede-length"].value, 2000, 0.1, 100, 50)
+create_centipede("medium", 0.3, settings.startup["tenebris-medium-centipede-length"].value, 5000, 0.15, 300, 300)
+create_centipede("large", 0.5, settings.startup["tenebris-large-centipede-length"].value, 10000, 0.2, 500, 1000)
+create_centipede("giant", 1.0, settings.startup["tenebris-giant-centipede-length"].value, 30000, 0.25, 1000, 2000)
