@@ -294,3 +294,13 @@ data:extend({
     icon = "__tenebris-prime__/graphics/icons/sulfur-from-acid.png"
   }
 })
+
+if settings.startup["tenebris-use-new-biobeacon-recipe"].value == true then
+  data.raw["recipe"]["biobeacon"].ingredients = {
+      { type = "item", name = "bioluminescent-crystal", amount = 16 },
+      { type = "item", name = "supercapacitor",         amount = 8 },
+      { type = "item", name = "beacon",         amount = 1 },
+      --{ type = "item", name = "electronic-circuit",     amount = 20 },
+      --{ type = "item", name = "advanced-circuit",       amount = 20 },
+  }
+end

@@ -45,5 +45,12 @@ data:extend{
         default_value = false,
         order = "af",
       },
+      {
+        type = "bool-setting",
+        name = "tenebris-use-new-biobeacon-recipe",
+        setting_type = "startup",
+        default_value = true,
+        order = "ag",
+      },
 
 }
