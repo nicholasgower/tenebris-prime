@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.7
+Date: 2025-02-10
+  Compatibility:
+    - Added option to allow quality modules in biobeacon
+    - Reduced minimum centipede segment lengths for all centipedes.
+  Graphics:
+    - Adjusted shifting of biobeacon
+---------------------------------------------------------------------------------------------------
 Version: 1.2.6
 Date: 2025-02-10
   Locale:
