@@ -11,7 +11,7 @@ data:extend{
         name = "tenebris-small-centipede-length",
         setting_type = "startup",
         default_value = 12,
-        min = 3,
+        min = 1,
         order = "ab",
       },
       {
@@ -19,7 +19,7 @@ data:extend{
         name = "tenebris-medium-centipede-length",
         setting_type = "startup",
         default_value = 16,
-        min = 4,
+        min = 2,
         order = "ac",
       },
       {
@@ -27,7 +27,7 @@ data:extend{
         name = "tenebris-large-centipede-length",
         setting_type = "startup",
         default_value = 32,
-        min = 8,
+        min = 4,
         order = "ad",
       },
       {
@@ -35,8 +35,15 @@ data:extend{
         name = "tenebris-giant-centipede-length",
         setting_type = "startup",
         default_value = 60,
-        min = 15,
+        min = 8,
         order = "ae",
+      },
+      {
+        type = "bool-setting",
+        name = "tenebris-allow-quality-modules-in-biobeacon",
+        setting_type = "startup",
+        default_value = false,
+        order = "af",
       },
 
 }
