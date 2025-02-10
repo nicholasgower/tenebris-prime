@@ -11,8 +11,17 @@ local tenebris = {
     starmap_icon_size = 512,
     map_gen_settings = meld.overwrite(tenebris_map_gen()),
     gravity_pull = 10,
-    distance = 35,
-    orientation = 0.450,
+    -- distance = 35,
+    -- orientation = 0.450,
+    orbit = {
+        type = "planet",
+        parent = {
+            type = "space-location",
+            name ="star",
+            },
+        distance = 35,
+        orientation = 0.450,
+    },
     magnitude = 1.0,
     label_orientation = 0.15,
     order = "e[tenebris]",
@@ -39,9 +48,12 @@ local tenebris = {
 }
 
 tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), tenebris)
+tenebris.distance = nil
+tenebris.orientation = nil
+PlanetsLib:extend({tenebris})
 
 data:extend({
-    tenebris,
+    
     {
         type = "space-connection",
         name = "fulgora-tenebris",
