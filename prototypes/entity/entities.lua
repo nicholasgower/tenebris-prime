@@ -40,6 +40,10 @@ local bioluminescent_beacon = meld(table.deepcopy(data.raw["beacon"]["beacon"]),
     }
 })
 
+if settings.startup["tenebris-allow-quality-modules-in-biobeacon"].value == true then
+    table.insert(bioluminescent_beacon.allowed_effects,"quality")
+end
+
 
 data:extend({
     bioluminescent_beacon,
