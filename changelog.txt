@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.8
+Date: 2025-02-10
+  Compatibility:
+    - Replaced vanilla extend with PlanetsLib:extend in Tenebris definition
+  Changes:
+    - Changed biobeacon recipe, with option to roll back to old recipe.
+---------------------------------------------------------------------------------------------------
 Version: 1.2.7
 Date: 2025-02-10
   Compatibility:
