@@ -26,7 +26,7 @@ local bioluminescent_beacon = meld(table.deepcopy(data.raw["beacon"]["beacon"]),
                     frame_count = 9,
                     scale = 0.3,
                     size = 512,
-                    shift = util.by_pixel(0, -8),
+                    shift = {0,-0.5}, --util.by_pixel(0, -8),
                     stripes = {
                         {
                             filename = "__tenebris-prime__/graphics/entity/biobeacon.png",
