@@ -408,8 +408,14 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
 
     data:extend({ meld(table.deepcopy(data.raw["segmented-unit"]["small-demolisher"]), head_overrides) })
 end
+--create_centipede(name, scale, length, health, speed, damage, min_spawn_distance)
+-- create_centipede("small", 0.2, settings.startup["tenebris-small-centipede-length"].value, 2000, 0.1, 100, 50)
+-- create_centipede("medium", 0.3, settings.startup["tenebris-medium-centipede-length"].value, 5000, 0.15, 300, 300)
+-- create_centipede("large", 0.5, settings.startup["tenebris-large-centipede-length"].value, 10000, 0.2, 500, 1000)
+-- create_centipede("giant", 1.0, settings.startup["tenebris-giant-centipede-length"].value, 30000, 0.25, 1000, 2000)
 
-create_centipede("small", 0.2, settings.startup["tenebris-small-centipede-length"].value, 2000, 0.1, 100, 50)
-create_centipede("medium", 0.3, settings.startup["tenebris-medium-centipede-length"].value, 5000, 0.15, 300, 300)
-create_centipede("large", 0.5, settings.startup["tenebris-large-centipede-length"].value, 10000, 0.2, 500, 1000)
-create_centipede("giant", 1.0, settings.startup["tenebris-giant-centipede-length"].value, 30000, 0.25, 1000, 2000)
+create_centipede("small", 0.8, settings.startup["tenebris-small-centipede-length"].value, 50000, 0.1, 1000, 50)
+create_centipede("medium", 1.6, settings.startup["tenebris-medium-centipede-length"].value, 100000, 0.10, 3000, 300)
+create_centipede("large", 2, settings.startup["tenebris-large-centipede-length"].value, 200000, 0.15, 5000, 1000)
+create_centipede("giant", 3, settings.startup["tenebris-giant-centipede-length"].value, 500000, 0.15, 10000, 2000)
+create_centipede("leviathan", 5, settings.startup["tenebris-giant-centipede-length"].value, 1000000, 0.15, 20000, 4000)
