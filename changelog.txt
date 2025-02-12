@@ -37,7 +37,7 @@ Date: 2025-02-10
 Version: 1.2.5
 Date: 2025-02-09
   Bugfixes:
-    -  Changed distance of Tenebris to 35 (https://github.com/nicholasgower/tenebris-prime/issues/1)
+    - Changed distance of Tenebris to 35 (https://github.com/nicholasgower/tenebris-prime/issues/1)
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.4
 Date: 2025-02-09
