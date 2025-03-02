@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.3.1
+Date: 2025-03-02
+  Info:
+  - Update by Fr_Dae
+  Bugfixes:
+    - merge old changlogs (for history preservation)
+    - info.json improve for humain reading
+    - remove blank locale.cfg
+    - add fr loc
+    - add ○🌐 for other language.    
+---------------------------------------------------------------------------------------------------
 Version: 1.3.0
 Date: 2025-03-02
   Features:
@@ -110,3 +121,73 @@ Date: 2025-02-07
     - Reset version number to 0.0.0
   Changes:
     - First version of Tenebris Prime. No changes in this version.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.1
+Date: 12.02.2024
+  Bugfixes:
+    - Compatibility fixes.
+    - Removed uneccessary dependencies.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 11.23.2024
+  Changes:
+    - Removed BSP from foundations (Sorry).
+    - Added bio night vision research.
+  Bugfixes:
+    - Can no longer recycle chitin from concrete.
+    - Fixed crash on cargo pod spawning.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.16
+Date: 11.23.2024
+  Changes:
+    - Improved mod compatibility.
+    - Hidden recipes until unlocked.
+    - Added optional lit up belts.
+  Bugfixes:
+    - Can no longer recycle chitin from concrete.
+    - Fixed crash on cargo pod spawning.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.15
+Date: 11.21.2024
+  Changes:
+    - Added zh-CN locale thanks to plexpt.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.14
+Date: 11.20.2024
+  Bugfixes:
+    - More mod compatibility.
+    - Removed useless recipes.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.13
+Date: 11.20.2024
+  Bugfixes:
+    - Added factorissimo compatability.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.12
+Date: 11.19.2024
+  Bugfixes:
+    - Fixed crash that would sometimes happen when drop orbital pods to tenebris.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.11
+Date: 11.19.2024
+  Bugfixes:
+    - Added science pack to correct places.
+    - Fixed recipes that could be crafted off tenebris.
+  Changes:
+    - Added biobeacon.
+    - Updated some art.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.10
+Date: 11.19.2024
+  Bugfixes:
+    - ttype = function fix.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.9
+Date: 11.19.2024
+  Changes:
+    - Updated glowdentale graphics.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.8
+Date: 11.19.2024
+  Bugfixes:
+    - Fixed game crash on Tenebris planet entry.
