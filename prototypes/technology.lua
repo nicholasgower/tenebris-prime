@@ -17,6 +17,7 @@ data:extend({
                 recipe = "sulfur-from-acid"
             },
         },
+        localised_description = {"space-location-description.tenebris"},
         prerequisites = { "rocket-turret", "advanced-asteroid-processing",
             "heating-tower", "asteroid-reprocessing",
             "electromagnetic-science-pack", "cryogenic-science-pack" },
