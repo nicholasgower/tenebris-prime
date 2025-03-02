@@ -1,4 +1,21 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.3.0
+Date: 2025-03-02
+  Features:
+    - Added elements of Terra Palus world generation to Tenebris, including Gleba enemies and elevation, temperature, and moisture expressions.
+    - Removed cargo drop restriction from Tenebris.
+    - Set initial evolution factor of Tenebris upon surface creation to 0.99.
+  Graphics:
+    - Added shadow to tenecap
+    - Reenabled shadows for all entities on Tenebris.
+  Sounds:
+    - Added soundtrack of songs by Kevin Macleod
+    - Removed all ambient music to fix game freeze.
+  Locale:
+    - Added description to Tenebris discovery technology matching planet description.
+  Changes:
+    - Adjusted sprite positioning of all plants, and increased hitbox of the lucifunnel.
+---------------------------------------------------------------------------------------------------
 Version: 1.2.12
 Date: 2025-02-12
   Bugfixes:
