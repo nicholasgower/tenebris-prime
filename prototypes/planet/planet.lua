@@ -38,7 +38,7 @@ local tenebris = {
     },
     surface_render_parameters =
     {
-        shadow_opacity = 0.0,
+        shadow_opacity = 0.9,
         day_night_cycle_color_lookup = {
             {0.0, "identity"},
             {0.35, "__tenebris-prime__/graphics/lut/night.png"},
