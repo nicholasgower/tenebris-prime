@@ -246,36 +246,36 @@ data:extend({
     }
 })
 
-local cargo_drops = util.merge{PlanetsLib.cargo_drops_technology_base("tenebris","__tenebris-prime__/graphics/icons/technology/tenebris.png", 256),
-        {
-        --type = "technology",
-        --name = "bioluminescent-navigation",
-        --icon = "__tenebris-prime__/graphics/technology/navigation-upgrade.png",
-        --icon_size = 256,
-        essential = true,
-        -- effects =
-        -- {
-        --     {
-        --         type = "nothing",
-        --         effect_description = { "research-effect.improved-navigation" },
-        --         icon = "__core__/graphics/icons/technology/effect/cargo-pod.png"
-        --     }
-        -- },
-        unit =
-        {
-            count = 500,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "bioluminescent-science-pack",  1 }
-            },
-            time = 60
-        },
-        prerequisites = { "bioluminescent-science-pack" },
-    }}
+-- local cargo_drops = util.merge{PlanetsLib.cargo_drops_technology_base("tenebris","__tenebris-prime__/graphics/icons/technology/tenebris.png", 256),
+--         {
+--         --type = "technology",
+--         --name = "bioluminescent-navigation",
+--         --icon = "__tenebris-prime__/graphics/technology/navigation-upgrade.png",
+--         --icon_size = 256,
+--         essential = true,
+--         -- effects =
+--         -- {
+--         --     {
+--         --         type = "nothing",
+--         --         effect_description = { "research-effect.improved-navigation" },
+--         --         icon = "__core__/graphics/icons/technology/effect/cargo-pod.png"
+--         --     }
+--         -- },
+--         unit =
+--         {
+--             count = 500,
+--             ingredients =
+--             {
+--                 { "automation-science-pack",      1 },
+--                 { "logistic-science-pack",        1 },
+--                 { "chemical-science-pack",        1 },
+--                 { "production-science-pack",      1 },
+--                 { "utility-science-pack",         1 },
+--                 { "bioluminescent-science-pack",  1 }
+--             },
+--             time = 60
+--         },
+--         prerequisites = { "bioluminescent-science-pack" },
+--     }}
 
-data:extend{cargo_drops}
+-- data:extend{cargo_drops}
