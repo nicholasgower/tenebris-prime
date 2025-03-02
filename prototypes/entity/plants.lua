@@ -35,24 +35,28 @@ data:extend({
                 scale = 0.2,
                 filename = "__tenebris-prime__/graphics/entity/glowdentale/glowdentale-1.png",
                 draw_as_glow = true,
+                shift = {0,-0.5},
             },
             {
                 size = 256,
                 scale = 0.2,
                 filename = "__tenebris-prime__/graphics/entity/glowdentale/glowdentale-2.png",
                 draw_as_glow = true,
+                shift = {0,-0.5},
             },
             {
                 size = 256,
                 scale = 0.2,
                 filename = "__tenebris-prime__/graphics/entity/glowdentale/glowdentale-3.png",
                 draw_as_glow = true,
+                shift = {0,-0.5},
             },
             {
                 size = 256,
                 scale = 0.2,
                 filename = "__tenebris-prime__/graphics/entity/glowdentale/glowdentale-4.png",
                 draw_as_glow = true,
+                shift = {0,-0.5},
             }
         },
 
@@ -90,7 +94,7 @@ data:extend({
         mining_sound = sound_variations("__space-age__/sound/mining/axe-mining-stingfrond", 5, 0.5),
         mined_sound = sound_variations("__space-age__/sound/mining/mined-stingfrond", 5, 0.4),
         max_health = 50,
-        collision_box = { { -0.2, -0.4 }, { 0.2, 0.2 } },
+        collision_box = { { -0.6, -0.8 }, { 0.6, 0.8 } },
         selection_box = { { -1, -1 }, { 1, 1 } },
         drawing_box_vertical_extension = 0.8,
         subgroup = "trees",
@@ -104,6 +108,7 @@ data:extend({
             scale = 0.1,
             filename = "__tenebris-prime__/graphics/entity/lucifunnel.png",
             draw_as_glow = true,
+            shift = {0,-0.5},
         },
 
         stateless_visualisation_variations = {
@@ -153,6 +158,7 @@ data:extend({
             height = 259,
             scale = 0.1,
             filename = "__tenebris-prime__/graphics/entity/tenecap.png",
+            shift = {0,-0.25},
         },
 
         autoplace = {
