@@ -21,6 +21,8 @@ script.on_event(defines.events.on_player_changed_surface, function(event)
     local surface = game.surfaces[event.surface_index]
 
     if surface.name == TENEBRIS then
+        surface.freeze_daytime = true
+        surface.daytime = 0.35
         game.players[event.player_index].enable_flashlight()
     end
 end)

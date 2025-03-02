@@ -154,11 +154,23 @@ data:extend({
         -- factoriopedia_simulation = simulations.factoriopedia_stingfrond,
 
         pictures = {
-            width = 256,
-            height = 259,
-            scale = 0.1,
-            filename = "__tenebris-prime__/graphics/entity/tenecap.png",
-            shift = {0,-0.25},
+                layers = {
+                    {
+                        width = 256,
+                        height = 259,
+                        scale = 0.1,
+                        filename = "__tenebris-prime__/graphics/entity/tenecap.png",
+                        shift = {0,-0.25},
+                    },
+                    {
+                        width = 512,
+                        height = 256,
+                        scale = 0.075,
+                        filename = "__tenebris-prime__/graphics/entity/tenecap-shadow.png",
+                        draw_as_shadow=true,
+                        shift = {0.55,0}, 
+                    }
+                }
         },
 
         autoplace = {
