@@ -13,6 +13,7 @@ require("__tenebris-prime__.prototypes.burner-usage")
 require("__tenebris-prime__.prototypes.recipe-category")
 require("__tenebris-prime__.prototypes.fuel-category")
 require("__tenebris-prime__.prototypes.tips-and-tricks")
+require("__tenebris-prime__.prototypes.ambient-sounds")
 require("__tenebris-prime__.prototypes.entity.decorative")
 
 
