@@ -2,7 +2,7 @@ data:extend({
     {
         type = "technology",
         name = "planet-discovery-tenebris",
-        icons = util.technology_icon_constant_planet("__tenebris-prime__/graphics/icons/technology/tenebris.png"),
+        icons = PlanetsLib.technology_icon_planet("__tenebris-prime__/graphics/icons/technology/tenebris.png"),
         icon_size = 256,
         essential = true,
         effects =
