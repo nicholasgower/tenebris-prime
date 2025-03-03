@@ -9,6 +9,8 @@ Date: 2025-03-02
     - remove blank locale.cfg
     - add fr loc
     - add ○🌐 for other language.    
+  Compatibility:
+    - Replaced vanilla technology_icon_planet function with PlanetsLib equivalent.
 ---------------------------------------------------------------------------------------------------
 Version: 1.3.0
 Date: 2025-03-02
