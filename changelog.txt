@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.3.2
+Date: 2025-03-03
+  Bugfixes:
+    - info.json improve for human reading
+    - merge old changlogs (for history preservation)
+    - remove blank locale.cfg
+  Locale:
+    - added ○🌐 for other languages.
+    - Added french locale
+  Changes:
+    - Update by Fr_Dae
+---------------------------------------------------------------------------------------------------
 Version: 1.3.1
 Date: 2025-03-02
   Compatibility:
