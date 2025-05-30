@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.3.4
+Date: 2025-05-30
+  Bugfixes:
+    - Reverted "Don't overwrite the cargo pod created event if one already exists, fixes nicholasgower/tenebris-prime[#12](https://github.com/nicholasgower/tenebris-prime/issues/12)"
+---------------------------------------------------------------------------------------------------
 Version: 1.3.3
 Date: 2025-05-29
   Changes:
