@@ -1,5 +1,4 @@
 require("util")
-local meld = require("meld")
 
 for _, lab in pairs(data.raw.lab) do
     if not contains(lab.inputs, "bioluminescent-science-pack") then
@@ -7,7 +6,7 @@ for _, lab in pairs(data.raw.lab) do
     end
 end
 
-meld.meld({
+data.raw["cargo-pod"]["cargo-pod"].created_effect = {
     {
         type = "direct",
         action_delivery = {
@@ -15,7 +14,7 @@ meld.meld({
             delayed_trigger = "cargo-pod-malfunction"
         }
     }
-}, data.raw["cargo-pod"]["cargo-pod"].created_effect)
+}
 
 data:extend({
     {
