@@ -1,11 +1,5 @@
 require("util")
 
-for _, lab in pairs(data.raw.lab) do
-    if not contains(lab.inputs, "bioluminescent-science-pack") then
-        table.insert(lab.inputs, "bioluminescent-science-pack")
-    end
-end
-
 data.raw["cargo-pod"]["cargo-pod"].created_effect = {
     {
         type = "direct",
