@@ -40,13 +40,6 @@ data:extend{
       },
       {
         type = "bool-setting",
-        name = "tenebris-allow-quality-modules-in-biobeacon",
-        setting_type = "startup",
-        default_value = false,
-        order = "af",
-      },
-      {
-        type = "bool-setting",
         name = "tenebris-use-new-biobeacon-recipe",
         setting_type = "startup",
         default_value = true,

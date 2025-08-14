@@ -32,13 +32,12 @@ data:extend({
 })
 
 local science_to_update = {
-    "promethium-science-pack",
     "research-productivity"
 }
 
 for _, tech in pairs(science_to_update) do
     table.insert(data.raw["technology"][tech].unit.ingredients, { "bioluminescent-science-pack", 1 })
-    table.insert(data.raw["technology"][tech].prerequisites, "bioluminescent-science-pack")
+    table.insert(data.raw["technology"][tech].prerequisites, "photonic-derangement")
 end
 
 table.insert(data.raw["item"]["foundation"].place_as_tile.tile_condition, "sulfuric-acid-tile"); --From ams-acid-landfill
