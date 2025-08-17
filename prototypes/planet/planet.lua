@@ -18,7 +18,7 @@ local tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), {
             name ="star",
             },
         distance = 45,
-        orientation = 0.450,
+        orientation = 0.60,
     },
     magnitude = 1.2,
     label_orientation = 0.15,
@@ -56,6 +56,7 @@ local tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), {
           tick_factor = 0.001,
         },
     },
+    draw_orbit = false,
     player_effects =
     { -- TODO: replace with shader & find a way to have rain appear and disappear with weather system.
       type = "cluster",
@@ -79,7 +80,7 @@ local tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), {
           speed_from_center = 0.01,
           speed_from_center_deviation = 0.02
         }
-      }
+      },
     },
     ticks_between_player_effects = 2
 })
@@ -98,7 +99,7 @@ local iridescent_river = { -- Bismuth harvesting route
     gravity_pull = -10,
     magnitude = 0.8,
     distance = 52,
-    orientation = 0.48,
+    orientation = 0.67,
     draw_orbit = false,
     fly_condition = true,
     label_orientation = 0.15,
@@ -115,8 +116,8 @@ local lightless_abyss = { -- Deep space endurance challenge on limited resources
     subgroup = "planets",
     gravity_pull = -50,
     magnitude = 0.8,
-    distance = 92,
-    orientation = 0.44,
+    distance = 108,
+    orientation = 0.67,
     draw_orbit = false,
     fly_condition = true,
     label_orientation = 0.15,
