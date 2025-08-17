@@ -45,15 +45,19 @@ data:extend(
 
 if not mods["Cerys-Moon-of-Fulgora"] then
     data.extend({
-		type = "fluid",
-		name = "nitric-acid",
-		subgroup = "fluid",
-		default_temperature = 15,
-		base_color = { 0.384, 0.271, 0.792 },
-		flow_color = { 0.384, 1, 0.792 },
-		icon = "__base__/graphics/icons/water.png",
-		icon_size = 64,
-		icon_mipmaps = 4,
-        order = "t[tenebris]-c[nitric-acid]",
+        {
+            type = "fluid",
+            name = "nitric-acid",
+            subgroup = "fluid",
+            default_temperature = 15,
+            max_temperature = 120,
+            base_color = { 0.384, 0.271, 0.792 },
+            flow_color = { 0.384, 1, 0.792 },
+            icon = "__base__/graphics/icons/fluid/water.png",
+            icon_size = 64,
+            icon_mipmaps = 4,
+            order = "t[tenebris]-c[nitric-acid]",
+            auto_barrel = false
+        }
 	})
 end
