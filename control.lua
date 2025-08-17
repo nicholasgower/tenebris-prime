@@ -1,6 +1,7 @@
 TENEBRIS = "tenebris"
 
 require("__tenebris-prime__.scripts.deep_space_sensing")
+require("__tenebris-prime__.scripts.destroy_power_poles")
 
 script.on_event(defines.events.on_surface_created, function(event)
     local surface = game.surfaces[event.surface_index]
