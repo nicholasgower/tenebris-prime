@@ -10,7 +10,7 @@
   "dependencies": [
     "base >= 2.0.28",
     "space-age >= 2.0.28",
-    "PlanetsLib >= 1.2.6",
+    "PlanetsLib >= 1.12.0",
     "muluna-graphics >= 1.0.25",
     "! ams-acid-landfill",
     "! beacon_maraxsis_tenebris",
