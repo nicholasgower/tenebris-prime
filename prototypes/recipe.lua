@@ -323,6 +323,11 @@ data:extend({
     results = {
         {type = "item", name = "quartz-ore", amount = 120, probability = 0.0025},
     },
+    crafting_machine_tint =
+    {
+      primary = {r = 0.939, g = 0.763, b = 0.191, a = 1.000}, -- #efc230ff
+      secondary = {r = 0.914, g = 0.729, b = 0.537, a = 1.000}, -- #e9ba89ff
+    },
     main_product = "quartz-ore",
     auto_recycle = false,
     allow_decomposition = false,
