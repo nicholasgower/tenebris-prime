@@ -86,12 +86,16 @@ local function discover_tenebris()
 
     local tenebris_technology = game.forces.player.technologies["planet-discovery-tenebris"]
     technology_bfs_enabler(tenebris_technology, true)
-
-    script.on_event(defines.events.on_tick, nil)
 end
 
 local function progress_deep_space_sensing()
     local sensing_fidelity = 0
+
+    if storage.tenebris_orbital_satellite_contribution_probabilities == nil and storage.tenebris_orbital_observation_satellites == nil then
+        setup_deep_space_sensing_planetary_contribution()
+        setup_deep_space_sensing_satellites_counter()
+    end
+
     for planet_name, planetary_fidelity in pairs(storage.tenebris_orbital_satellite_contribution_probabilities) do
         sensing_fidelity = sensing_fidelity + storage.tenebris_orbital_observation_satellites[planet_name] * planetary_fidelity
     end
