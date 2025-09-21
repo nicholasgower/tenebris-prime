@@ -10,8 +10,8 @@ local function _xor(a, b)
 end
 
 
-local function _is_deny_list_exclusion(entity)
-    -- Deny from tracking if the entity has a heat energy source prototype.
+local function _is_heated_entity(entity)
+    -- Deny from tracking if the entity requires or outputs heat.
     if entity.prototype == nil then
         return true
     end
@@ -34,7 +34,7 @@ end
 
 
 function spore_clearance.on_built_entity(entity)
-    if _is_deny_list_exclusion(entity) then
+    if _is_heated_entity(entity) then
         return
     end
 
@@ -67,7 +67,7 @@ end
 
 
 function spore_clearance.on_entity_destroyed(entity)
-    if _is_deny_list_exclusion(entity) then
+    if _is_heated_entity(entity) then
         return
     end
 
