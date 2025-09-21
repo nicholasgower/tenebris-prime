@@ -28,11 +28,12 @@ data:extend({
                 { "production-science-pack",      1 },
                 { "utility-science-pack",         1 },
                 { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
                 { "electromagnetic-science-pack", 1 },
             },
             time = 60
         },
-        prerequisites = { "electromagnetic-science-pack" },
+        prerequisites = { "low-density-structure-productivity", "electromagnetic-science-pack" },
     },
     {
         type = "technology",
@@ -106,6 +107,22 @@ data:extend({
             {
                 type = "unlock-recipe",
                 recipe = "chitin-burning"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-heated-air-scrubber"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-atmosphere-scrubbing"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-atmosphere-filtration"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-atmosphere-filtration-cleaning"
             },
             {
                 type = "unlock-recipe",
@@ -225,7 +242,8 @@ data:extend({
     {
         type = "technology",
         name = "lightless-science-pack",
-        icon = "__space-age__/graphics/icons/promethium-science-pack.png",
+        icon = "__tenebris-prime__/graphics/technology/lightless-science-pack.png",
+        icon_size = 256,
         visible_when_disabled = false,
         effects =
         {
@@ -899,6 +917,11 @@ data:extend({
         visible_when_disabled = false,
         effects =
         {
+            {
+                type = "unlock-space-location",
+                space_location = "lightless-gateway",
+                use_icon_overlay_constant = true
+            },
             {
                 type = "unlock-space-location",
                 space_location = "lightless-abyss",

@@ -1,3 +1,5 @@
+local meld = require("meld")
+
 data:extend(
 {
     {
@@ -18,7 +20,7 @@ data:extend(
     {
         type = "fluid",
         name = "nitrogen",
-        icon = "__space-age__/graphics/icons/fluid/molten-copper.png",
+        icon = "__tenebris-prime__/graphics/icons/fluid/nitrogen.png",
         subgroup = "fluid",
         order = "t[tenebris]-b[nitrogen]",
         default_temperature = 600,
@@ -28,6 +30,26 @@ data:extend(
         flow_color = {0.93, 0.729, 0.23},
         auto_barrel = false
     },
+    {
+        type = "fluid",
+        name = "nitric-acid",
+        subgroup = "fluid",
+        default_temperature = 15,
+        max_temperature = 120,
+        base_color = { 0.384, 0.271, 0.792 },
+        flow_color = { 0.384, 1, 0.792 },
+        icon = "__tenebris-prime__/graphics/icons/fluid/nitric-acid.png",
+        icon_size = 64,
+        icon_mipmaps = 4,
+        order = "t[tenebris]-c[nitric-acid]",
+        auto_barrel = false
+    },
+    meld(table.deepcopy(data.raw["fluid"]["steam"]), {
+        name = "tenebris-heat",
+        icon = "__core__/graphics/arrows/heat-exchange-indication.png",
+        icon_size = 48,
+        heat_capacity = "0.2kJ",
+    }),
     {
         type = "fluid",
         name = "molten-quartziferous-bismuth",
@@ -42,22 +64,3 @@ data:extend(
         auto_barrel = false
     },
 })
-
-if not mods["Cerys-Moon-of-Fulgora"] then
-    data.extend({
-        {
-            type = "fluid",
-            name = "nitric-acid",
-            subgroup = "fluid",
-            default_temperature = 15,
-            max_temperature = 120,
-            base_color = { 0.384, 0.271, 0.792 },
-            flow_color = { 0.384, 1, 0.792 },
-            icon = "__base__/graphics/icons/fluid/water.png",
-            icon_size = 64,
-            icon_mipmaps = 4,
-            order = "t[tenebris]-c[nitric-acid]",
-            auto_barrel = false
-        }
-	})
-end

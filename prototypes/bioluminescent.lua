@@ -143,9 +143,6 @@ end
 
 local function create_light_emissions(light_pollution)
     return {
-        emissions_per_minute = {
-            light = light_pollution
-        }
     }
 end
 

@@ -1,8 +1,7 @@
-local tenebris_map_gen = require("__tenebris-prime__.prototypes.planet.tenebris_map_gen")
-local asteroid_util = require("__space-age__.prototypes.planet.asteroid-spawn-definitions")
-local tenebris_asteroid_util = require("__tenebris-prime__.prototypes.planet.asteroid-spawn-definitions")
-
 local meld = require("meld")
+local tenebris_asteroid_util = require("__tenebris-prime__.prototypes.planet.asteroid-spawn-definitions")
+local tenebris_map_gen = require("__tenebris-prime__.prototypes.planet.tenebris_map_gen")
+
 local tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), {
     type = "planet",
     name = "tenebris",
@@ -24,7 +23,7 @@ local tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), {
     label_orientation = 0.15,
     order = "e[tenebris]",
     subgroup = "planets",
-    pollutant_type = "light",
+    pollutant_type = "tenecap_spore_clearance",
     solar_power_in_space = 25,
     surface_properties =
     {
@@ -56,6 +55,8 @@ local tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), {
           tick_factor = 0.001,
         },
     },
+    asteroid_spawn_influence = 1,
+    asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.fulgora_tenebris, 0.9),
     draw_orbit = false,
     player_effects =
     { -- TODO: replace with shader & find a way to have rain appear and disappear with weather system.
@@ -86,6 +87,7 @@ local tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), {
 })
 tenebris.distance = nil
 tenebris.orientation = nil
+
 PlanetsLib:extend({tenebris})
 
 local iridescent_river = { -- Bismuth harvesting route
@@ -103,7 +105,29 @@ local iridescent_river = { -- Bismuth harvesting route
     draw_orbit = false,
     fly_condition = true,
     label_orientation = 0.15,
+    asteroid_spawn_influence = 1,
+    asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.tenebris_iridescent_river, 0.9),
     solar_power_in_space = 1,
+}
+
+local lightless_gateway = { -- Deep space endurance challenge on limited resources
+    type = "space-location",
+    name = "lightless-gateway",
+    icon = "__tenebris-prime__/graphics/icons/tenebris.png",
+    starmap_icon = "__tenebris-prime__/graphics/icons/starmap-planet-tenebris.png",
+    starmap_icon_size = 512,
+    order = "f[lightless-abyss]",
+    subgroup = "planets",
+    gravity_pull = -50,
+    magnitude = 0.8,
+    distance = 60,
+    orientation = 0.61,
+    draw_orbit = false,
+    fly_condition = true,
+    label_orientation = 0.15,
+    asteroid_spawn_influence = 1,
+    asteroid_spawn_definitions = {},
+    solar_power_in_space = 0,
 }
 
 local lightless_abyss = { -- Deep space endurance challenge on limited resources
@@ -114,48 +138,21 @@ local lightless_abyss = { -- Deep space endurance challenge on limited resources
     starmap_icon_size = 512,
     order = "f[lightless-abyss]",
     subgroup = "planets",
-    gravity_pull = -50,
+    gravity_pull = -80,
     magnitude = 0.8,
     distance = 108,
     orientation = 0.67,
     draw_orbit = false,
     fly_condition = true,
     label_orientation = 0.15,
+    asteroid_spawn_influence = 0,
+    asteroid_spawn_definitions = {},
     solar_power_in_space = 0,
 }
 
-
+PlanetsLib:extend({tenebris})
 data:extend({
     iridescent_river,
+    lightless_gateway,
     lightless_abyss,
-    {
-        type = "space-connection",
-        name = "fulgora-tenebris",
-        subgroup = "planet-connections",
-        from = "fulgora",
-        to = "tenebris",
-        order = "b",
-        length = 75000,
-        asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.fulgora_tenebris)
-    },
-    {
-        type = "space-connection",
-        name = "tenebris-iridescent-river",
-        subgroup = "planet-connections",
-        from = "tenebris",
-        to = "iridescent-river",
-        order = "d",
-        length = 62000,
-        asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.tenebris_iridescent_river)
-    },
-    {
-        type = "space-connection",
-        name = "tenebris-lightless-abyss",
-        subgroup = "planet-connections",
-        from = "tenebris",
-        to = "lightless-abyss",
-        order = "e",
-        length = 9000000,
-        asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.tenebris_lightless_abyss)
-    },
 })

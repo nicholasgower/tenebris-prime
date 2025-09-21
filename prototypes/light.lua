@@ -2,8 +2,8 @@ data:extend(
 {
   {
     type = "airborne-pollutant",
-    name = "light",
-    chart_color = {r = 240, g = 240, b = 240, a = 149},
+    name = "tenecap_spore_clearance",
+    chart_color = {r = 139, g = 69, b = 19, a = 60},
     icon =
     {
       filename = "__core__/graphics/icons/mip/side-map-menu-buttons.png",

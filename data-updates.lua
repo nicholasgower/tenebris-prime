@@ -1,5 +1,6 @@
 require("__tenebris-prime__.prototypes.bioluminescent")
 require("__tenebris-prime__.compat.maraxsis")
+require("__tenebris-prime__.compat.muluna")
 
 if data.raw.lab["lab"] then
   table.insert(data.raw.lab["lab"].inputs, "lightless-science-pack")

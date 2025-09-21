@@ -705,5 +705,128 @@ data:extend({
       }
     },
     energy_required = 10.0,
+  },
+  {
+      type = "recipe",
+      name = "tenebris-heated-air-scrubber",
+      icon = "__atan-air-scrubbing__/graphics/icons/air-scrubber.png",
+      category = "crafting",
+      enabled = false,
+      energy_required = 6,
+      ingredients = {
+          { type = "item", name = "quantum-processor", amount = 5 },
+          { type = "item", name = "atan-air-scrubber", amount = 1 },
+          { type = "item", name = "heating-tower", amount = 1 },
+          { type = "item", name = "chitin", amount = 10 },
+          { type = "item", name = "efficiency-module-3", amount = 2 },
+      },
+      results = {
+          { type = "item", name = "tenebris-heated-air-scrubber", amount = 1 },
+      },
+      allow_productivity = false,
+      surface_conditions = {
+        {
+          property = "pressure",
+          min = 18000,
+          max = 18000
+        }
+      },
+  },
+  {
+      type = "recipe",
+      name = "tenebris-atmosphere-filtration",
+      icon = "__atan-air-scrubbing__/graphics/icons/air-scrubber.png",
+      category = "crafting",
+      enabled = false,
+      energy_required = 1,
+      ingredients = {
+          { type = "item", name = "carbon", amount = 2 },
+          { type = "item", name = "chitin", amount = 2 },
+      },
+      results = {
+          { type = "item", name = "tenebris-spore-filter", amount = 1 },
+      },
+      allow_productivity = false,
+      surface_conditions = {
+        {
+          property = "pressure",
+          min = 18000,
+          max = 18000
+        }
+      },
+  },
+  {
+      type = "recipe",
+      name = "tenebris-atmosphere-filtration-cleaning",
+      icon = "__atan-air-scrubbing__/graphics/icons/air-scrubber.png",
+      category = "chemistry-or-cryogenics",
+      enabled = false,
+      energy_required = 1,
+      ingredients = {
+          { type = "item", name = "tenebris-used-spore-filter", amount = 1 },
+          { type = "item", name = "carbon", amount = 1 },
+          { type = "fluid", name = "sulfuric-acid", amount = 20 }
+      },
+      results = {
+          { type = "item", name = "tenebris-spore-filter", amount = 1 },
+      },
+      allow_productivity = false,
+      allow_quality = false,
+      surface_conditions = {
+        {
+          property = "pressure",
+          min = 18000,
+          max = 18000
+        }
+      },
+  },
+  {
+    type = "recipe",
+    name = "tenebris-atmosphere-scrubbing",
+    category = "atmospheric-filtration",
+    enabled = false,
+    icons = {
+        { icon = "__tenebris-prime__/graphics/icons/tenebris.png", draw_background = true },
+        {
+            icon = "__atan-air-scrubbing__/graphics/icons/air-scrubber.png",
+            draw_background = true,
+            scale = 0.4,
+            shift = { 2, 6 },
+        },
+    },
+    energy_required = 60,
+    ingredients = {
+        { type = "item", name = "tenebris-spore-filter", amount = 1 },
+    },
+    results = {
+        { type = "item", name = "tenebris-used-spore-filter", amount = 1 },
+        { type = "item", name = "tenecap-spore", amount_min = 2, amount_max = 16 },
+    },
+    main_product = "tenebris-used-spore-filter",
+    allow_productivity = false,
+    allow_quality = false,
+    surface_conditions = {
+      {
+        property = "pressure",
+        min = 18000,
+        max = 18000
+      }
+    },
+  },
+  {
+    type = "recipe",
+    name = "tenebris-heating",
+    category = "tenebris-heating",
+    results = {{
+      type = "fluid", name = "tenebris-heat", amount = 100, temperature = 1000
+    }},
+    surface_conditions = {
+      {
+        property = "pressure",
+        min = 18000,
+        max = 18000
+      }
+    },
+    energy_required = 10.0,
   }
 })

@@ -30,7 +30,7 @@ data:extend(
         order = "b[exploration]-t[tenebris-lightless-abyss]",
         distance = 9000000,
         reversed = false,
-        tracked_connection = "tenebris-lightless-abyss",
+        tracked_connection = "lightless-gateway-lightless-abyss",
         icon = "__space-age__/graphics/achievement/shattered-planet-1.png",
         icon_size = 128
       },
