@@ -1,14 +1,16 @@
-local meld = require("meld")
+local _TENEBRIS = "tenebris"
+local _AQUILO = "aquilo"
+local _FULGORA = "fulgora"
+local _GLEBA = "gleba"
+local _NAUVIS = "nauvis"
+local _VULCANUS = "vulcanus"
+local _OBSERVATION_SATELLITE = "observation-satellite"
 
-_TENEBRIS = "tenebris"
-_AQUILO = "aquilo"
-_FULGORA = "fulgora"
-_GLEBA = "gleba"
-_NAUVIS = "nauvis"
-_VULCANUS = "vulcanus"
-_OBSERVATION_SATELLITE = "observation-satellite"
 
-local function technology_bfs_enabler(starting_tech, should_enable)
+local deep_space_sensing = {}
+
+
+function deep_space_sensing.technology_bfs_enabler(starting_tech, should_enable)
     local tech_queue = {}
     local visited_techs = {}
 
@@ -32,7 +34,8 @@ local function technology_bfs_enabler(starting_tech, should_enable)
     end
 end
 
-local function setup_deep_space_sensing_satellites_counter()
+
+function deep_space_sensing.setup_deep_space_sensing_satellites_counter()
     -- Forcibly reset all the satellites around every planet. Engineer pressing the interplanetary self-destruct button.
     storage.tenebris_orbital_observation_satellites = {}
     for planet_name, _ in pairs(game.planets) do
@@ -40,7 +43,8 @@ local function setup_deep_space_sensing_satellites_counter()
     end
 end
 
-local function setup_deep_space_sensing_planetary_contribution()
+
+function deep_space_sensing.setup_deep_space_sensing_planetary_contribution()
     -- Ideally this should compute the distance from Tenebris to every other planet, but that's hard to think about doing in Factorio Lua, for now set fixed contributions.
     -- Fixed contributions also mean that additional planets from other mods won't impact the research chance.
     storage.tenebris_orbital_satellite_contribution_probabilities = {
@@ -52,21 +56,11 @@ local function setup_deep_space_sensing_planetary_contribution()
     }
 end
 
-local function on_satellite_launched(event)
-    local cargo_pod = event.cargo_pod 
 
-    local inventory = cargo_pod.get_inventory(defines.inventory.cargo_unit)
-    if inventory == nil then
-        return
-    end
-
-    if inventory.find_item_stack(_OBSERVATION_SATELLITE) == nil then
-        return
-    end
-
+function deep_space_sensing.on_satellite_launched(cargo_pod)
     -- This shouldn't happen, but I don't want to crash a save over it.
     if storage.tenebris_orbital_observation_satellites == nil then
-        setup_deep_space_sensing_satellites_counter()
+        deep_space_sensing.setup_deep_space_sensing_satellites_counter()
     end
 
     -- To account for planets added retroactively to the save...
@@ -81,19 +75,21 @@ local function on_satellite_launched(event)
     game.print(storage.tenebris_orbital_observation_satellites[cargo_pod.cargo_pod_origin.surface.planet.name])
 end
 
-local function discover_tenebris()
+
+function deep_space_sensing.discover_tenebris()
     game.print(string.format("Observation Satellite Network Message: Distant celestial body discovered. Name: Tenebris, the Dark World"))
 
     local tenebris_technology = game.forces.player.technologies["planet-discovery-tenebris"]
-    technology_bfs_enabler(tenebris_technology, true)
+    -- technology_bfs_enabler(tenebris_technology, true)
 end
 
-local function progress_deep_space_sensing()
+
+function deep_space_sensing.progress_deep_space_sensing()
     local sensing_fidelity = 0
 
     if storage.tenebris_orbital_satellite_contribution_probabilities == nil and storage.tenebris_orbital_observation_satellites == nil then
-        setup_deep_space_sensing_planetary_contribution()
-        setup_deep_space_sensing_satellites_counter()
+        deep_space_sensing.setup_deep_space_sensing_planetary_contribution()
+        deep_space_sensing.setup_deep_space_sensing_satellites_counter()
     end
 
     for planet_name, planetary_fidelity in pairs(storage.tenebris_orbital_satellite_contribution_probabilities) do
@@ -107,36 +103,15 @@ local function progress_deep_space_sensing()
         return
     end
 
-    discover_tenebris()
+    deep_space_sensing.discover_tenebris()
 end
 
-local function on_progress_deep_space_sensing_tick(event)
-    if event.tick % 3600 ~= 0 then
-        return
-    end
 
+function deep_space_sensing.on_progress_deep_space_sensing_tick(event)
     if game.forces.player.technologies["deep-space-sensing"].researched then
-        progress_deep_space_sensing()
+        deep_space_sensing.progress_deep_space_sensing()
     end
 end
 
-local function on_deep_space_sensing_researched(event)
-    if event.research.name ~= "deep-space-sensing" then
-        return
-    end
 
-    setup_deep_space_sensing_satellites_counter()
-    setup_deep_space_sensing_planetary_contribution()
-end
-
-script.on_event(defines.events.on_research_finished, on_deep_space_sensing_researched)
-script.on_event(defines.events.on_cargo_pod_finished_ascending, on_satellite_launched)
-script.on_event(defines.events.on_tick, on_progress_deep_space_sensing_tick)
-
-script.on_init(
-    function()
-        local tenebris_technology = game.forces.player.technologies["planet-discovery-tenebris"]
-
-        technology_bfs_enabler(tenebris_technology, false)
-    end
-)
+return deep_space_sensing
