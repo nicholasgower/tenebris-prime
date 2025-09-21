@@ -1,0 +1,3 @@
+[submodule ".unused_renders"]
+	path = .unused_renders
+	url = https://github.com/malcolmriley/unused-renders.git

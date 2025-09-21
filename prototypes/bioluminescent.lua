@@ -58,7 +58,7 @@ local function icons_to_layers(item)
     return layers
 end
 
-local function create_bioluminescent_entity(entities, cost, entity_mod, exclude, light_scale)
+local function create_bioluminescent_entity(entities, cost, entity_mod, exclude, light_scale, light_pollution)
     local result = {}
     for _, entity in pairs(entities) do
         if entity.bioluminescent or
@@ -78,7 +78,9 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
                     name = name,
                     bioluminescent = true,
                     localised_name = { "entity-name.bioluminescent-entity", entity.localised_name or { "entity-name." .. entity.name } },
-                    energy_source = { type = "void" },
+                    energy_source = meld({ 
+                        type = "void",   
+                    }, light_pollution or {}),
                     integration_patch_render_layer = "collision-selection-box",
                     integration_patch = {
                         filename = "__tenebris-prime__/graphics/icons/item-glow.png",
@@ -87,13 +89,7 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
                         draw_as_light = true,
                     },
                     minable = { mining_time = 0.2, result = "bioluminescent-" .. entity.minable.result },
-                    surface_conditions = meld.overwrite {
-                        {
-                            property = "pressure",
-                            min = 3000,
-                            max = 3000
-                        }
-                    }
+                    
                 })
 
             if entity_mod then
@@ -112,7 +108,9 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
                     icons = meld.overwrite(build_item_icons(item)),
                     pictures = meld.overwrite {
                         layers = icons_to_layers(item)
-                    }
+                    },
+                    spoil_result = item.name,
+                    spoil_ticks = 1296000
                 }),
                 {
                     type = "recipe",
@@ -123,22 +121,15 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
                     category = "bioinfusion",
                     ingredients = {
                         { type = "item", name = item.name, amount = 1 },
-                        -- { type = "item", name = "bioluminescent-crystal", amount = 4 }
                     },
                     results = { { type = "item", name = "bioluminescent-" .. item.name, amount = 1 } },
                     energy_required = cost or 10.0,
                     allow_productivity = false,
-                    surface_conditions = {
-                        {
-                            property = "pressure",
-                            min = 3000,
-                            max = 3000  
-                        }
-                    }
+                    allow_quality = false,
                 }
             })
 
-            table.insert(data.raw["technology"]["bioinfusor"].effects, {
+            table.insert(data.raw["technology"]["tenebris-bioinfusor"].effects, {
                 type = "unlock-recipe",
                 recipe = "bioluminescent-"..item.name
             })
@@ -148,6 +139,11 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
     end
 
     return result
+end
+
+local function create_light_emissions(light_pollution)
+    return {
+    }
 end
 
 local biolum_types = flatten {
@@ -160,17 +156,17 @@ local biolum_types = flatten {
         return {
             crafting_speed = entity.crafting_speed * 1.5
         }
-    end, {"crusher"}),
+    end, {"crusher"}, nil, create_light_emissions(6)),
     create_bioluminescent_entity(table.deepcopy(data.raw["furnace"]), 15.0, function(entity)
         return {
             crafting_speed = entity.crafting_speed * 1.5
         }
-    end),
+    end, nil, nil, create_light_emissions(4)),
     create_bioluminescent_entity(table.deepcopy(data.raw["mining-drill"]), 10.0, function(entity)
         return {
             mining_speed = entity.mining_speed * 1.5
         }
-    end),
+    end, nil, nil, create_light_emissions(6)),
     create_bioluminescent_entity(table.deepcopy(data.raw["agricultural-tower"]), 15.0),
     create_bioluminescent_entity(table.deepcopy(data.raw["roboport"]), 30.0),
     create_bioluminescent_entity(table.deepcopy(data.raw["constant-combinator"]), 3.0),
@@ -181,7 +177,7 @@ local biolum_types = flatten {
         return {
             crafting_speed = entity.crafting_speed * 2
         }
-    end),
+    end, nil, nil, create_light_emissions(10)),
     create_bioluminescent_entity(table.deepcopy(data.raw["locomotive"]), 30.0, function(entity)
         return {
             max_speed = entity.max_speed * 2
@@ -197,7 +193,7 @@ local biolum_types = flatten {
             max_speed = entity.max_speed * 2
         }
     end),
-    create_bioluminescent_entity(table.deepcopy(data.raw["transport-belt"]), 0.1, nil, nil, 2),
+    create_bioluminescent_entity(table.deepcopy(data.raw["transport-belt"]), 0.1, nil, nil, 2, create_light_emissions(2)),
 }
 
 data:extend(biolum_types)

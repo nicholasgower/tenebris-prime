@@ -1,10 +1,22 @@
 data:extend({
     {
         type = "tips-and-tricks-item",
+        name = "deep-space-sensing-briefing",
+        tag = "[item=observation-satellite]",
+        category = "space-age",
+        order = "t[tenebris]-a[deep-space-sensing-briefing]",
+        trigger =
+        {
+            type = "research",
+            technology = "deep-space-sensing"
+        }
+    },
+    {
+        type = "tips-and-tricks-item",
         name = "tenebris-briefing",
         tag = "[planet=tenebris]",
         category = "space-age",
-        order = "d-k",
+        order = "t[tenebris]-b[tenebris-briefing]",
         trigger =
         {
             type = "research",

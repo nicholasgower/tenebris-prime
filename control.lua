@@ -1,17 +1,25 @@
-TENEBRIS = "tenebris"
+require("__tenebris-prime__.scripts.hooks.on_built_entity")
+require("__tenebris-prime__.scripts.hooks.on_cargo_pod_finished_ascending")
+require("__tenebris-prime__.scripts.hooks.on_cargo_pod_finished_descending")
+require("__tenebris-prime__.scripts.hooks.on_init")
+require("__tenebris-prime__.scripts.hooks.on_nth_tick")
+require("__tenebris-prime__.scripts.hooks.on_player_mined_entity")
+require("__tenebris-prime__.scripts.hooks.on_post_entity_died")
+require("__tenebris-prime__.scripts.hooks.on_research_finished")
+require("__tenebris-prime__.scripts.hooks.on_robot_built_entity")
+require("__tenebris-prime__.scripts.hooks.on_robot_mined_entity")
 
-script.on_init(function()
-    if game.surfaces[TENEBRIS] then
-        game.forces["enemy"].set_evolution_factor(0.99, game.surfaces.tenebris)
-    end
-  end)
+
+local _TENEBRIS = "tenebris"
+
+
+if script.active_mods["gvv"] then require("__gvv__.gvv")() end
 
 script.on_event(defines.events.on_surface_created, function(event)
     local surface = game.surfaces[event.surface_index]
-    if surface.name == TENEBRIS then
+    if surface.name == _TENEBRIS then
         surface.freeze_daytime = true
         surface.daytime = 0.35
-        game.forces["enemy"].set_evolution_factor(0.99, surface)
     end
 end)
 
@@ -20,46 +28,9 @@ script.on_event(defines.events.on_player_changed_surface, function(event)
 
     local surface = game.surfaces[event.surface_index]
 
-    if surface.name == TENEBRIS then
+    if surface.name == _TENEBRIS then
         surface.freeze_daytime = true
         surface.daytime = 0.35
         game.players[event.player_index].enable_flashlight()
     end
 end)
-
--- script.on_event(defines.events.on_script_trigger_effect, function(event)
---     if event.effect_id == "cargo-pod-spawned" then
---         if event.cause_entity == nil then return end
---         if event.cause_entity.force.technologies["planetslib-tenebris-cargo-drops"].researched then return end
-
---         if event.cause_entity.surface.name == TENEBRIS and event.cause_entity.has_items_inside() then
---             local source_inventory = event.cause_entity.get_inventory(defines.inventory.cargo_landing_pad_main)
-
---             local distance = math.random(2000, 2500)
---             local angle = math.random() * math.pi * 2
-
---             local x = math.sin(angle) * distance
---             local y = math.cos(angle) * distance
-
---             local pod = event.cause_entity.surface.create_entity {
---                 name = "cargo-pod-container", force = event.cause_entity.force, position = { x, y }
---             }
---             local target_inventory = pod.get_inventory(defines.inventory.cargo_landing_pad_main)
-
---             event.cause_entity.force.chart(event.cause_entity.surface, { { x - 10, y - 10 }, { x + 10, y + 10 } })
---             game.print("Cargo pod navigation failure, crash landed at " .. pod.gps_tag)
-
---             if source_inventory and target_inventory then
---                 for i = 1, #source_inventory do
---                     local stack = source_inventory[i]
-
---                     if stack.valid_for_read then
---                         target_inventory.insert(stack)
---                     end
---                 end
-
---                 event.cause_entity.destroy()
---             end
---         end
---     end
--- end)
