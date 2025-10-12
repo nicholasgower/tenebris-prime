@@ -66,6 +66,11 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
             goto skip
         end
 
+        if mods["wood-logistics"] and mods["Age-of-Production"] and entity.name == "lumber-mill" then
+            -- fixing issue loading for lumber-mill since if wood-logistics is enabled, age of production mods will remove it and replace it with aop version.
+            goto skip
+        end
+
         if not contains(exclude or {}, entity.name) and entity.minable and entity.minable.result and entity.minable.result == entity.name then
             local item = data.raw["item"][entity.minable.result] or
                 data.raw["item-with-entity-data"][entity.minable.result]
