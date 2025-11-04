@@ -72,6 +72,11 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
 
             if not item then goto skip end
 
+			local bioluminescent_next_upgrade = nil
+			if entity.next_upgrade then 
+				bioluminescent_next_upgrade = "bioluminescent-" .. entity.next_upgrade
+			end
+
             local name = "bioluminescent-" .. entity.name
             result[name] =
                 meld(table.deepcopy(entity), {
@@ -92,7 +97,8 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
                             property = "pressure",
                             min = 3000,
                             max = 3000
-                        }
+                        },
+					    next_upgrade = bioluminescent_next_upgrade
                     }
                 })
 
