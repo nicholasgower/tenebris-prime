@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.3.7
+Date: 2025-11-05
+  Bugfixes:
+    - Bypassing lumber-mill is getting removed by age-of-production and wood-logistics both mods enabled. By ach4ndi.
+    - Fixed "Downgrading belts uses the Bioluminecent version." https://github.com/nicholasgower/tenebris-prime/issues/5. By stef77stef.
+---------------------------------------------------------------------------------------------------
 Version: 1.3.6
 Date: 2025-07-03
   Locale:
