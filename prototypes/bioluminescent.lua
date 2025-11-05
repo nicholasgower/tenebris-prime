@@ -103,8 +103,9 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
                             min = 3000,
                             max = 3000
                         },
-					    next_upgrade = bioluminescent_next_upgrade
-                    }
+					    
+                    },
+                    next_upgrade = bioluminescent_next_upgrade
                 })
 
             if entity_mod then
