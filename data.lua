@@ -18,3 +18,5 @@ require("__tenebris-prime__.prototypes.entity.decorative")
 
 
 require("__tenebris-prime__.prototypes.bioluminescent")
+
+require("__tenebris-prime__.compat.canal-excavator-data")
