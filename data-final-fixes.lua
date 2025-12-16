@@ -42,3 +42,5 @@ for _, tech in pairs(science_to_update) do
 end
 
 table.insert(data.raw["item"]["foundation"].place_as_tile.tile_condition, "sulfuric-acid-tile"); --From ams-acid-landfill
+
+require("__tenebris-prime__.compat.canal-excavator-data-final-fixes")
