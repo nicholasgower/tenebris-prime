@@ -12,6 +12,16 @@ for _, location in pairs(constants.ALL_TENEBRIS_LOCATIONS) do
     tenebris_locations[location] = true
 end
 
+-- Log all Tenebris-related connections for debugging
+log("[Tenebris Prime] Tenebris-related connections found:")
+for name, connection in pairs(data.raw["space-connection"]) do
+    local involves_tenebris = tenebris_locations[connection.from] or tenebris_locations[connection.to]
+    if involves_tenebris then
+        log(string.format("  %s: from=%s, to=%s, tenebris_prime_connection=%s",
+            name, connection.from, connection.to, tostring(connection.tenebris_prime_connection)))
+    end
+end
+
 -- Find and remove external connections to Tenebris locations
 local connections_to_delete = {}
 

@@ -376,6 +376,7 @@ local tenebris_biopipe_to_ground = meld(table.deepcopy(data.raw["pipe-to-ground"
 apply_tint_recursive(tenebris_biopipe_to_ground.pictures)
 
 -- Piezoelectric Inserter: Bulk inserter capacity, burner inserter speed, no power required
+-- Supports toggling between normal and long-handed reach via GUI
 local piezoelectric_inserter = meld(table.deepcopy(data.raw["inserter"]["bulk-inserter"]), {
     name = "piezoelectric-inserter",
     minable = { mining_time = 0.1, result = "piezoelectric-inserter" },
@@ -389,6 +390,8 @@ local piezoelectric_inserter = meld(table.deepcopy(data.raw["inserter"]["bulk-in
     },
     energy_per_movement = "1J",
     energy_per_rotation = "1J",
+    -- Enable runtime pickup/drop position changes for long-handed toggle
+    allow_custom_vectors = true,
 })
 
 -- Apply dark orange tint to all graphics

@@ -73,8 +73,10 @@ tenebris.EVENTS = {
     ON_GUI_CLOSED = defines.events.on_gui_closed,
     ON_GUI_TEXT_CHANGED = defines.events.on_gui_text_changed,
     ON_GUI_ELEM_CHANGED = defines.events.on_gui_elem_changed,
+    ON_GUI_SWITCH_STATE_CHANGED = defines.events.on_gui_switch_state_changed,
     ON_ENTITY_SETTINGS_PASTED = defines.events.on_entity_settings_pasted,
     ON_SELECTED_ENTITY_CHANGED = defines.events.on_selected_entity_changed,
+    ON_PLAYER_SETUP_BLUEPRINT = defines.events.on_player_setup_blueprint,
 }
 
 --#endregion

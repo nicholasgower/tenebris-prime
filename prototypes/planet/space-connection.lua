@@ -11,6 +11,7 @@ data:extend({
         length = 75000,
         asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.fulgora_tenebris),
         tenebris_prime_connection = true,
+        redrawn_connections_exclude = true,
     },
     {
         type = "space-connection",
@@ -21,6 +22,7 @@ data:extend({
         length = 62000,
         asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.tenebris_iridescent_river),
         tenebris_prime_connection = true,
+        redrawn_connections_exclude = true,
     },
     {
         type = "space-connection",
@@ -31,6 +33,7 @@ data:extend({
         length = 50000,
         asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.the_nest_route),
         tenebris_prime_connection = true,
+        redrawn_connections_exclude = true,
     },
     {
         type = "space-connection",
@@ -41,6 +44,7 @@ data:extend({
         length = 80000,
         asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.the_nest_route),
         tenebris_prime_connection = true,
+        redrawn_connections_exclude = true,
     },
     {
         type = "space-connection",
@@ -51,6 +55,7 @@ data:extend({
         length = 100000,
         asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.tenebris_lightless_abyss),
         tenebris_prime_connection = true,
+        redrawn_connections_exclude = true,
     },
     {
         type = "space-connection",
@@ -61,6 +66,7 @@ data:extend({
         length = 70000,
         asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.tenebris_lightless_abyss),
         tenebris_prime_connection = true,
+        redrawn_connections_exclude = true,
     },
     {
         type = "space-connection",
@@ -71,5 +77,6 @@ data:extend({
         length = 9000000,
         asteroid_spawn_definitions = {},
         tenebris_prime_connection = true,
+        redrawn_connections_exclude = true,
     },
 })

@@ -33,6 +33,7 @@ require("scripts.lightning_furnace.energy")
 require("scripts.lightning_furnace.gui")
 require("scripts.thermal_diode.init")
 require("scripts.thermal_battery.gui")
+require("scripts.piezoelectric_inserter.gui")
 
 -- Centipede spawning from egg rafts in space
 require("scripts.centipede_spawner.init").register_events()
