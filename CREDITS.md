@@ -2,10 +2,11 @@
 
 ## Original Mod
 
-This revamp is built upon the original Tenebris Prime mod. Special thanks to:
+This revamp is built upon the original Tenebris Prime mod, which itself is a derivative of the original Tenebris mod. Special thanks to:
 
-- **nicholasgower** - Creator and maintainer of [Tenebris Prime](https://github.com/nicholasgower/tenebris-prime)
-- Thank you for creating and maintaining the original mod, and for allowing this major revamp to be developed.
+- **Big_J** - Original creator of [Tenebris](https://mods.factorio.com/mod/tenebris), the dark planet mod that started it all.
+- **MeteorSwarm** - Creator and maintainer of [Tenebris Prime](https://github.com/nicholasgower/tenebris-prime), the derivative work that expanded on Big_J's vision.
+- Thanks MeteorSwarm for letting me work on this revamp!
 
 ---
 
