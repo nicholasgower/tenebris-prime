@@ -1,88 +1,134 @@
 local sounds = require("__base__.prototypes.entity.sounds")
 local resource_autoplace = require("resource-autoplace")
 
-resource_autoplace.initialize_patch_set("quartz-ore", true)
+resource_autoplace.initialize_patch_set("tenebris-exposed-lichen-deposit", true)
 
-local stone_driving_sound =
-{
-  sound =
+data:extend({
   {
-    filename = "__base__/sound/driving/vehicle-surface-stone.ogg", volume = 0.8,
-    advanced_volume_control = {fades = {fade_in = {curve_type = "cosine", from = {control = 0.5, volume_percentage = 0.0}, to = {1.5, 100.0 }}}}
-  },
-  fade_ticks = 6
-}
+    type = "resource",
+    name = "tenebris-exposed-lichen-deposit",
+    icons = {
+      -- Center: Spoilage (main drop)
+      { icon = "__space-age__/graphics/icons/spoilage.png", icon_size = 64, scale = 0.4 },
+      -- Top-left: Tenecap spore
+      { icon = "__tenebris-prime__/graphics/icons/tenecap-spore.png", icon_size = 64, scale = 0.25, shift = {-10, -10} },
+      -- Top-right: Stone
+      { icon = "__base__/graphics/icons/stone.png", icon_size = 64, scale = 0.25, shift = {10, -10} },
+      -- Bottom-left: Carbon
+      { icon = "__space-age__/graphics/icons/carbon.png", icon_size = 64, scale = 0.25, shift = {-10, 10} },
+      -- Bottom-right: Calcite
+      { icon = "__space-age__/graphics/icons/calcite.png", icon_size = 64, scale = 0.25, shift = {10, 10} },
+      -- Right: Chitin (rare)
+      { icon = "__tenebris-prime__/graphics/icons/chitin.png", icon_size = 64, scale = 0.2, shift = {12, 0} },
+    },
+    flags = {"placeable-neutral"},
+    subgroup = "tenebris-minerals",
+    order="t[tenebris]-a[tenebris-exposed-lichen-deposit]",
+    hidden = true,
+    hidden_in_factoriopedia = false,
+    infinite = false,
+    minimum = 2000,
+    normal = 10000,
+    highlight = false,
+    tree_removal_probability = 0.8,
+    tree_removal_max_distance = 32 * 32,
 
-local function resource(resource_parameters, autoplace_parameters)
-    return
+
+    minable =
     {
-      type = "resource",
-      name = resource_parameters.name,
-      icon = "__tenebris-prime__/graphics/icons/" .. resource_parameters.name .. ".png",
-      flags = {"placeable-neutral"},
-      order="a-b-"..resource_parameters.order,
-      tree_removal_probability = 0.8,
-      tree_removal_max_distance = 32 * 32,
-      minable = resource_parameters.minable or
+      mining_particle = "stone-particle",
+      mining_time = 1,
+      results =
       {
-        -- mining_particle = resource_parameters.name .. "-particle",
-        mining_time = resource_parameters.mining_time,
-        result = resource_parameters.name
-      },
-      category = resource_parameters.category,
-      subgroup = resource_parameters.subgroup,
-      walking_sound = resource_parameters.walking_sound,
-      driving_sound = resource_parameters.driving_sound,
-      collision_mask = resource_parameters.collision_mask,
-      collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
-      selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
-      autoplace = resource_autoplace.resource_autoplace_settings
-      {
-        name = resource_parameters.name,
-        order = resource_parameters.order,
-        base_density = autoplace_parameters.base_density,
-        base_spots_per_km = autoplace_parameters.base_spots_per_km2,
-        has_starting_area_placement = true,
-        regular_rq_factor_multiplier = autoplace_parameters.regular_rq_factor_multiplier,
-        starting_rq_factor_multiplier = autoplace_parameters.starting_rq_factor_multiplier,
-        candidate_spot_count = autoplace_parameters.candidate_spot_count,
-        tile_restriction = autoplace_parameters.tile_restriction
-      },
-      stage_counts = {15000, 9500, 5500, 2900, 1300, 400, 150, 80},
-      stages =
-      {
-        sheet =
         {
-          filename = "__tenebris-prime__/graphics/entity/" .. resource_parameters.name .. "/" .. resource_parameters.name .. ".png",
-          priority = "extra-high",
-          size = 128,
-          frame_count = 8,
-          variation_count = 8,
-          scale = 0.5
-        }
-      },
-      map_color = resource_parameters.map_color,
-      mining_visualisation_tint = resource_parameters.mining_visualisation_tint,
-      factoriopedia_simulation = resource_parameters.factoriopedia_simulation
-    }
-  end
-
-  data:extend({
-    resource(
-        {
-          name = "quartz-ore",
-          order = "b",
-          map_color = {0.715, 0.725, 0.780},
-          mining_time = 1,
-          walking_sound = sounds.ore,
-          driving_sound = stone_driving_sound,
-          mining_visualisation_tint = {r = 0.895, g = 0.965, b = 1.000, a = 1.000}, -- #e4f6ffff
+          type = "item",
+          name = "tenecap-spore",
+          amount = 1,
+          probability = 29.9 / 100,
         },
         {
-          base_density = 10,
-          regular_rq_factor_multiplier = 1.10,
-          starting_rq_factor_multiplier = 1.5,
-          candidate_spot_count = 22, -- To match 0.17.50 placement
-        }
-      )
-  })
+          type = "item",
+          name = "spoilage",
+          amount = 2,
+          probability = 33.998 / 100,
+        },
+        {
+          type = "item",
+          name = "tenebris-chitin",
+          amount = 10,
+          probability = 0.002 / 100,
+        },
+        {
+          type = "item",
+          name = "stone",
+          amount = 1,
+          probability = 22 / 100,
+        },
+        {
+          type = "item",
+          name = "carbon",
+          amount = 1,
+          probability = 14 / 100,
+        },
+        {
+          type = "item",
+          name = "calcite",
+          amount = 2,
+          probability = 0.1 / 100,
+        },
+      }
+    },
+    category = "basic-solid",
+    walking_sound = sounds.ore,
+    collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
+    selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+    randomize_visual_position = true,
+    -- Use resource_autoplace for proper ore patch clustering
+    autoplace = resource_autoplace.resource_autoplace_settings({
+      name = "tenebris-exposed-lichen-deposit",
+      order = "t[tenebris]-a",
+      base_density = 8,
+      base_spots_per_km2 = 2.5,
+      has_starting_area_placement = true,
+      regular_rq_factor_multiplier = 1.2,
+      starting_rq_factor_multiplier = 1.5,
+      -- Restrict to highlands and wastes using spot_favorability
+      -- This makes patches favor these biomes
+      ideal_aux = 0.5,
+      aux_range = 0.5,
+    }),
+    stage_counts = {0},
+    stages =
+    {
+      sheet = 
+      {
+        filename = "__tenebris-prime__/graphics/entity/lichen-deposit/lichen-deposit.png",
+        priority = "extra-high",
+        size = 128,
+        frame_count = 32,
+        variation_count = 1,
+        scale = 0.5,
+      },
+    },
+    stages_effect =
+    {
+      sheet = 
+      {
+        filename = "__Moshine-assets__/graphics/entity/multi-ore/multi-ore-effect.png",
+        priority = "extra-high",
+        size = 128,
+        frame_count = 32,
+        variation_count = 1,
+        scale = 0.5,
+      },
+    },
+    effect_animation_period = 11,
+    effect_animation_period_deviation = 1.2,
+    effect_darkness_multiplier = 3.6,
+    min_effect_alpha = 0.1,
+    max_effect_alpha = 0.3,
+    map_color = {r = 170, g = 51, b = 229, a = 255},
+    mining_visualisation_tint = {r = 180, g = 120, b = 190, a = 255},
+    map_grid = true,
+  },
+})

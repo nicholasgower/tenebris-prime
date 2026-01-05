@@ -1,3 +1,6 @@
 [submodule ".unused_renders"]
 	path = .unused_renders
 	url = https://github.com/malcolmriley/unused-renders.git
+[submodule "factorio_free_graphics_for_modders"]
+	path = .factorio_free_graphics_for_modders
+	url = https://github.com/snouz/factorio_free_graphics_for_modders.git

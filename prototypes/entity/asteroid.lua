@@ -39,6 +39,7 @@ function create_asteroid_chunk_parameter(number)
   ]]
   
   local simulations = require("__space-age__.prototypes.factoriopedia-simulations")
+  local tenebris_simulations = require("prototypes.factoriopedia-simulations")
   
   local sounds = require("__base__.prototypes.entity.sounds")
   local space_age_sounds = require ("__space-age__.prototypes.entity.sounds")
@@ -74,19 +75,22 @@ function create_asteroid_chunk_parameter(number)
       resistances = shared_resistances,
       shading_data =
       {
-        normal_strength = 1.2,
-        light_width = 0.3,
-        brightness = 0.3,
-        specular_strength = 2.5,
-        specular_power = 1.5,
-        specular_purity = 0.1,
-        sss_contrast = 0,
-        sss_amount = 0.15,
+        normal_strength = 1.4,
+        light_width = 0.4,
+        brightness = 0.4,
+        specular_strength = 3.0,
+        specular_power = 2.0,
+        specular_purity = 0.3,  -- Higher purity for more vibrant reflections
+        sss_contrast = 0.1,
+        sss_amount = 0.2,
+        -- Iridescent multi-colored lights to simulate bismuth's rainbow oxide layers
         lights = {
-          { color = {1,1,1}, direction = {0.75,0.22,-1} },
-          { color = {0.2,0,0}, direction = {0.5, 0, 0.95} },
+          { color = {1.0, 0.3, 0.5}, direction = {0.75, 0.22, -1} },    -- Magenta/pink from above-right
+          { color = {0.3, 0.8, 1.0}, direction = {-0.5, 0.3, -0.8} },   -- Cyan from above-left
+          { color = {1.0, 0.8, 0.2}, direction = {0.0, -0.5, -1} },     -- Gold/yellow from below
+          { color = {0.5, 0.2, 1.0}, direction = {0.5, 0, 0.95} },      -- Purple rim light
         },
-        ambient_light = {0.0, 0.0, 0.0},
+        ambient_light = {0.05, 0.03, 0.08},  -- Slight purple ambient
       }
     },
   }
@@ -176,7 +180,12 @@ function create_asteroid_chunk_parameter(number)
         asteroid_name = asteroid_type .. "-asteroid-chunk"
       else
         asteroid_name = asteroid_size_name .. "-"..asteroid_type.."-asteroid"
-        factoriopedia_sim = simulations["factoriopedia_" .. asteroid_size_name .. "_" .. asteroid_type .. "_asteroid"]
+        -- Use tenebris simulations for bismuth, otherwise use space-age simulations
+        if asteroid_type == "bismuth" then
+          factoriopedia_sim = tenebris_simulations["factoriopedia_" .. asteroid_size_name .. "_" .. asteroid_type .. "_asteroid"]
+        else
+          factoriopedia_sim = simulations["factoriopedia_" .. asteroid_size_name .. "_" .. asteroid_type .. "_asteroid"]
+        end
         local spread = collision_radius * 0.5
   
         if asteroid_size == 2 then
@@ -476,6 +485,229 @@ function create_asteroid_chunk_parameter(number)
     end
   end
   
-  -- chunk backlight overrides
-  data.raw["asteroid-chunk"]["bismuth-asteroid-chunk"].graphics_set.lights[2] = { color = {0.85,0.5,0.4}, direction = {-1,-45,0.1} }
+  -- chunk backlight overrides - iridescent coloring for bismuth
+  if data.raw["asteroid-chunk"]["bismuth-asteroid-chunk"] then
+    data.raw["asteroid-chunk"]["bismuth-asteroid-chunk"].graphics_set.lights = {
+      { color = {1.0, 0.3, 0.5}, direction = {0.75, 0.22, -1} },    -- Magenta/pink
+      { color = {0.3, 0.8, 1.0}, direction = {-0.5, 0.3, -0.8} },   -- Cyan
+      { color = {0.5, 0.2, 1.0}, direction = {-1, -0.45, 0.1} },    -- Purple backlight
+    }
+  end
   
+--------------------------------------------------------------------------------
+-- Infected Carbonic Chunk
+-- Dropped by centipede eggroids, can be processed into lucifunnel and carbon
+--------------------------------------------------------------------------------
+
+local centipede_constants = require("lib.centipede_constants")
+local infected_chunk_shading = centipede_constants.INFECTED_CHUNK_SHADING
+
+data:extend{{
+  type = "asteroid-chunk",
+  name = "infected-carbonic-chunk",
+  icons = {
+    {
+      icon = "__space-age__/graphics/icons/carbonic-asteroid-chunk.png",
+      icon_size = 64,
+      tint = centipede_constants.EGGROID_ICON_TINT,
+    },
+  },
+  subgroup = "space-material",
+  order = "b[carbonic]-z[infected]",
+  minable = {
+    mining_time = 0.2,
+    result = "infected-carbonic-chunk",
+    mining_particle = "carbonic-asteroid-chunk-particle-medium",
+  },
+  graphics_set = {
+    normal_strength = infected_chunk_shading.normal_strength,
+    light_width = infected_chunk_shading.light_width,
+    brightness = infected_chunk_shading.brightness,
+    specular_strength = infected_chunk_shading.specular_strength,
+    specular_power = infected_chunk_shading.specular_power,
+    specular_purity = infected_chunk_shading.specular_purity,
+    sss_contrast = infected_chunk_shading.sss_contrast,
+    sss_amount = infected_chunk_shading.sss_amount,
+    lights = infected_chunk_shading.lights,
+    ambient_light = infected_chunk_shading.ambient_light,
+    variations = {
+      {
+        color_texture = {
+          filename = "__space-age__/graphics/entity/asteroid/carbonic/chunk/asteroid-carbonic-chunk-colour-01.png",
+          size = 64,
+          scale = 0.5,
+        },
+        normal_map = {
+          filename = "__space-age__/graphics/entity/asteroid/carbonic/chunk/asteroid-carbonic-chunk-normal-01.png",
+          premul_alpha = false,
+          size = 64,
+          scale = 0.5,
+        },
+        roughness_map = {
+          filename = "__space-age__/graphics/entity/asteroid/carbonic/chunk/asteroid-carbonic-chunk-roughness-01.png",
+          premul_alpha = false,
+          size = 64,
+          scale = 0.5,
+        },
+        shadow_shift = {0.15, 0.15},
+      },
+    },
+  },
+}}
+
+--------------------------------------------------------------------------------
+-- Centipede Eggroid Asteroids
+-- These spawn centipedes when destroyed
+--------------------------------------------------------------------------------
+
+-- centipede_constants already required above for infected chunk
+
+-- Build eggroid definitions from constants
+local eggroid_sizes = {}
+for _, size in ipairs({"small", "medium", "large", "giant", "leviathan"}) do
+  local config = centipede_constants.EGGROID[size]
+  local eggroid = {
+    name = centipede_constants.ENTITY_NAMES.EGGROID_PREFIX .. size,
+    centipede = centipede_constants.ENTITY_NAMES.HEAD_PREFIX .. size,
+    health = config.health,
+    mass = config.mass,
+    collision_radius = config.collision_radius,
+    scale = config.graphics_scale,
+    explosion_size = config.explosion_size,
+    use_huge_graphic = config.use_huge_graphic,
+    splits_into = config.splits_into and {
+      name = centipede_constants.ENTITY_NAMES.EGGROID_PREFIX .. config.splits_into.type,
+      count = config.splits_into.count,
+    } or nil,
+  }
+  table.insert(eggroid_sizes, eggroid)
+end
+
+-- Use shading from centipede_constants
+local eggroid_shading = centipede_constants.EGGROID_SHADING
+
+for _, eggroid in pairs(eggroid_sizes) do
+  local selection_radius = eggroid.collision_radius * 1.1 + 0.1
+  
+  -- Build dying trigger effect: explosion + chunks + optional child eggroids
+  local dying_effects = {
+    -- Explosion effect using carbonic asteroid explosions
+    {
+      type = "create-explosion",
+      entity_name = "carbonic-asteroid-explosion-" .. eggroid.explosion_size,
+    },
+  }
+  
+  -- Drop infected carbonic chunks only from small and medium eggroids
+  -- Extract size from eggroid name (e.g., "centipede-eggroid-small" -> "small")
+  local eggroid_size = eggroid.name:match("centipede%-eggroid%-(%w+)")
+  local chunk_count = centipede_constants.EGGROID_CHUNK_DROPS[eggroid_size]
+  
+  if chunk_count then
+    local spread = eggroid.collision_radius * 0.5
+    table.insert(dying_effects, {
+      type = "create-asteroid-chunk",
+      asteroid_name = "infected-carbonic-chunk",
+      offset_deviation = {{-spread, -spread}, {spread, spread}},
+      offsets = {{0, 0}},
+      repeat_count = chunk_count,
+    })
+  end
+  
+  -- Add child eggroid spawns if this eggroid splits
+  if eggroid.splits_into then
+    table.insert(dying_effects, {
+      type = "create-entity",
+      entity_name = eggroid.splits_into.name,
+      offset_deviation = centipede_constants.EGGROID_SPLIT_OFFSET,
+      offsets = {{0, 0}},
+      repeat_count = eggroid.splits_into.count,
+      trigger_created_entity = true,
+    })
+  end
+  
+  -- Choose graphic path and size based on eggroid size (using carbonic asteroid graphics)
+  local graphic_configs = {
+    ["centipede-eggroid-small"] = { size_name = "small", pixel_size = 128, icon = "small-carbonic-asteroid" },
+    ["centipede-eggroid-medium"] = { size_name = "medium", pixel_size = 230, icon = "medium-carbonic-asteroid" },
+    ["centipede-eggroid-large"] = { size_name = "big", pixel_size = 304, icon = "big-carbonic-asteroid" },
+    ["centipede-eggroid-giant"] = { size_name = "huge", pixel_size = 512, icon = "huge-carbonic-asteroid" },
+    ["centipede-eggroid-leviathan"] = { size_name = "huge", pixel_size = 512, icon = "huge-carbonic-asteroid" },
+  }
+  local config = graphic_configs[eggroid.name] or { size_name = "big", pixel_size = 304, icon = "big-carbonic-asteroid" }
+  local graphic_path = "__space-age__/graphics/entity/asteroid/carbonic/" .. config.size_name .. "/asteroid-carbonic-" .. config.size_name
+  local graphic_size = config.pixel_size
+  
+  -- Get factoriopedia simulation for this eggroid
+  local eggroid_sim_key = "factoriopedia_" .. eggroid.name:gsub("-", "_")
+  local eggroid_factoriopedia_sim = tenebris_simulations[eggroid_sim_key]
+  
+  data:extend{{
+    type = "asteroid",
+    name = eggroid.name,
+    icons = {
+      {
+        icon = "__space-age__/graphics/icons/" .. config.icon .. ".png",
+        icon_size = 64,
+        tint = centipede_constants.EGGROID_ICON_TINT,
+      },
+    },
+    flags = {"placeable-enemy", "placeable-off-grid", "not-repairable", "not-on-map"},
+    max_health = eggroid.health,
+    mass = eggroid.mass,
+    collision_box = {{-eggroid.collision_radius, -eggroid.collision_radius}, {eggroid.collision_radius, eggroid.collision_radius}},
+    selection_box = {{-selection_radius, -selection_radius}, {selection_radius, selection_radius}},
+    collision_mask = {layers = {object = true}, not_colliding_with_itself = true},
+    subgroup = "space-environment",
+    order = "z[centipede-eggroid]-" .. eggroid.name,
+    factoriopedia_simulation = eggroid_factoriopedia_sim,
+    
+    -- Centipede spawning is handled by scripts/centipede_spawner/init.lua
+    -- which spawns them at a distance (lure mechanic)
+    
+    dying_trigger_effect = dying_effects,
+    
+    -- Use carbonic asteroid graphics as base
+    graphics_set = {
+      rotation_speed = 0.001,
+      normal_strength = eggroid_shading.normal_strength,
+      light_width = eggroid_shading.light_width,
+      brightness = eggroid_shading.brightness,
+      specular_strength = eggroid_shading.specular_strength,
+      specular_power = eggroid_shading.specular_power,
+      specular_purity = eggroid_shading.specular_purity,
+      sss_contrast = eggroid_shading.sss_contrast,
+      sss_amount = eggroid_shading.sss_amount,
+      lights = eggroid_shading.lights,
+      ambient_light = eggroid_shading.ambient_light,
+      variations = {
+        {
+          color_texture = {
+            filename = graphic_path .. "-colour-01.png",
+            size = graphic_size,
+            scale = eggroid.scale,
+          },
+          normal_map = {
+            filename = graphic_path .. "-normal-01.png",
+            premul_alpha = false,
+            size = graphic_size,
+            scale = eggroid.scale,
+          },
+          roughness_map = {
+            filename = graphic_path .. "-roughness-01.png",
+            premul_alpha = false,
+            size = graphic_size,
+            scale = eggroid.scale,
+          },
+          shadow_shift = {0.5, 0.5},
+        },
+      },
+    },
+    
+    resistances = {
+      {type = "physical", decrease = 0, percent = 0},
+      {type = "explosion", decrease = 0, percent = 0},
+      {type = "laser", decrease = 0, percent = 0},
+    },
+  }}
+end

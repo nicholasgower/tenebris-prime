@@ -5,3 +5,7 @@
 *.code-workspace
 *.zip
 .unused_renders
+.factorio_free_graphics_for_modders
+.cursorrules
+.cursor/
+.DS_Store

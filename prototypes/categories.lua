@@ -3,4 +3,8 @@ data:extend{
         type="recipe-category",
         name="tenebris-heating",
     },
+    {
+        type="recipe-category",
+        name="crystal-resonance",
+    },
 }

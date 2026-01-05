@@ -11,7 +11,6 @@
     "base >= 2.0.28",
     "space-age >= 2.0.28",
     "PlanetsLib >= 1.11.0",
-    "muluna-graphics >= 1.0.25",
     "atan-air-scrubbing >= 0.2.5",
     "! ams-acid-landfill",
     "! beacon_maraxsis_tenebris",

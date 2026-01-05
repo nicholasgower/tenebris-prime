@@ -8,8 +8,8 @@ data:extend({
       },
       {
         type = "autoplace-control",
-        name = "quartz_ore",
-        localised_name = {"", "[entity=quartz-ore] ", {"entity-name.quartz-ore"}},
+        name = "tenebris_exposed_lichen_deposit",
+        localised_name = {"", "[entity=tenebris-exposed-lichen-deposit] ", {"entity-name.tenebris-exposed-lichen-deposit"}},
         richness = true,
         order = "z-c",
         category = "resource"

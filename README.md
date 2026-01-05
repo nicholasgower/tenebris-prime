@@ -14,3 +14,9 @@ Work through the Tenebris tech tree to unlock new and powerful buildings.
 ##WIP
 
 This mod is WIP. Expect new features to be added regularly. It is also recommended that you take a backup of your save before using this mod. 
+
+Credits:
+- SafTheLamb's circuit waste icons
+- Unused renders
+- Atan's air scrubbing
+- MeteorSwarm for support and guidance

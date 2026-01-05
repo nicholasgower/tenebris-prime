@@ -1,4 +1,5 @@
 local meld = require("meld")
+local centipede_constants = require("lib.centipede_constants")
 
 local function generate_frame_sequence(start)
     local result = {}
@@ -8,55 +9,119 @@ local function generate_frame_sequence(start)
     return result
 end
 
-local function create_centipede_segment(health, still_frame, segment_overrides)
+local function create_centipede_segment(segment_health, still_frame, segment_overrides)
     local variant = meld(table.deepcopy(data.raw["segment"]["small-demolisher-segment-x0_64"]), segment_overrides)
-    variant.name = "centipede-body-" .. health .. "-" .. still_frame
-    variant.max_health = health
+    variant.name = centipede_constants.ENTITY_NAMES.BODY_PREFIX .. segment_health .. "-" .. still_frame
+    variant.max_health = segment_health
     variant.animation.layers[1].frame_sequence = generate_frame_sequence(still_frame)
     variant.animation.layers[2].frame_sequence = generate_frame_sequence(still_frame)
     return variant
 end
 
+-- Centipede corpse is an asteroid-chunk so it can be collected by asteroid collectors
 local centipede_corpse = {
-    name = "centipede-corpse",
-    type = "simple-entity",
-    collision_box = { { -3.0, -1.0 }, { 3.0, 1.0 } },
-    selection_box = { { -3.0, -1.0 }, { 3.0, 1.0 } },
-    minable =
-    {
+    name = centipede_constants.ENTITY_NAMES.CORPSE,
+    type = "asteroid-chunk",
+    icon = "__tenebris-prime__/graphics/icons/chitin.png",
+    icon_size = 64,
+    subgroup = "space-material",
+    order = "z[centipede-corpse]",
+    minable = {
         mining_particle = "stone-particle",
         mining_time = 1,
-        results =
-        {
-            { type = "item", name = "luciferin", amount_min = 30, amount_max = 50 },
-            { type = "item", name = "chitin",    amount_min = 4,  amount_max = 16 }
+        results = {
+            { type = "item", name = "tenebris-centipede-corpse", amount = 1 }
         },
     },
-    pictures = {
+    graphics_set = {
+        rotation_speed = 0.002,
+        normal_strength = 1.0,
+        light_width = 0.3,
+        brightness = 0.4,
+        specular_strength = 1.5,
+        specular_power = 2.0,
+        specular_purity = 0.3,
+        sss_contrast = 0.1,
+        sss_amount = 0.2,
+        lights = {
+            { color = {0.3, 0.5, 0.4}, direction = {0.75, 0.22, -1} },  -- Bioluminescent glow
+            { color = {0.15, 0.25, 0.2}, direction = {0.5, 0, 0.95} },
+        },
+        ambient_light = {0.05, 0.08, 0.06},
+        variations = {
+            {
+                color_texture = {
+                    filename = "__tenebris-prime__/graphics/entity/centipede/centipede-corpse.png",
+                    width = 410,
+                    height = 337,
+                    scale = 0.3,
+    },
+                normal_map = {
+                    filename = "__tenebris-prime__/graphics/entity/centipede/centipede-corpse.png",
+                    width = 410,
+                    height = 337,
+                    scale = 0.3,
+                    premul_alpha = false,
+                },
+                roughness_map = {
         filename = "__tenebris-prime__/graphics/entity/centipede/centipede-corpse.png",
         width = 410,
         height = 337,
         scale = 0.3,
-        draw_as_glow = true,
-    }
+                    premul_alpha = false,
+                },
+                shadow_shift = {0.3, 0.3},
+            },
+        },
+    },
 }
 
 data:extend({ centipede_corpse })
 
-local function create_centipede(name, scale, length, health, speed, damage, min_spawn_distance)
+--- Creates a centipede variant using constants from centipede_constants
+--- @param variant_name string The variant name (small, medium, large, giant, leviathan)
+--- @param length number The number of body segments (from settings)
+local function create_centipede(variant_name, length)
+    local variant = centipede_constants.VARIANTS[variant_name]
+    if not variant then
+        error("Unknown centipede variant: " .. variant_name)
+    end
+    
+    local scale = variant.scale
+    local health = variant.health
+    local segment_health = variant.segment_health
+    local speed = variant.speed
+    local damage = variant.damage
+    local vision_distance = variant.vision_distance
+    local enraged_duration = variant.enraged_duration
+    local healing_per_tick = variant.healing_per_tick
+    local enraged_speed_mult = variant.enraged_speed_mult
+    local resistances = centipede_constants.RESISTANCES[variant_name]
+    
+    -- Asteroid debris size based on centipede variant
+    local debris_asteroid = {
+        small = "small-carbonic-asteroid",
+        medium = "small-carbonic-asteroid",
+        large = "medium-carbonic-asteroid",
+        giant = "medium-carbonic-asteroid",
+        leviathan = "big-carbonic-asteroid",
+    }
+    local asteroid_name = debris_asteroid[variant_name] or "small-carbonic-asteroid"
+    
     local segments = {}
     for i = 0, length do
-        table.insert(segments, { segment = "centipede-body-" .. health .. "-" .. (i % 8) })
+        table.insert(segments, { segment = centipede_constants.ENTITY_NAMES.BODY_PREFIX .. segment_health .. "-" .. (i % 8) })
     end
 
-    table.insert(segments, { segment = "centipede-tail-" .. health })
+    table.insert(segments, { segment = centipede_constants.ENTITY_NAMES.TAIL_PREFIX .. segment_health })
 
     ---@type data.SegmentedUnitPrototype
     ---@diagnostic disable-next-line: missing-fields
     local head_overrides = {
-        name = "centipede-head-" .. name,
-        localised_name = { "entity-name.centipede-" .. name },
+        name = centipede_constants.ENTITY_NAMES.HEAD_PREFIX .. variant_name,
+        localised_name = { "entity-name.centipede-" .. variant_name },
         update_effects = meld.overwrite {
+            -- Contact damage
             {
                 distance_cooldown = 5,
                 effect =
@@ -81,36 +146,28 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
                         }
                     }
                 }
-            }
+            },
         },
-        update_effects_while_enraged = meld.overwrite {
+        update_effects_while_enraged = meld.delete(),
+        -- Spawn asteroid debris when taking damage
+        damaged_trigger_effect = meld.overwrite {
             {
-                effect = {
                     type = "create-entity",
-                    entity_name = "poison-cloud"
-                },
-                distance_cooldown = 15,
-                initial_distance_cooldown = 10,
+                entity_name = asteroid_name,
+                offset_deviation = centipede_constants.DEBRIS.OFFSET,
+                trigger_created_entity = true,
+                probability = centipede_constants.DEBRIS.PROBABILITY,
             }
         },
         dying_trigger_effect = meld.overwrite {
             {
-                type = "create-entity",
-                entity_name = "centipede-corpse"
+                type = "create-asteroid-chunk",
+                asteroid_name = centipede_constants.ENTITY_NAMES.CORPSE,
+                offset_deviation = {{-0.5, -0.5}, {0.5, 0.5}},
             }
         },
-        autoplace = meld.overwrite {
-            control = "tenebris_enemies",
-            order = "a[tenebris]-b[centipede]-"..name,
-            force = "enemy",
-            probability_expression = "clamp(distance - " .. min_spawn_distance .. ", 0, 1) * 0.00005",
-        },
-        resistances = meld.overwrite {
-            {
-                type = "poison",
-                percent = 100,
-            }
-        },
+        autoplace = meld.delete(),
+        resistances = meld.overwrite(resistances),
         working_sound = meld.overwrite {
             sound =
             {
@@ -123,21 +180,21 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
             fade_in_ticks = 4,
             fade_out_ticks = 20
         },
-        vision_distance = 6,
-        enraged_duration = 300,
+        vision_distance = vision_distance,
+        enraged_duration = enraged_duration,
         revenge_attack_parameters = meld.delete(),
         forward_padding = 0,
         backward_padding = 0,
         forward_overlap = 0,
         backward_overlap = 0,
-        collision_box = { { -1.5 * scale, -.8 * scale }, { 1.5 * scale, .8 * scale } },
-        selection_box = { { -1.5 * scale, -.8 * scale }, { 1.5 * scale, .8 * scale } },
+        collision_box = { { -2.5 * scale, -1.5 * scale }, { 2.5 * scale, 1.5 * scale } },
+        selection_box = { { -2.5 * scale, -1.5 * scale }, { 2.5 * scale, 1.5 * scale } },
         patrolling_speed = speed,
         investigating_speed = speed,
-        enraged_speed = speed * 2,
-        attacking_speed = speed * 2,
+        enraged_speed = speed * enraged_speed_mult,
+        attacking_speed = speed * enraged_speed_mult,
         max_health = health,
-        healing_per_tick = 1,
+        healing_per_tick = healing_per_tick,
         turn_radius = 4 * scale,
         acceleration_rate = 1,
         render_layer = "object",
@@ -189,6 +246,7 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
                     width = 512,
                     height = 512,
                     draw_as_light = true,
+                    blend_mode = "additive",
                     stripes = {
                         {
                             filename = "__tenebris-prime__/graphics/entity/centipede/centipede-head-light-1.png",
@@ -213,34 +271,37 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
                     }
                 }
             }
-        }
+        },
+        -- Negative backward_padding makes segments overlap (like demolishers)
+        backward_padding = -3.0 * scale,
     }
 
     ---@type data.SegmentPrototype
     ---@diagnostic disable-next-line: missing-fields
     local tail_segment_overrides = {
-        name = "centipede-tail",
-        localised_name = { "entity-name.centipede-" .. name },
+        name = centipede_constants.ENTITY_NAMES.TAIL_PREFIX,
+        localised_name = { "entity-name.centipede-" .. variant_name },
         update_effects = meld.delete(),
         update_effects_while_enraged = meld.delete(),
-        dying_trigger_effect = meld.delete(),
-        revenge_attack_parameters = meld.delete(),
-        forward_padding = 0.0,
-        backward_padding = 0.0,
-        forward_overlap = 0,
-        backward_overlap = 0,
-        collision_box = { { -1.5 * scale, -.8 * scale }, { 1.5 * scale, .8 * scale } },
-        selection_box = { { -1.5 * scale, -.8 * scale }, { 1.5 * scale, .8 * scale } },
-        collision_mask = { layers = { item = true, meltable = true, object = true, player = true, water_tile = true, is_object = true, is_lower_object = true } },
-        render_layer = "object",
-        max_health = 10000,
-        healing_per_tick = 1,
-        resistances = meld.overwrite {
+        dying_trigger_effect = meld.overwrite {
             {
-                type = "poison",
-                percent = 100,
+                type = "create-asteroid-chunk",
+                asteroid_name = centipede_constants.ENTITY_NAMES.CORPSE,
+                offset_deviation = {{-0.5, -0.5}, {0.5, 0.5}},
             }
         },
+        revenge_attack_parameters = meld.delete(),
+        forward_padding = 0,
+        backward_padding = -2.0 * scale,  -- Overlap with previous segment
+        forward_overlap = 0,
+        backward_overlap = 0,
+        collision_box = { { -2.5 * scale, -1.5 * scale }, { 2.5 * scale, 1.5 * scale } },
+        selection_box = { { -2.5 * scale, -1.5 * scale }, { 2.5 * scale, 1.5 * scale } },
+        collision_mask = { layers = { item = true, meltable = true, object = true, player = true, water_tile = true, is_object = true, is_lower_object = true } },
+        render_layer = "object",
+        max_health = segment_health,
+        healing_per_tick = healing_per_tick,
+        resistances = meld.overwrite(resistances),
         working_sound = meld.overwrite {
             sound =
             {
@@ -290,21 +351,27 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
     ---@type data.SegmentPrototype
     ---@diagnostic disable-next-line: missing-fields
     local segment_overrides = {
-        name = "centipede-body",
-        localised_name = { "entity-name.centipede-" .. name },
+        name = centipede_constants.ENTITY_NAMES.BODY_PREFIX,
+        localised_name = { "entity-name.centipede-" .. variant_name },
         update_effects = meld.delete(),
         update_effects_while_enraged = meld.delete(),
-        dying_trigger_effect = meld.delete(),
-        forward_padding = 0.0,
-        backward_padding = 0.0,
+        dying_trigger_effect = meld.overwrite {
+            {
+                type = "create-asteroid-chunk",
+                asteroid_name = centipede_constants.ENTITY_NAMES.CORPSE,
+                offset_deviation = {{-0.5, -0.5}, {0.5, 0.5}},
+            }
+        },
+        forward_padding = 0,
+        backward_padding = -2.5 * scale,  -- Negative padding for segment overlap
         forward_overlap = 0,
         backward_overlap = 0,
-        collision_box = { { -1.5 * scale, -.8 * scale }, { 1.5 * scale, .8 * scale } },
-        selection_box = { { -1.5 * scale, -.8 * scale }, { 1.5 * scale, .8 * scale } },
+        collision_box = { { -2.5 * scale, -1.5 * scale }, { 2.5 * scale, 1.5 * scale } },
+        selection_box = { { -2.5 * scale, -1.5 * scale }, { 2.5 * scale, 1.5 * scale } },
         collision_mask = { layers = { item = true, meltable = true, object = true, player = true, water_tile = true, is_object = true, is_lower_object = true } },
         render_layer = "object",
-        max_health = 10000,
-        healing_per_tick = 1,
+        max_health = segment_health,
+        healing_per_tick = healing_per_tick,
         working_sound = meld.overwrite {
             sound =
             {
@@ -317,12 +384,7 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
             fade_in_ticks = 4,
             fade_out_ticks = 20
         },
-        resistances = meld.overwrite {
-            {
-                type = "poison",
-                percent = 100,
-            }
-        },
+        resistances = meld.overwrite(resistances),
         animation = meld.overwrite({
             layers = {
                 {
@@ -367,6 +429,7 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
                     width = 512,
                     height = 512,
                     draw_as_light = true,
+                    blend_mode = "additive",
                     stripes = {
                         {
                             filename = "__tenebris-prime__/graphics/entity/centipede/centipede-body-light-1.png",
@@ -391,31 +454,30 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
                     }
                 }
             }
-        })
+        }),
+        -- Negative backward_padding makes segments overlap
+        backward_padding = -2.5 * scale,
     }
 
     for i = 0, 8 do
-        data:extend({ create_centipede_segment(health, i, segment_overrides) })
+        data:extend({ create_centipede_segment(segment_health, i, segment_overrides) })
     end
 
 
     local centipede_tail = meld(table.deepcopy(data.raw["segment"]["small-demolisher-segment-x0_64"]),
         tail_segment_overrides)
-    centipede_tail.name = "centipede-tail-" .. health
-    centipede_tail.max_health = health
+    centipede_tail.name = centipede_constants.ENTITY_NAMES.TAIL_PREFIX .. segment_health
+    centipede_tail.max_health = segment_health
     data:extend({ centipede_tail })
 
 
     data:extend({ meld(table.deepcopy(data.raw["segmented-unit"]["small-demolisher"]), head_overrides) })
 end
---create_centipede(name, scale, length, health, speed, damage, min_spawn_distance)
--- create_centipede("small", 0.2, settings.startup["tenebris-small-centipede-length"].value, 2000, 0.1, 100, 50)
--- create_centipede("medium", 0.3, settings.startup["tenebris-medium-centipede-length"].value, 5000, 0.15, 300, 300)
--- create_centipede("large", 0.5, settings.startup["tenebris-large-centipede-length"].value, 10000, 0.2, 500, 1000)
--- create_centipede("giant", 1.0, settings.startup["tenebris-giant-centipede-length"].value, 30000, 0.25, 1000, 2000)
-
-create_centipede("small", 0.8, settings.startup["tenebris-small-centipede-length"].value, 50000, 0.05, 1000, 500)
-create_centipede("medium", 1.6, settings.startup["tenebris-medium-centipede-length"].value, 100000, 0.1, 3000, 3000)
-create_centipede("large", 2, settings.startup["tenebris-large-centipede-length"].value, 200000, 0.1, 5000, 10000)
-create_centipede("giant", 3, settings.startup["tenebris-giant-centipede-length"].value, 500000, 0.1, 10000, 20000)
-create_centipede("leviathan", 5, settings.startup["tenebris-giant-centipede-length"].value, 1000000, 0.1, 20000, 40000)
+-- Create all centipede variants using centralized constants
+-- To buff centipedes, modify lib/centipede_constants.lua
+create_centipede("premature", settings.startup["tenebris-premature-centipede-length"].value)
+create_centipede("small", settings.startup["tenebris-small-centipede-length"].value)
+create_centipede("medium", settings.startup["tenebris-medium-centipede-length"].value)
+create_centipede("large", settings.startup["tenebris-large-centipede-length"].value)
+create_centipede("giant", settings.startup["tenebris-giant-centipede-length"].value)
+create_centipede("leviathan", settings.startup["tenebris-leviathan-centipede-length"].value)

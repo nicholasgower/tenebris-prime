@@ -1,4 +1,5 @@
 local tenebris_asteroid_util = require("__tenebris-prime__.prototypes.planet.asteroid-spawn-definitions")
+local constants = require("lib.constants")
 
 data:extend({
     {
@@ -6,30 +7,60 @@ data:extend({
         name = "fulgora-tenebris",
         subgroup = "planet-connections",
         from = "fulgora",
-        to = "tenebris",
-        order = "b",
+        to = constants.PLANET.TENEBRIS,
         length = 75000,
-        asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.fulgora_tenebris)
+        asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.fulgora_tenebris),
+        tenebris_prime_connection = true,
     },
     {
         type = "space-connection",
         name = "tenebris-iridescent-river",
         subgroup = "planet-connections",
-        from = "tenebris",
+        from = constants.PLANET.TENEBRIS,
         to = "iridescent-river",
-        order = "d",
         length = 62000,
-        asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.tenebris_iridescent_river)
+        asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.tenebris_iridescent_river),
+        tenebris_prime_connection = true,
     },
     {
         type = "space-connection",
-        name = "tenebris-lightless-gateway",
+        name = "iridescent-river-the-nest",
         subgroup = "planet-connections",
-        from = "tenebris",
+        from = "iridescent-river",
+        to = "the-nest",
+        length = 50000,
+        asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.the_nest_route),
+        tenebris_prime_connection = true,
+    },
+    {
+        type = "space-connection",
+        name = "tenebris-the-nest",
+        subgroup = "planet-connections",
+        from = constants.PLANET.TENEBRIS,
+        to = "the-nest",
+        length = 80000,
+        asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.the_nest_route),
+        tenebris_prime_connection = true,
+    },
+    {
+        type = "space-connection",
+        name = "iridescent-river-lightless-gateway",
+        subgroup = "planet-connections",
+        from = "iridescent-river",
         to = "lightless-gateway",
-        order = "e",
-        length = 90000,
-        asteroid_spawn_definitions = {}
+        length = 100000,
+        asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.tenebris_lightless_abyss),
+        tenebris_prime_connection = true,
+    },
+    {
+        type = "space-connection",
+        name = "the-nest-lightless-gateway",
+        subgroup = "planet-connections",
+        from = "the-nest",
+        to = "lightless-gateway",
+        length = 70000,
+        asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.tenebris_lightless_abyss),
+        tenebris_prime_connection = true,
     },
     {
         type = "space-connection",
@@ -37,8 +68,8 @@ data:extend({
         subgroup = "planet-connections",
         from = "lightless-gateway",
         to = "lightless-abyss",
-        order = "f",
         length = 9000000,
-        asteroid_spawn_definitions = {}
+        asteroid_spawn_definitions = {},
+        tenebris_prime_connection = true,
     },
 })

@@ -1,5 +1,13 @@
+--- Phase 1 Tenebris Technologies
+--- Clean redesign of all technologies for the Tenebris planet
+
+local constants = require("__tenebris-prime__.prototypes.constants")
+local tenebris = require("__tenebris-prime__.lib.tenebris")
+
 data:extend({
-    -- Rocket launch trigger tech
+    -- ========================================
+    -- DEEP SPACE EXPLORATION
+    -- ========================================
     {
         type = "technology",
         name = "deep-space-sensing",
@@ -12,16 +20,14 @@ data:extend({
             {
                 type = "nothing",
                 use_icon_overlay_constant = true,
-                icons = PlanetsLib.technology_icon_planet("__tenebris-prime__/graphics/icons/technology/tenebris.png"),
-                icon_size = 256,
-                effect_description = "Launch satellites to locate celestial bodies in deep space."
+                icon = "__base__/graphics/icons/satellite.png",
+                icon_size = 64,
+                effect_description = "Launch [item=observation-satellite] to locate celestial bodies in deep space."
             },
         },
-        unit =
-        {
+        unit = {
             count = 5000,
-            ingredients =
-            {
+            ingredients = {
                 { "automation-science-pack",      1 },
                 { "logistic-science-pack",        1 },
                 { "chemical-science-pack",        1 },
@@ -33,157 +39,177 @@ data:extend({
             },
             time = 60
         },
-        prerequisites = { "low-density-structure-productivity", "electromagnetic-science-pack" },
+        prerequisites = { 
+            "metallurgic-science-pack", 
+            "electromagnetic-science-pack",
+            "utility-science-pack",
+            "production-science-pack",
+        },
     },
     {
         type = "technology",
         name = "planet-discovery-tenebris",
-        icons = PlanetsLib.technology_icon_planet("__tenebris-prime__/graphics/icons/technology/tenebris.png"),
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
+        icons = PlanetsLib.technology_icon_planet("__tenebris-prime__/graphics/icons/starmap-icon-tenebris.png", 3840),
+        effects = {
             {
                 type = "unlock-space-location",
-                space_location = "tenebris",
+                space_location = tenebris.PLANET.TENEBRIS,
                 use_icon_overlay_constant = true
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-repair-pack-from-waste"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-centipede-corpse-grinding"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-radiation-hardened-chitin-processing"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "infected-carbonic-chunk-crushing"
             }
         },
         localised_description = {"space-location-description.tenebris"},
-        prerequisites = { "deep-space-sensing", "railgun", "overgrowth-soil"},
-        unit =
-        {
-            count = 4000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "metallurgic-science-pack",     1 },
-                { "agricultural-science-pack",    1 },
-                { "electromagnetic-science-pack", 1 },
-                { "cryogenic-science-pack",       1 }
-            },
-            time = 60
+        prerequisites = { "deep-space-sensing", "railgun", "overgrowth-soil" },
+        research_trigger = {
+            type = "scripted",
+            icon = "__base__/graphics/icons/satellite.png",
+            icon_size = 64,
+            trigger_description = {"", "Launch [item=observation-satellite] and scan for ", "[planet=tenebris]", " via Deep Space Sensing."}
         }
     },
-    {
-        type = "technology",
-        name = "lucifunnel-processing",
-        icon = "__tenebris-prime__/graphics/icons/lucifunnel.png",
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "unlock-recipe",
-                recipe = "lucifunnel-processing"
-            },
-            {
-                type = "unlock-recipe",
-                recipe = "lucifunnel-burning"
-            },
-        },
-        research_trigger =
-        {
-            type = "mine-entity",
-            entity = "lucifunnel"
-        },
-        prerequisites = { "planet-discovery-tenebris" },
-    },
+    
+    -- ========================================
+    -- TENEBRIS BIOLOGICAL PROCESSING
+    -- ========================================
     {
         type = "technology",
         name = "tenecap-processing",
-        icon = "__tenebris-prime__/graphics/icons/tenecap.png",
-        visible_when_disabled = false,
-        effects =
-        {
+        icon = "__tenebris-prime__/graphics/icons/tenecap-processing.png",
+        icon_size = 64,
+        effects = {
             {
                 type = "unlock-recipe",
                 recipe = "tenecap-processing"
             },
             {
                 type = "unlock-recipe",
-                recipe = "chitin-burning"
+                recipe = "tenebris-chitin-nutrients"
             },
             {
                 type = "unlock-recipe",
-                recipe = "tenebris-heated-air-scrubber"
+                recipe = "tenebris-heated-atmosphere-scrubber"
             },
             {
                 type = "unlock-recipe",
-                recipe = "tenebris-atmosphere-scrubbing"
+                recipe = "tenebris-biopipe"
             },
             {
                 type = "unlock-recipe",
-                recipe = "tenebris-atmosphere-filtration"
-            },
-            {
-                type = "unlock-recipe",
-                recipe = "tenebris-atmosphere-filtration-cleaning"
-            },
-            {
-                type = "unlock-recipe",
-                recipe = "tenebris-atmosphere"
-            },
-        },
-        research_trigger =
-        {
-            type = "mine-entity",
-            entity = "tenecap"
+                recipe = "tenebris-biopipe-to-ground"
+            }
         },
         prerequisites = { "planet-discovery-tenebris" },
+        research_trigger = {
+            type = "mine-entity",
+            entity = "tenecap"
+        }
     },
     {
         type = "technology",
-        name = "quartz-ore",
-        icon = "__tenebris-prime__/graphics/icons/quartz-ore.png",
-        visible_when_disabled = false,
-        effects =
-        {
+        name = "lucifunnel-processing",
+        icon = "__tenebris-prime__/graphics/icons/lucifunnel-processing.png",
+        icon_size = 64,
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "lucifunnel-processing"
+            }
+        },
+        prerequisites = { "planet-discovery-tenebris" },
+        research_trigger = {
+            type = "mine-entity",
+            entity = "lucifunnel"
+        }
+    },
+    {
+        type = "technology",
+        name = "lichen-deposit-harvesting",
+        icon = "__base__/graphics/technology/mining-productivity.png", -- Placeholder
+        icon_size = 256,
+        effects = {
             {
                 type = "unlock-recipe",
                 recipe = "tenebris-stone-centrifuging"
             },
-        },
-        research_trigger =
-        {
-            type = "mine-entity",
-            entity = "quartz-node"
-        },
-        prerequisites = { "tenecap-processing" },
-    },
-    {
-        type = "technology",
-        name = "quartz-crystal",
-        icon = "__tenebris-prime__/graphics/icons/quartz-crystal.png",
-        visible_when_disabled = false,
-        effects =
-        {
             {
                 type = "unlock-recipe",
-                recipe = "quartz-ore-washing"
+                recipe = "tenebris-carbon-spore-filter"
             },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-carbon-spore-filter-cleaning"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-atmosphere-scrubbing-carbon"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-heated-big-mining-drill"
+            }
         },
-        research_trigger =
-        {
-            type = "craft-item",
-            item = "quartz-ore"
-        },
-        prerequisites = { "quartz-ore" },
+        prerequisites = { "planet-discovery-tenebris" },
+        research_trigger = {
+            type = "mine-entity",
+            entity = "tenebris-exposed-lichen-deposit"
+        }
     },
     {
         type = "technology",
-        name = "tenebris-atmosphere-separation",
-        icon = "__tenebris-prime__/graphics/icons/chitin.png",
-        visible_when_disabled = false,
-        effects =
-        {
+        name = "piezoelectric-interfacing",
+        icon = "__tenebris-prime__/graphics/technology/piezoelectric-interfacing.png",
+        icon_size = 1024,
+        effects = {
+            { type = "unlock-recipe", recipe = "piezoelectric-converter-capture-bot-rocket" },
+            { type = "unlock-recipe", recipe = "tenebris-heated-agricultural-tower-citrine" },
+            { type = "unlock-recipe", recipe = "tenebris-heated-agricultural-tower-onyx" },
+            { type = "unlock-recipe", recipe = "tenebris-heated-agricultural-tower-prasiolite" },
+            { type = "unlock-recipe", recipe = "tenebris-heated-agricultural-tower-amethyst" },
+            { type = "unlock-recipe", recipe = "tenebris-heated-agricultural-tower-ruby-agate" },
+            { type = "unlock-recipe", recipe = "tenebris-heated-agricultural-tower-sapphire-agate" },
+        },
+        prerequisites = { "tenecap-processing", "lichen-deposit-harvesting" },
+        -- TODO: This should trigger on mining a quartz geode entity, not crafting the item
+        -- Need to create a mineable quartz-geode entity in the world
+        research_trigger = {
+            type = "craft-item",
+            item = "tenebris-quartz-geode"
+        }
+    },
+    {
+        type = "technology",
+        name = "tenebris-atmospheric-distillation",
+        icons = {
+            { icon = "__tenebris-prime__/graphics/technology/filter-simple.png", icon_size = 1024, scale = 0.2 },
+            { icon = "__tenebris-prime__/graphics/technology/gas-cloud-clean-air.png", icon_size = 1024, scale = 0.5, tint = tenebris.TINT.DARK_ATMOSPHERE },
+        },
+        effects = {
             {
                 type = "unlock-recipe",
-                recipe = "tenebris-atmosphere-separation"
+                recipe = "tenebris-atmosphere"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-atmosphere-separation-carbon"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-atmosphere-separation-ceramic"
             },
             {
                 type = "unlock-recipe",
@@ -191,577 +217,235 @@ data:extend({
             },
             {
                 type = "unlock-recipe",
-                recipe = "luciferin-solid-fuel"
+                recipe = "tenebris-hydrofluoric-acid"
             },
             {
                 type = "unlock-recipe",
-                recipe = "chitosan"
+                recipe = "tenebris-heated-pumpjack"
             },
+            {
+                type = "unlock-recipe",
+                recipe = "luciferin-solid-fuel"
+            }
         },
+        prerequisites = { "lichen-deposit-harvesting", "tenecap-processing", "lucifunnel-processing" },
         research_trigger = {
-            type = "craft-fluid",
-            fluid = "tenebris-atmosphere"
-        },
-        prerequisites = { "tenecap-processing", "lucifunnel-processing" },
+            type = "craft-item",
+            item = "tenebris-used-carbon-spore-filter"
+        }
     },
     {
         type = "technology",
-        name = "chitin-processing",
-        icon = "__tenebris-prime__/graphics/icons/chitin.png",
-        visible_when_disabled = false,
-        effects =
-        {
+        name = "chitosan",
+        icon = "__tenebris-prime__/graphics/technology/chitosan.png",
+        icon_size = 1024,
+        effects = {
             {
                 type = "unlock-recipe",
-                recipe = "chitin-concrete"
+                recipe = "tenebris-chitosan"
             },
             {
                 type = "unlock-recipe",
-                recipe = "chitosan-lubricant"
-            },
-            {
-                type = "unlock-recipe",
-                recipe = "chitin-processing"
-            },
-            {
-                type = "unlock-recipe",
-                recipe = "chitosan-advanced-circuit"
+                recipe = "tenebris-quartz-slurry"
             },
             {
                 type = "unlock-recipe",
                 recipe = "chitosan-carbon-fiber"
             },
-        },
-        research_trigger = {
-            type = "craft-item",
-            item = "chitosan",
-            count = 10
-        },
-        prerequisites = { "tenebris-atmosphere-separation" },
-    },
-    {
-        type = "technology",
-        name = "lightless-science-pack",
-        icon = "__tenebris-prime__/graphics/technology/lightless-science-pack.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
             {
                 type = "unlock-recipe",
-                recipe = "photonic-crystal"
+                recipe = "tenebris-lubricant"
             },
             {
                 type = "unlock-recipe",
-                recipe = "lightless-science-pack"
+                recipe = "tenebris-biopipe-from-chitosan"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-biopipe-to-ground-from-chitosan"
             }
         },
-        unit =
-        {
-            count = 1000,
-            ingredients =
-            {
-                { "agricultural-science-pack",    1 },
-                { "cryogenic-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "chitin-processing", "quartz-crystal" },
+        prerequisites = { "tenebris-atmospheric-distillation" },
+        research_trigger = {
+            type = "craft-fluid",
+            fluid = "tenebris-hydrofluoric-acid"
+        }
     },
     {
         type = "technology",
-        name = "deep-space-discovery-iridescent-river",
-        icons = PlanetsLib.technology_icon_planet("__tenebris-prime__/graphics/icons/technology/tenebris.png"),
+        name = "mercury-harvesting",
+        icon = "__base__/graphics/technology/oil-gathering.png", -- Placeholder
         icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-cupric-mercury-amalgam"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-cinnabar"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-battery"
+            }
+        },
+        prerequisites = { "piezoelectric-interfacing" },
+        research_trigger = {
+            type = "craft-fluid",
+            fluid = "tenebris-mercury"
+        }
+    },
+    {
+        type = "technology",
+        name = "metal-waste-reprocessing",
+        icons = {
+            { icon = "__tenebris-prime__/graphics/technology/metal-waste-copper.png", icon_size = 1024, shift = {-32, 0} },
+            { icon = "__tenebris-prime__/graphics/technology/metal-waste-gear.png", icon_size = 1024 },
+        },
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-circuit-waste-recycling"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "molten-iron-from-ferric-waste"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "molten-copper-from-cupric-waste"
+            }
+        },
+        prerequisites = { "piezoelectric-interfacing" },
+        research_trigger = {
+            type = "scripted",
+            icon = "__tenebris-prime__/graphics/icons/electronic-waste.png",
+            icon_size = 64,
+            trigger_description = {"", "Produce 10,000 [item=tenebris-circuit-waste]. Drop circuits from orbit onto [planet=tenebris] to corrode them into [item=tenebris-circuit-waste]."}
+        },
+    },
+    {
+        type = "technology",
+        name = "ceramics",
+        icons = {
+            { icon = "__tenebris-prime__/graphics/technology/ceramics-base.png", icon_size = 256, scale = 0.7, shift = {-24, -24} },
+            { icon = "__tenebris-prime__/graphics/technology/ceramics.png", icon_size = 1024, scale = 0.15, shift = {32, 32} },
+        },
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-ceramic-plate"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-ceramic-circuitry"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-ceramic-filter"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-ceramic-filter-cleaning"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-atmosphere-scrubbing-ceramic"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-ceramic-plated-heat-pipe"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-crystal-resonance-chamber"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-crystal-seedling"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-quartz-geode"
+            },
+        },
+        prerequisites = { "chitosan", "mercury-harvesting" },
+        research_trigger = {
+            type = "craft-item",
+            item = "tenebris-ceramic-plate"
+        }
+    },
+    
+    -- ========================================
+    -- DEEP SPACE EXPLORATION - CONTINUED
+    -- ========================================
+    {
+        type = "technology",
+        name = "deep-space-discovery-tenespace",
+        -- Composite icon: Iridescent River (left) + The Nest (right) with planet discovery symbol
+        icons = {
+            {
+                icon = "__tenebris-prime__/graphics/icons/starmap-icon-iridescent-river.png",
+                icon_size = 4096,
+                scale = 0.7 * (256 / 4096),  -- Scale to fit left half
+                shift = {-32, 32},
+            },
+            {
+                icon = "__tenebris-prime__/graphics/icons/starmap-icon-nest.png",
+                icon_size = 3840,
+                scale = 0.7 * (256 / 3840),  -- Scale to fit right half
+                shift = {32, -32},
+            },
+            {
+                icon = "__core__/graphics/icons/technology/constants/constant-planet.png",
+                icon_size = 128,
+                scale = 0.5,
+                shift = {80, 80},
+            },
+        },
+        effects = {
             {
                 type = "unlock-space-location",
                 space_location = "iridescent-river",
                 use_icon_overlay_constant = true
             },
             {
+                type = "unlock-space-location",
+                space_location = "the-nest",
+                use_icon_overlay_constant = true
+            },
+            {
                 type = "unlock-recipe",
                 recipe = "bismuth-asteroid-crushing"
             },
-            {
-                type = "unlock-recipe",
-                recipe = "bismuth-ore-melting"
-            },
-            {
-                type = "unlock-recipe",
-                recipe = "bioluminescent-crystal-forging",
-            },
-        },
-        unit =
-        {
-            count = 3000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "electromagnetic-science-pack", 1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "lightless-science-pack" },
-    },
-    {
-        type = "technology",
-        name = "lightless-beacons",
-        icon = "__base__/graphics/technology/lamp.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "unlock-recipe",
-                recipe = "lightless-beacon"
-            }
-        },
-        unit =
-        {
-            count = 2000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "military-science-pack",        1 },
-                { "utility-science-pack",         1 },
-                { "agricultural-science-pack",    1 },
-                { "electromagnetic-science-pack", 1 },
-                { "cryogenic-science-pack",       1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "lightless-science-pack" },
-    },
-    {
-        type = "technology",
-        name = "luciferin-explosives",
-        icon = "__base__/graphics/technology/explosive-rocketry.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "unlock-recipe",
-                recipe = "luciferin-explosives"
-            },
-            {
-                type = "unlock-recipe",
-                recipe = "luciferin-rocket-fuel"
-            }
-        },
-        unit =
-        {
-            count = 6000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "military-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "metallurgic-science-pack",     1 },
-                { "agricultural-science-pack",    1 },
-                { "electromagnetic-science-pack", 1 },
-                { "cryogenic-science-pack",       1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "lightless-science-pack", "explosive-rocketry" },
-    },
-    {
-        type = "technology",
-        name = "luciferin-rocketry-speed",
-        icon = "__base__/graphics/technology/explosive-rocketry.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "gun-speed",
-                ammo_category = "rocket",
-                modifier = 1
-            },
-        },
-        unit =
-        {
-            count_formula = "3.5^(L-1) * 20000",
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "military-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "metallurgic-science-pack",     1 },
-                { "agricultural-science-pack",    1 },
-                { "electromagnetic-science-pack", 1 },
-                { "cryogenic-science-pack",       1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        max_level = 4,
-        upgrade = true,
-        prerequisites = { "weapon-shooting-speed-6", "luciferin-explosives" },
-    },
-    {
-        type = "technology",
-        name = "quartz-crystal-reduction",
-        icon = "__tenebris-prime__/graphics/icons/quartz-crystal.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "unlock-recipe",
-                recipe = "quartz-crystal-reduction"
-            },
-        },
-        unit =
-        {
-            count = 2000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "metallurgic-science-pack",     1 },
-                { "agricultural-science-pack",    1 },
-                { "cryogenic-science-pack",       1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "lightless-science-pack" },
-    },
-    {
-        type = "technology",
-        name = "tenebris-soil-enrichment",
-        icon = "__space-age__/graphics/technology/overgrowth-soil.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-        },
-        unit =
-        {
-            count = 2000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "agricultural-science-pack",    1 },
-                { "cryogenic-science-pack",       1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "lightless-science-pack" },
-    },
-    {
-        type = "technology",
-        name = "ammonic-acidification",
-        icon = "__space-age__/graphics/icons/fluid/ammonia.png",
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "unlock-recipe",
-                recipe = "ammonic-acidification"
-            }
-        },
-        unit =
-        {
-            count = 1000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "agricultural-science-pack",    1 },
-                { "cryogenic-science-pack",       1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "lightless-science-pack" },
-    },
-    {
-        type = "technology",
-        name = "sulfuric-ketones",
-        icon = "__space-age__/graphics/technology/cryogenic-plant.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "unlock-recipe",
-                recipe = "sulfuric-fluoroketone"
-            }
-        },
-        unit =
-        {
-            count = 4000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "metallurgic-science-pack",     1 },
-                { "agricultural-science-pack",    1 },
-                { "electromagnetic-science-pack", 1 },
-                { "cryogenic-science-pack",       1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "lightless-science-pack" },
-    },
-    {
-        type = "technology",
-        name = "bioluminescent-crystal",
-        icon = "__tenebris-prime__/graphics/icons/bioluminescent-crystal.png",
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "unlock-recipe",
-                recipe = "bioluminescent-crystal-organics",
-            },
         },
         research_trigger = {
-            type = "craft-item",
-            item = "quartz-crystal"
+            type = "scripted",
+            icon = "__base__/graphics/icons/satellite.png",
+            icon_size = 64,
+            trigger_description = {"", "Launch [item=observation-satellite] and scan for Tenespace via Deep Space Sensing."}
         },
-        prerequisites = { "quartz-crystal", "lucifunnel-processing" },
+        prerequisites = { "piezoelectric-science-pack", "tenebris-rocket-silo" },
     },
     {
         type = "technology",
-        name = "tenebris-bioinfusor",
-        icon = "__tenebris-prime__/graphics/technology/bioinfusor.png",
+        name = "tenebris-bismuth-smelting",
+        icon = "__space-age__/graphics/technology/foundry.png",
         icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "unlock-recipe",
-                recipe = "tenebris-bioinfusor"
-            }
-        },
-        research_trigger = {
-            type = "craft-item",
-            item = "bioluminescent-crystal"
-        },
-        prerequisites = { "bioluminescent-crystal" },
-    },
-    {
-        type = "technology",
-        name = "bioluminescent-science-pack",
-        icon = "__tenebris-prime__/graphics/technology/bioluminescent-science-pack.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "unlock-recipe",
-                recipe = "bioluminescent-science-pack"
-            }
-        },
-        research_trigger = {
-            type = "craft-item",
-            item = "tenebris-bioinfusor"
-        },
-        prerequisites = { "lightless-science-pack", "tenebris-bioinfusor" },
-    },
-    {
-        type = "technology",
-        name = "photonic-derangement",
-        icon = "__base__/graphics/technology/rocket-silo.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "unlock-recipe",
-                recipe = "tenebris-rocket-part"
-            },
-        },
-        unit =
-        {
-            count = 1000,
-            ingredients =
-            {
-                { "bioluminescent-science-pack",  1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 30
-        },
-        prerequisites = { "bioluminescent-science-pack" },
-    },
-    {
-        type = "technology",
-        name = "bismuthal-alloys",
-        icon = "__base__/graphics/technology/steel-processing.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        research_trigger =   
-        {
-            type = "craft-item",
-            item = "quartziferous-bismuthal-plate",
-            count = 100
-        },
-        prerequisites = { "deep-space-discovery-iridescent-river", "photonic-derangement" },
-    },
-    {
-        type = "technology",
-        name = "tenebris-biobeacon",
-        icon = "__tenebris-prime__/graphics/technology/biobeacon.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =   
-        {
-            {
-                type = "unlock-recipe",
-                recipe = "tenebris-biobeacon"
-            }
-        },
-        unit =
-        {
-            count = 10000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "metallurgic-science-pack",     1 },
-                { "agricultural-science-pack",    1 },
-                { "electromagnetic-science-pack", 1 },
-                { "cryogenic-science-pack",       1 },
-                { "bioluminescent-science-pack",  1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "bismuthal-alloys" },
-    },
-    {
-        type = "technology",
-        name = "tenebris-laser-cannon",
-        icon = "__base__/graphics/technology/laser-turret.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =   
-        {
-        },
-        unit =
-        {
-            count = 10000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "metallurgic-science-pack",     1 },
-                { "agricultural-science-pack",    1 },
-                { "electromagnetic-science-pack", 1 },
-                { "cryogenic-science-pack",       1 },
-                { "bioluminescent-science-pack",  1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "bismuthal-alloys" },
-    },
-    {
-        type = "technology",
-        name = "tenebris-laser-shooting-speed",
-        icon = "__base__/graphics/technology/laser-turret.png",
-        icon_size = 256,
-        visible_when_disabled = false,
         effects = {
             {
-                type = "gun-speed",
-                ammo_category = "laser",
-                modifier = 0.75
+                type = "unlock-recipe",
+                recipe = "tenebris-molten-bismuth"
             },
-        },
-        unit =
-        {
-            count_formula = "4^(L-1) * 20000",
-            ingredients =
             {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "military-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "metallurgic-science-pack",     1 },
-                { "agricultural-science-pack",    1 },
-                { "electromagnetic-science-pack", 1 },
-                { "cryogenic-science-pack",       1 },
-                { "lightless-science-pack",       1 },
-                { "bioluminescent-science-pack",  1 },
-            },
-            time = 60
-        },
-        max_level = 4,
-        upgrade = true,
-        prerequisites = { "laser-shooting-speed-7", "tenebris-laser-cannon" },
-    },
-    {
-        type = "technology",
-        name = "tenebris-beacon-distribution-efficiency",
-        icon = "__tenebris-prime__/graphics/technology/biobeacon.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =   
-        {
-            {
-                type = "beacon-distribution",
-                modifier = 0.02
+                type = "unlock-recipe",
+                recipe = "tenebris-ceramic-plate-from-molten-bismuth"
             }
         },
-        unit =
-        {
-            count_formula = "5^(L-1)*12000",
-            ingredients =
-            {
+        unit = {
+            count = 1500,
+            ingredients = {
                 { "automation-science-pack",      1 },
                 { "logistic-science-pack",        1 },
                 { "chemical-science-pack",        1 },
@@ -772,58 +456,30 @@ data:extend({
                 { "agricultural-science-pack",    1 },
                 { "electromagnetic-science-pack", 1 },
                 { "cryogenic-science-pack",       1 },
-                { "bioluminescent-science-pack",  1 },
-                { "lightless-science-pack",       1 }
+                { "piezoelectric-science-pack",   1 }
             },
             time = 60
         },
-        max_level = "infinite",
-        upgrade = true,
-        prerequisites = { "tenebris-biobeacon" },
+        prerequisites = { "deep-space-discovery-tenespace" },
     },
     {
         type = "technology",
-        name = "cloaking",
+        name = "tenebris-luciferin-terraforming",
         icon = "__space-age__/graphics/technology/overgrowth-soil.png",
         icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "overgrowth-luciferin-soil"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "overgrowth-tenecap-soil"
+            }
         },
-        unit =
-        {
+        unit = {
             count = 2000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "agricultural-science-pack",    1 },
-                { "cryogenic-science-pack",       1 },
-                { "bioluminescent-science-pack",  1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "photonic-derangement" },
-    },
-    {
-        type = "technology",
-        name = "bioluminescent-robots",
-        icon = "__base__/graphics/technology/robotics.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-        },
-        unit =
-        {
-            count = 10000,
-            ingredients =
-            {
+            ingredients = {
                 { "automation-science-pack",      1 },
                 { "logistic-science-pack",        1 },
                 { "chemical-science-pack",        1 },
@@ -834,89 +490,35 @@ data:extend({
                 { "agricultural-science-pack",    1 },
                 { "electromagnetic-science-pack", 1 },
                 { "cryogenic-science-pack",       1 },
-                { "bioluminescent-science-pack",  1 },
-                { "lightless-science-pack",       1 }
+                { "piezoelectric-science-pack",   1 }
             },
             time = 60
         },
-        prerequisites = { "photonic-derangement" },
+        prerequisites = { "deep-space-discovery-tenespace", "overgrowth-soil" },
     },
     {
         type = "technology",
-        name = "worker-robot-battery-capacity",
-        icon = "__base__/graphics/technology/robotics.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-            {
-                type = "worker-robot-battery",
-                modifier = 0.1
-            },
+        name = "tenebris-end-of-demo",
+        icon = "__base__/graphics/icons/signal/signal-question-mark.png",
+        icon_size = 64,
+        effects = {},
+        research_trigger = {
+            type = "scripted",
+            icon = "__base__/graphics/icons/signal/signal-question-mark.png",
+            icon_size = 64,
+            trigger_description = {"", "You have reached the end of the Tenebris Prime demo. More content coming soon!"}
         },
-        unit =
-        {
-            count_formula = "1.4^L*1000",
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "metallurgic-science-pack",     1 },
-                { "agricultural-science-pack",    1 },
-                { "electromagnetic-science-pack", 1 },
-                { "cryogenic-science-pack",       1 },
-                { "bioluminescent-science-pack",  1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
+        prerequisites = { 
+            "deep-space-discovery-tenespace", 
+            "quartz-crystal-sedimentation", 
+            "tenebris-rocket-silo" 
         },
-        max_level = "infinite",
-        upgrade = true,
-        prerequisites = { "bioluminescent-robots" },
-    },
-    {
-        type = "technology",
-        name = "bioluminescent-lamps",
-        icon = "__base__/graphics/technology/lamp.png",
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
-        },
-        unit =
-        {
-            count = 1000,
-            ingredients =
-            {
-                { "automation-science-pack",      1 },
-                { "logistic-science-pack",        1 },
-                { "chemical-science-pack",        1 },
-                { "production-science-pack",      1 },
-                { "utility-science-pack",         1 },
-                { "space-science-pack",           1 },
-                { "metallurgic-science-pack",     1 },
-                { "agricultural-science-pack",    1 },
-                { "electromagnetic-science-pack", 1 },
-                { "cryogenic-science-pack",       1 },
-                { "bioluminescent-science-pack",  1 },
-                { "lightless-science-pack",       1 }
-            },
-            time = 60
-        },
-        prerequisites = { "photonic-derangement" },
     },
     {
         type = "technology",
         name = "deep-space-discovery-lightless-abyss",
-        icons = PlanetsLib.technology_icon_planet("__tenebris-prime__/graphics/icons/technology/tenebris.png"),
-        icon_size = 256,
-        visible_when_disabled = false,
-        effects =
-        {
+        icons = PlanetsLib.technology_icon_planet("__tenebris-prime__/graphics/icons/starmap-icon-lightless-gateway.png", 4096),
+        effects = {
             {
                 type = "unlock-space-location",
                 space_location = "lightless-gateway",
@@ -928,11 +530,244 @@ data:extend({
                 use_icon_overlay_constant = true
             },
         },
-        unit =
-        {
-            count = 30000,
-            ingredients =
+        research_trigger = {
+            type = "scripted",
+            icon = "__base__/graphics/icons/satellite.png",
+            icon_size = 64,
+            trigger_description = {"", "Launch [item=observation-satellite] and scan for the Lightless Gateway via Deep Space Sensing."}
+        },
+        prerequisites = { "tenebris-end-of-demo" },
+    },
+    {
+        type = "technology",
+        name = "luciferin-explosives",
+        icon = "__tenebris-prime__/graphics/technology/luciferin-explosives.png",
+        icon_size = 256,
+        effects = {
             {
+                type = "unlock-recipe",
+                recipe = "tenebris-luciferin-explosives"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "luciferin-rocket-fuel"
+            }
+        },
+        prerequisites = { "tenebris-atmospheric-distillation", "explosive-rocketry" },
+        research_trigger = {
+            type = "scripted",
+            icon = "__tenebris-prime__/graphics/technology/luciferin-explosives.png",
+            icon_size = 256,
+            trigger_description = {"", "Destroy a [entity=tenebris-quartz-forest-ortet] Quartz Forest Ortet."}
+        },
+    },
+    {
+        type = "technology",
+        name = "piezoelectric-science-pack",
+        icon = "__tenebris-prime__/graphics/technology/piezoelectric-science-pack.png",
+        icon_size = 256,
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-science-pack-citrine"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-science-pack-onyx"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-science-pack-prasiolite"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-science-pack-amethyst"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-science-pack-ruby-agate"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-science-pack-sapphire-agate"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-motor-citrine"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-motor-onyx"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-motor-prasiolite"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-motor-amethyst"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-motor-ruby-agate"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-motor-sapphire-agate"
+            }
+        },
+        prerequisites = { "ceramics", "metal-waste-reprocessing" },
+        research_trigger = {
+            type = "craft-item",
+            item = "tenebris-ceramic-plate",
+            count = 100
+        }
+    },
+    {
+        type = "technology",
+        name = "piezoelectric-inserter",
+        icon = "__space-age__/graphics/technology/stack-inserter.png",
+        icon_size = 256,
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-inserter-citrine"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-inserter-onyx"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-inserter-prasiolite"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-inserter-amethyst"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-inserter-ruby-agate"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-inserter-sapphire-agate"
+            }
+        },
+        unit = {
+            count = 2000,
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "electromagnetic-science-pack", 1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 }
+            },
+            time = 60
+        },
+        prerequisites = { "piezoelectric-science-pack" },
+    },
+    {
+        type = "technology",
+        name = "thermal-logistics",
+        icon = "__space-age__/graphics/technology/heating-tower.png",
+        icon_size = 256,
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-thermal-battery"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-steel-thermal-diode"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-ceramic-thermal-diode"
+            }
+        },
+        unit = {
+            count = 2000,
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "electromagnetic-science-pack", 1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 }
+            },
+            time = 60
+        },
+        prerequisites = { "piezoelectric-science-pack" },
+    },
+    {
+        type = "technology",
+        name = "inserter-capacity-bonus-8",
+        icon = "__base__/graphics/technology/inserter-capacity.png",
+        icon_size = 256,
+        effects = {
+            {
+                type = "inserter-stack-size-bonus",
+                modifier = 1  -- Regular inserters: result of 4 (base 1 + 1 from lvl2 + 1 from lvl7 + 1 from lvl8)
+            },
+            {
+                type = "bulk-inserter-capacity-bonus",
+                modifier = 4  -- Bulk inserters: result of 16 (base 2 + cumulative bonuses)
+            }
+        },
+        unit = {
+            count = 2500,
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "electromagnetic-science-pack", 1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 }
+            },
+            time = 60
+        },
+        prerequisites = { "piezoelectric-inserter", "inserter-capacity-bonus-7" },
+    },
+    {
+        type = "technology",
+        name = "tenebris-rocket-silo",
+        icon = "__base__/graphics/technology/rocket-silo.png",
+        icon_size = 256,
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-concrete"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-reinforced-concrete"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-rocket-silo"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-rocket-part"
+            }
+        },
+        unit = {
+            count = 5000,
+            ingredients = {
                 { "automation-science-pack",      1 },
                 { "logistic-science-pack",        1 },
                 { "chemical-science-pack",        1 },
@@ -943,11 +778,390 @@ data:extend({
                 { "agricultural-science-pack",    1 },
                 { "electromagnetic-science-pack", 1 },
                 { "cryogenic-science-pack",       1 },
-                { "bioluminescent-science-pack",  1 },
-                { "lightless-science-pack",       1 }
+                { "piezoelectric-science-pack",   1 }
             },
             time = 60
         },
-        prerequisites = { "photonic-derangement" },
+        prerequisites = { "piezoelectric-science-pack", "luciferin-explosives" },
+    },
+    {
+        type = "technology",
+        name = "piezoelectric-lamps",
+        icon = "__base__/graphics/technology/lamp.png",
+        icon_size = 256,
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "piezoelectric-lamp"
+            }
+        },
+        unit = {
+            count = 1000,
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "agricultural-science-pack",    1 },
+                { "electromagnetic-science-pack", 1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 }
+            },
+            time = 60
+        },
+        prerequisites = { "piezoelectric-science-pack" },
+    },
+    {
+        type = "technology",
+        name = "tenebris-robo-logistics",
+        icon = "__base__/graphics/technology/logistic-robotics.png",
+        icon_size = 256,
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-quartz-ortet-robo-interface"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-ceramic-robot-frame"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-ceramic-construction-robot"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-ceramic-logistic-robot"
+            }
+        },
+        unit = {
+            count = 3000,
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "agricultural-science-pack",    1 },
+                { "electromagnetic-science-pack", 1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 }
+            },
+            time = 60
+        },
+        prerequisites = { "piezoelectric-science-pack", "logistic-robotics" },
+    },
+    {
+        type = "technology",
+        name = "quartz-crystal-sedimentation",
+        icons = {
+            {
+                icon = "__tenebris-prime__/graphics/icons/quartz-crystal.png",
+                icon_size = 64,
+                scale = 4,
+            },
+            {
+                icon = "__PlanetsLib__/graphics/icons/reprocessing-arrow.png",
+                icon_size = 64,
+                scale = 4,
+            },
+        },
+        effects = {
+
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-crystal-reprocess-citrine"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-crystal-reprocess-onyx"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-crystal-reprocess-prasiolite"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-crystal-reprocess-amethyst"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-crystal-reprocess-ruby-agate"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-crystal-reprocess-sapphire-agate"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "crystal-seedling-from-citrine"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "crystal-seedling-from-onyx"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "crystal-seedling-from-prasiolite"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "crystal-seedling-from-amethyst"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "crystal-seedling-from-ruby-agate"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "crystal-seedling-from-sapphire-agate"
+            }
+        },
+        unit = {
+            count = 2000,
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "agricultural-science-pack",    1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 }
+            },
+            time = 60
+        },
+        prerequisites = { "piezoelectric-science-pack" },
+    },
+    {
+        type = "technology",
+        name = "mercurial-biota",
+        icon = "__space-age__/graphics/technology/overgrowth-soil.png",
+        icon_size = 256,
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "mercurial-archaea-cultivation"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-mercurial-lattice"
+            }
+        },
+        unit = {
+            count = 3000,
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "agricultural-science-pack",    1 },
+                { "electromagnetic-science-pack", 1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 },
+                { "promethium-science-pack",      1 }
+            },
+            time = 60
+        },
+        prerequisites = { "tenebris-end-of-demo", "overgrowth-soil" },
+    },
+    {
+        type = "technology",
+        name = "luciferin-rocket-speed",
+        icon = "__tenebris-prime__/graphics/technology/rocket-speed.png",
+        icon_size = 256,
+        effects = {
+            {
+                type = "gun-speed",
+                ammo_category = "rocket",
+                modifier = 0.5
+            }
+        },
+        unit = {
+            count_formula = "5000*(L^1.5)",
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "military-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "agricultural-science-pack",    1 },
+                { "electromagnetic-science-pack", 1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 }
+            },
+            time = 60
+        },
+        max_level = 4,
+        prerequisites = { "tenebris-rocket-silo", "weapon-shooting-speed-6" },
+    },
+    {
+        type = "technology",
+        name = "tenebris-worker-robot-battery",
+        icons = {
+            { icon = "__base__/graphics/technology/worker-robots-speed.png", icon_size = 256 },
+            { icon = "__core__/graphics/icons/technology/effect-constant/effect-constant-battery.png", icon_size = 64, shift = {32, 32}, scale = 1 },
+        },
+        effects = {
+            {
+                type = "worker-robot-battery",
+                modifier = 0.1
+            }
+        },
+        unit = {
+            count_formula = "1000*(L^1.5)",
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "agricultural-science-pack",    1 },
+                { "electromagnetic-science-pack", 1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 }
+            },
+            time = 60
+        },
+        max_level = "infinite",
+        prerequisites = { "tenebris-rocket-silo", "tenebris-robo-logistics" },
+    },
+    {
+        type = "technology",
+        name = "tenebris-high-energy-potential-forging",
+        icon = "__base__/graphics/technology/advanced-material-processing.png",
+        icon_size = 256,
+        effects = (function()
+            local effects = {}
+            for _, crystal in ipairs(constants.CRYSTAL_TYPES) do
+                table.insert(effects, {
+                    type = "unlock-recipe",
+                    recipe = "tenebris-lightning-furnace-" .. crystal
+                })
+            end
+            -- Add high-energy forging recipes
+            table.insert(effects, {
+                type = "unlock-recipe",
+                recipe = "tenebris-mercury-vii-plate"
+            })
+            return effects
+        end)(),
+        prerequisites = {
+            "mercurial-biota",
+            "lightning-collector",
+        },
+        unit = {
+            count = 4000,
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "agricultural-science-pack",    1 },
+                { "electromagnetic-science-pack", 1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 },
+                { "promethium-science-pack",      1 }
+            },
+            time = 60
+        }
+    },
+    -- ========================================
+    -- BIOLUMINESCENT TECHNOLOGY (behind end-of-demo)
+    -- ========================================
+    {
+        type = "technology",
+        name = "tenebris-lightless-beacons",
+        icon = "__tenebris-prime__/graphics/technology/biobeacon.png",
+        icon_size = 256,
+        effects = {
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-bioinfusor"
+            },
+            {
+                type = "unlock-recipe",
+                recipe = "tenebris-biobeacon"
+            }
+        },
+        prerequisites = { "tenebris-end-of-demo" },
+        unit = {
+            count = 3000,
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "agricultural-science-pack",    1 },
+                { "electromagnetic-science-pack", 1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 },
+                { "promethium-science-pack",      1 }
+            },
+            time = 60
+        }
+    },
+    -- ========================================
+    -- BEACON EFFICIENCY INFINITE TECH
+    -- ========================================
+    {
+        type = "technology",
+        name = "tenebris-beacon-distribution-efficiency",
+        icons = {
+            { icon = "__tenebris-prime__/graphics/technology/biobeacon.png", icon_size = 256 },
+                { icon = "__core__/graphics/icons/technology/effect-constant/effect-constant-movement-speed.png", icon_size = 64, shift = {32, 32}, scale = 1 },
+        },
+        effects = {
+            {
+                type = "beacon-distribution",
+                modifier = 0.02
+            }
+        },
+        prerequisites = { 
+            "deep-space-discovery-lightless-abyss", 
+            "tenebris-lightless-beacons" 
+        },
+        unit = {
+            count_formula = "6^L*5000",
+            ingredients = {
+                { "automation-science-pack",      1 },
+                { "logistic-science-pack",        1 },
+                { "chemical-science-pack",        1 },
+                { "production-science-pack",      1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "metallurgic-science-pack",     1 },
+                { "agricultural-science-pack",    1 },
+                { "electromagnetic-science-pack", 1 },
+                { "cryogenic-science-pack",       1 },
+                { "piezoelectric-science-pack",   1 },
+                { "promethium-science-pack",      1 }
+            },
+            time = 60
+        },
+        max_level = "infinite",
+        upgrade = true,
     },
 })
+

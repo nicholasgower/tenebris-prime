@@ -1,17 +1,21 @@
+--- Phase 1 Tenebris Items
+--- Clean redesign of all items for the Tenebris planet
+
 local item_sounds = require("__base__.prototypes.item_sounds")
 local space_age_item_sounds = require("__space-age__.prototypes.item_sounds")
 local item_tints = require("__base__.prototypes.item-tints")
 local meld = require("meld")
+local tenebris = require("lib.tenebris")
+local centipede_constants = require("lib.centipede_constants")
 
 local ticks_per_minute = 60 * 60
 
-
-local lightless_science_pack = meld(
+-- Science packs
+local piezoelectric_science_pack = meld(
     table.deepcopy(data.raw["tool"]["automation-science-pack"]), {
-        name = "lightless-science-pack",
+        name = "piezoelectric-science-pack",
         icon = "__space-age__/graphics/icons/promethium-science-pack.png",
-        subgroup = "science-pack",
-        order = "t[tenebris]-a[lightless_science_pack]",
+        subgroup = "tenebris-piezoelectric-science-pack",
         pictures = meld.overwrite {
             scale = 0.5,
             size = 64,
@@ -25,34 +29,26 @@ local bioluminescent_science_pack = meld(
         name = "bioluminescent-science-pack",
         icon = "__tenebris-prime__/graphics/icons/bioluminescent-science-pack.png",
         subgroup = "science-pack",
-        order = "t[tenebris]-b[bioluminescent_science_pack]",
         pictures = meld.overwrite {
             scale = 0.5,
             size = 64,
             filename = "__tenebris-prime__/graphics/icons/bioluminescent-science-pack.png",
             draw_as_glow = true,
         },
-        spoil_result = "lightless-science-pack",
+        spoil_result = "piezoelectric-science-pack",
         spoil_ticks = ticks_per_minute * 120
     })
 
 data:extend({
-    {
-        type = "item",
-        name = "observation-satellite",
-        icon = "__base__/graphics/icons/satellite.png",
-        subgroup = "deep-space-sensing",
-        inventory_move_sound = item_sounds.mechanical_inventory_move,
-        pick_sound = item_sounds.mechanical_inventory_pickup,
-        drop_sound = item_sounds.mechanical_inventory_move,
-        stack_size = 1,
-        weight = 1 * tons,
-        send_to_orbit_mode = "automated"
-    },
+    -- ========================================
+    -- BIOLOGICAL MATERIALS
+    -- ========================================
+    
+    -- Lucifunnel plant chain
     {
         type = "item",
         name = "lucifunnel",
-        subgroup = "tenebris-processes",
+        subgroup = "tenebris-organic-products",
         stack_size = 50,
         icon = "__tenebris-prime__/graphics/icons/lucifunnel.png",
         pictures = {
@@ -65,7 +61,7 @@ data:extend({
         pick_sound = item_sounds.resource_inventory_pickup,
         drop_sound = item_sounds.resource_inventory_move,
         weight = 2 * kg,
-        default_import_location = "tenebris",
+        default_import_location = tenebris.PLANET.TENEBRIS,
         fuel_category = "chemical", 
         fuel_value = "4MJ", 
         spoil_result = "spoilage", 
@@ -83,20 +79,43 @@ data:extend({
             mipmap_count = 4,
             draw_as_glow = true
         },
-        subgroup = "tenebris-processes",
+        subgroup = "tenebris-organic-products",
         inventory_move_sound = item_sounds.wood_inventory_move,
         plant_result = "lucifunnel",
         place_result = "lucifunnel",
         stack_size = 10,
-        default_import_location = "tenebris",
+        default_import_location = tenebris.PLANET.TENEBRIS,
         fuel_category = "chemical",
         fuel_value = "100kJ",
         weight = 10 * kg,
     },
     {
         type = "item",
+        name = "luciferin",
+        subgroup = "tenebris-organic-products",
+        icon = "__tenebris-prime__/graphics/icons/luciferin.png",
+        stack_size = 100,
+        weight = 0.5 * kg,
+        fuel_category = "chemical",
+        fuel_value = "1MJ",
+        pictures = {
+            scale = 0.5,
+            width = 64,
+            height = 64,
+            filename = "__tenebris-prime__/graphics/icons/luciferin.png",
+            draw_as_glow = true,
+        },
+        inventory_move_sound = item_sounds.resource_inventory_move,
+        pick_sound = item_sounds.resource_inventory_pickup,
+        drop_sound = item_sounds.resource_inventory_move,
+        default_import_location = tenebris.PLANET.TENEBRIS,
+    },
+    
+    -- Tenecap fungus chain
+    {
+        type = "item",
         name = "tenecap",
-        subgroup = "tenebris-processes",
+        subgroup = "tenebris-organic-products",
         stack_size = 50,
         icon = "__tenebris-prime__/graphics/icons/tenecap.png",
         pictures = {
@@ -107,10 +126,41 @@ data:extend({
         inventory_move_sound = item_sounds.resource_inventory_move,
         pick_sound = item_sounds.resource_inventory_pickup,
         drop_sound = item_sounds.resource_inventory_move,
-        weight = weight or (2 * kg),
-        default_import_location = "tenebris",
+        weight = 2 * kg,
+        default_import_location = tenebris.PLANET.TENEBRIS,
         spoil_result = "tenecap-spore", 
         spoil_ticks = ticks_per_minute * 20
+    },
+    {
+        type = "item",
+        name = "mercurial-stromatolite",
+        subgroup = "tenebris-mercury-products",
+        stack_size = 50,
+        icon = "__space-age__/graphics/icons/yumako.png", -- Placeholder
+        inventory_move_sound = item_sounds.resource_inventory_move,
+        pick_sound = item_sounds.resource_inventory_pickup,
+        drop_sound = item_sounds.resource_inventory_move,
+        weight = 2 * kg,
+        default_import_location = tenebris.PLANET.TENEBRIS,
+        plant_result = "mercurial-stromatolite"
+    },
+    {
+        type = "item",
+        name = "mercurial-archaea",
+        subgroup = "tenebris-mercury-products",
+        stack_size = 50,
+        icons = {
+            {
+                icon = "__tenebris-prime__/graphics/icons/mercurial-archaea.png",
+                icon_size = 1024,
+                tint = {r = 0.85, g = 0.85, b = 0.90, a = 1.0},  -- Strong silver tint
+            },
+        },
+        spoil_ticks = ticks_per_minute * 2, -- 2 minutes
+        inventory_move_sound = item_sounds.organic_inventory_move,
+        pick_sound = item_sounds.organic_inventory_pickup,
+        drop_sound = item_sounds.organic_inventory_move,
+        weight = 1 * kg
     },
     {
         type = "item",
@@ -122,73 +172,68 @@ data:extend({
             filename = "__tenebris-prime__/graphics/icons/tenecap-spore.png",
             scale = 0.5,
         },
-        subgroup = "tenebris-processes",
+        subgroup = "tenebris-organic-products",
         inventory_move_sound = item_sounds.wood_inventory_move,
         plant_result = "tenecap",
         place_result = "tenecap",
         stack_size = 20,
-        default_import_location = "tenebris",
+        default_import_location = tenebris.PLANET.TENEBRIS,
         fuel_category = "chemical",
         fuel_value = "100kJ",
         weight = 5 * kg,
     },
     {
         type = "item",
-        name = "sulfuric-waste-spores",
-        icon = "__tenebris-prime__/graphics/icons/tenecap-spore.png",
-        pictures = {
-            size = 64,
-            filename = "__tenebris-prime__/graphics/icons/tenecap-spore.png",
-            scale = 0.5,
-        },
-        subgroup = "tenebris-processes",
-        inventory_move_sound = item_sounds.wood_inventory_move,
-        stack_size = 20,
-        default_import_location = "tenebris",
-        fuel_category = "chemical",
-        fuel_value = "100kJ",
-        weight = 5 * kg,
-    },
-    {
-        type = "item",
-        name = "quartz-ore",
-        icon = "__tenebris-prime__/graphics/icons/quartz-ore.png",
-        subgroup = "tenebris-processes",
-        pictures =
-        {
-            size = 64,
-            filename = "__tenebris-prime__/graphics/icons/quartz-ore.png",
-            scale = 0.5,
-            mipmap_count = 4,
-        },
-        inventory_move_sound = item_sounds.resource_inventory_move,
-        pick_sound = item_sounds.resource_inventory_pickup,
-        drop_sound = item_sounds.resource_inventory_move,
-        default_import_location = "tenebris",
-        stack_size = 50,
-        weight = 2 * kg
-    },
-    {
-        type = "item",
-        name = "luciferin",
-        subgroup = "tenebris-processes",
-        icon = "__tenebris-prime__/graphics/icons/luciferin.png",
+        name = "overgrowth-luciferin-soil",
+        subgroup = "tenebris-artificial-terrain",
+        order = "z[overgrowth-luciferin-soil]",
         stack_size = 100,
-        fuel_category = "chemical",
-        fuel_value = "1MJ",
-        pictures = {
-            scale = 0.5,
-            width = 64,
-            height = 64,
-            filename = "__tenebris-prime__/graphics/icons/luciferin.png",
-            draw_as_glow = true,
+        icon = "__space-age__/graphics/icons/overgrowth-yumako-soil.png", -- Placeholder
+        inventory_move_sound = item_sounds.landfill_inventory_move,
+        pick_sound = item_sounds.landfill_inventory_pickup,
+        drop_sound = item_sounds.landfill_inventory_move,
+        default_import_location = tenebris.PLANET.TENEBRIS,
+        place_as_tile = {
+            result = "overgrowth-luciferin-soil",
+            condition_size = 1,
+            condition = {layers = {}},
+            tile_condition = {
+                "tenebris-debug-highlands",
+                "tenebris-debug-lowlands",
+                "tenebris-debug-wastes"
+            }
         },
-        default_import_location = "tenebris",
+        weight = 10 * kg,
     },
     {
         type = "item",
-        name = "chitin",
-        subgroup = "tenebris-processes",
+        name = "overgrowth-tenecap-soil",
+        subgroup = "tenebris-artificial-terrain",
+        order = "z[overgrowth-tenecap-soil]",
+        stack_size = 100,
+        icon = "__space-age__/graphics/icons/overgrowth-jellynut-soil.png", -- Placeholder
+        inventory_move_sound = item_sounds.landfill_inventory_move,
+        pick_sound = item_sounds.landfill_inventory_pickup,
+        drop_sound = item_sounds.landfill_inventory_move,
+        default_import_location = tenebris.PLANET.TENEBRIS,
+        place_as_tile = {
+            result = "overgrowth-tenecap-soil",
+            condition_size = 1,
+            condition = {layers = {}},
+            tile_condition = {
+                "tenebris-debug-highlands",
+                "tenebris-debug-lowlands",
+                "tenebris-debug-wastes"
+            }
+        },
+        weight = 10 * kg,
+    },
+    
+    -- Chitin chain
+    {
+        type = "item",
+        name = "tenebris-chitin",
+        subgroup = "tenebris-organic-products",
         stack_size = 50,
         icon = "__tenebris-prime__/graphics/icons/chitin.png",
         pictures = {
@@ -200,106 +245,118 @@ data:extend({
         pick_sound = item_sounds.resource_inventory_pickup,
         drop_sound = item_sounds.resource_inventory_move,
         weight = 2 * kg,
-        default_import_location = "tenebris",
+        default_import_location = tenebris.PLANET.TENEBRIS,
     },
     {
         type = "item",
-        name = "chitosan",
-        subgroup = "tenebris-processes",
-        stack_size = 50,
+        name = "tenebris-chitosan",
         icon = "__tenebris-prime__/graphics/icons/chitosan.png",
+        subgroup = "tenebris-organic-products",
+        stack_size = 100,
+        weight = 1 * kg,
+        inventory_move_sound = item_sounds.plastic_inventory_move,
+        pick_sound = item_sounds.plastic_inventory_pickup,
+        drop_sound = item_sounds.plastic_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-centipede-corpse",
+        icon = "__tenebris-prime__/graphics/icons/centipede-corpse.png",
+        icon_size = 64,
+        subgroup = "tenebris-organic-products",
+        stack_size = 10,
+        weight = 100 * kg,
+        inventory_move_sound = item_sounds.resource_inventory_move,
+        pick_sound = item_sounds.resource_inventory_pickup,
+        drop_sound = item_sounds.resource_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-radiation-hardened-chitin",
+        icon = "__tenebris-prime__/graphics/icons/organic-chitin-plate.png",
+        subgroup = "tenebris-organic-products",
+        stack_size = 50,
+        weight = 5 * kg,
+        inventory_move_sound = item_sounds.resource_inventory_move,
+        pick_sound = item_sounds.resource_inventory_pickup,
+        drop_sound = item_sounds.resource_inventory_move,
+    },
+    
+    -- ========================================
+    -- WASTE PRODUCTS
+    -- ========================================
+    {
+        type = "item",
+        name = "tenebris-ferric-waste",
+        subgroup = "tenebris-waste-products",
+        stack_size = 50,
+        icon = "__tenebris-prime__/graphics/icons/ferric-waste.png",
         pictures = {
             size = 64,
-            filename = "__tenebris-prime__/graphics/icons/chitosan.png",
+            filename = "__tenebris-prime__/graphics/icons/ferric-waste.png",
             scale = 0.5,
+        },
+        inventory_move_sound = item_sounds.metal_small_inventory_move,
+        pick_sound = item_sounds.metal_small_inventory_pickup,
+        drop_sound = item_sounds.metal_small_inventory_drop,
+        weight = 2 * kg,
+        default_import_location = tenebris.PLANET.TENEBRIS,
+    },
+    {
+        type = "item",
+        name = "tenebris-cupric-waste",
+        subgroup = "tenebris-waste-products",
+        stack_size = 50,
+        icon = "__tenebris-prime__/graphics/icons/cupric-waste.png",
+        pictures = {
+            size = 64,
+            filename = "__tenebris-prime__/graphics/icons/cupric-waste.png",
+            scale = 0.5,
+        },
+        inventory_move_sound = item_sounds.metal_small_inventory_move,
+        pick_sound = item_sounds.metal_small_inventory_pickup,
+        drop_sound = item_sounds.metal_small_inventory_drop,
+        weight = 2 * kg,
+        default_import_location = tenebris.PLANET.TENEBRIS,
+    },
+    {
+        type = "item",
+        name = "tenebris-circuit-waste",
+        icon = "__tenebris-prime__/graphics/icons/electronic-waste.png",
+        subgroup = "tenebris-waste-products",
+        stack_size = 100,
+        weight = 1 * kg,
+        inventory_move_sound = item_sounds.electric_small_inventory_move,
+        pick_sound = item_sounds.electric_small_inventory_pickup,
+        drop_sound = item_sounds.electric_small_inventory_move,
+    },
+    
+    -- ========================================
+    -- MINERALS & ORES
+    -- ========================================
+    {
+        type = "item",
+        name = "tenebris-quartz-ore",
+        icon = "__tenebris-prime__/graphics/icons/quartz-ore.png",
+        subgroup = "tenebris-minerals",
+        pictures = {
+            size = 64,
+            filename = "__tenebris-prime__/graphics/icons/quartz-ore.png",
+            scale = 0.5,
+            mipmap_count = 4,
         },
         inventory_move_sound = item_sounds.resource_inventory_move,
         pick_sound = item_sounds.resource_inventory_pickup,
         drop_sound = item_sounds.resource_inventory_move,
-        weight = 2 * kg,
-        default_import_location = "tenebris",
+        default_import_location = tenebris.PLANET.TENEBRIS,
+        stack_size = 50,
+        weight = 2 * kg
     },
     {
         type = "item",
-        name = "quartz-crystal",
-        subgroup = "tenebris-processes",
-        stack_size = 100,
-        icon = "__tenebris-prime__/graphics/icons/quartz-crystal.png",
-        pictures = {
-            size = 64,
-            filename = "__tenebris-prime__/graphics/icons/quartz-crystal.png",
-            scale = 0.5,
-        },
-        inventory_move_sound = item_sounds.rock_inventory_move,
-        pick_sound = item_sounds.rock_inventory_pickup,
-        drop_sound = item_sounds.rock_inventory_move,
-        weight = 2 * kg,
-        default_import_location = "tenebris",
-    },
-    {
-        type = "item",
-        name = "quartz-crystal-seedling",
-        subgroup = "tenebris-processes",
-        stack_size = 5,
-        icon = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-2.png",
-        icon_size = 256,
-        pictures = {
-            size = 64,
-            filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-2.png",
-            scale = 0.5,
-        },
-        inventory_move_sound = item_sounds.rock_inventory_move,
-        pick_sound = item_sounds.rock_inventory_pickup,
-        drop_sound = item_sounds.rock_inventory_move,
-        plant_result = "quartz-node",
-        place_result = "quartz-node",
-        weight = 0.5 * kg,
-        default_import_location = "tenebris",
-        spoil_result = "quartz-crystal", 
-        spoil_ticks = ticks_per_minute * 6
-    },
-    {
-        type = "item",
-        name = "photonic-crystal",
-        subgroup = "tenebris-processes",
-        stack_size = 100,
-        icon = "__tenebris-prime__/graphics/icons/quartz-crystal.png",
-        pictures = {
-            size = 64,
-            filename = "__tenebris-prime__/graphics/icons/quartz-crystal.png",
-            scale = 0.5,
-        },
-        inventory_move_sound = item_sounds.rock_inventory_move,
-        pick_sound = item_sounds.rock_inventory_pickup,
-        drop_sound = item_sounds.rock_inventory_move,
-        weight = 2 * kg,
-        default_import_location = "tenebris",
-    },
-    {
-        type = "item",
-        name = "bioluminescent-crystal",
-        subgroup = "tenebris-processes",
-        stack_size = 100,
-        icon = "__tenebris-prime__/graphics/icons/bioluminescent-crystal.png",
-        pictures = {
-            size = 64,
-            filename = "__tenebris-prime__/graphics/icons/bioluminescent-crystal.png",
-            scale = 0.5,
-            draw_as_glow = true,
-        },
-        inventory_move_sound = item_sounds.metal_small_inventory_move,
-        pick_sound = item_sounds.metal_small_inventory_pickup,
-        drop_sound = item_sounds.metal_small_inventory_move,
-        weight = 2 * kg,
-        default_import_location = "tenebris",
-        fuel_category = "bioluminescent", 
-        fuel_value = "100kJ"
-    },
-    {
-        type = "item",
-        name = "bismuth-ore",
-        subgroup = "tenebris-processes",
-        icon = "__base__/graphics/icons/copper-ore.png",
+        name = "tenebris-bismuth-ore",
+        subgroup = "tenebris-minerals",
+        icon = "__tenebris-prime__/graphics/icons/bismuth-ore.png",
         pictures = {
             size = 64,
             filename = "__base__/graphics/icons/copper-ore.png",
@@ -312,20 +369,298 @@ data:extend({
         weight = 4 * kg
     },
     {
-      type = "item",
-      name = "quartziferous-bismuthal-plate",
-      icon = "__base__/graphics/icons/copper-plate.png",
-      subgroup = "tenebris-processes",
-      inventory_move_sound = item_sounds.metal_small_inventory_move,
-      pick_sound = item_sounds.metal_small_inventory_pickup,
-      drop_sound = item_sounds.metal_small_inventory_move,
-      stack_size = 100
+        type = "item",
+        name = "tenebris-cinnabar",
+        icon = "__tenebris-prime__/graphics/icons/crystals/cinnabar.png",
+        icon_size = 64,
+        subgroup = "tenebris-mercury-products",
+        stack_size = 50,
+        weight = 2 * kg,
+        inventory_move_sound = space_age_item_sounds.calcite_inventory_move,
+        pick_sound = space_age_item_sounds.calcite_inventory_pickup,
+        drop_sound = space_age_item_sounds.calcite_inventory_move,
     },
     {
         type = "item",
+        name = "tenebris-quartz-geode",
+        icon = "__tenebris-prime__/graphics/icons/quartz-geode.png",
+        icon_size = 64,
+        subgroup = "tenebris-minerals",
+        stack_size = 50,
+        weight = 5 * kg,
+        inventory_move_sound = space_age_item_sounds.rock_inventory_move,
+        pick_sound = space_age_item_sounds.rock_inventory_pickup,
+        drop_sound = space_age_item_sounds.rock_inventory_move,
+    },
+    
+    -- ========================================
+    -- GEMSTONES
+    -- ========================================
+    {
+        type = "item",
+        name = "tenebris-onyx",
+        icons = {
+            { icon = "__tenebris-prime__/graphics/icons/crystals/onyx.png", icon_size = 64, tint = tenebris.TINT.ONYX },
+        },
+        subgroup = "tenebris-crystal-processing",
+        stack_size = 100,
+        weight = 0.5 * kg,
+        inventory_move_sound = space_age_item_sounds.calcite_inventory_move,
+        pick_sound = space_age_item_sounds.calcite_inventory_pickup,
+        drop_sound = space_age_item_sounds.calcite_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-citrine",
+        icon = "__tenebris-prime__/graphics/icons/crystals/citrine.png",
+        icon_size = 64,
+        subgroup = "tenebris-crystal-processing",
+        stack_size = 100,
+        weight = 0.5 * kg,
+        inventory_move_sound = space_age_item_sounds.calcite_inventory_move,
+        pick_sound = space_age_item_sounds.calcite_inventory_pickup,
+        drop_sound = space_age_item_sounds.calcite_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-prasiolite",
+        icons = {
+            { icon = "__tenebris-prime__/graphics/icons/crystals/prasiolite.png", icon_size = 64, tint = tenebris.TINT.PRASIOLITE },
+        },
+        subgroup = "tenebris-crystal-processing",
+        stack_size = 100,
+        weight = 0.5 * kg,
+        inventory_move_sound = space_age_item_sounds.calcite_inventory_move,
+        pick_sound = space_age_item_sounds.calcite_inventory_pickup,
+        drop_sound = space_age_item_sounds.calcite_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-amethyst",
+        icon = "__tenebris-prime__/graphics/icons/crystals/amethyst.png",
+        icon_size = 64,
+        subgroup = "tenebris-crystal-processing",
+        stack_size = 100,
+        weight = 0.5 * kg,
+        inventory_move_sound = space_age_item_sounds.calcite_inventory_move,
+        pick_sound = space_age_item_sounds.calcite_inventory_pickup,
+        drop_sound = space_age_item_sounds.calcite_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-ruby-agate",
+        icon = "__tenebris-prime__/graphics/icons/crystals/agate.png",
+        icon_size = 64,
+        subgroup = "tenebris-crystal-processing",
+        stack_size = 100,
+        weight = 0.5 * kg,
+        inventory_move_sound = space_age_item_sounds.calcite_inventory_move,
+        pick_sound = space_age_item_sounds.calcite_inventory_pickup,
+        drop_sound = space_age_item_sounds.calcite_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-sapphire-agate",
+        icons = {
+            { icon = "__tenebris-prime__/graphics/icons/crystals/agate.png", icon_size = 64, tint = tenebris.TINT.SAPPHIRE },
+        },
+        subgroup = "tenebris-crystal-processing",
+        stack_size = 100,
+        weight = 0.5 * kg,
+        inventory_move_sound = space_age_item_sounds.calcite_inventory_move,
+        pick_sound = space_age_item_sounds.calcite_inventory_pickup,
+        drop_sound = space_age_item_sounds.calcite_inventory_move,
+    },
+    
+    -- ========================================
+    -- CERAMIC PRODUCTS
+    -- ========================================
+    {
+        type = "item",
+        name = "tenebris-mercurial-lattice",
+        icons = {
+            {
+                icon = "__tenebris-prime__/graphics/icons/mercurial-lattice.png",
+                icon_size = 1024,
+                tint = {r = 0.85, g = 0.85, b = 0.90, a = 1.0},  -- Silver tint to match archaea
+            },
+        },
+        subgroup = "tenebris-mercury-products",
+        stack_size = 10,
+        weight = 5 * kg,
+        inventory_move_sound = item_sounds.fluid_inventory_move,
+        pick_sound = item_sounds.fluid_inventory_pickup,
+        drop_sound = item_sounds.fluid_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-mercury-vii-plate",
+        icon = "__base__/graphics/icons/steel-plate.png", -- Placeholder
+        subgroup = "tenebris-mercury-products",
+        stack_size = 100,
+        weight = 2 * kg,
+        inventory_move_sound = item_sounds.metal_small_inventory_move,
+        pick_sound = item_sounds.metal_small_inventory_pickup,
+        drop_sound = item_sounds.metal_small_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-ceramic-plate",
+        icon = "__tenebris-prime__/graphics/icons/ceramic-plate.png",
+        icon_size = 64,
+        subgroup = "tenebris-ceramic-products",
+        stack_size = 100,
+        weight = 2 * kg,
+        inventory_move_sound = item_sounds.metal_small_inventory_move,
+        pick_sound = item_sounds.metal_small_inventory_pickup,
+        drop_sound = item_sounds.metal_small_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-ceramic-filter",
+        icon = "__tenebris-prime__/graphics/icons/filter/ceramic-filter.png",
+        icon_size = 64,
+        subgroup = "tenebris-ceramic-products",
+        stack_size = 50,
+        weight = 1 * kg,
+        inventory_move_sound = item_sounds.metal_small_inventory_move,
+        pick_sound = item_sounds.metal_small_inventory_pickup,
+        drop_sound = item_sounds.metal_small_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-used-ceramic-filter",
+        icon = "__tenebris-prime__/graphics/icons/filter/ceramic-filter-used.png",
+        icon_size = 64,
+        subgroup = "tenebris-ceramic-products",
+        stack_size = 50,
+        weight = 1 * kg,
+        inventory_move_sound = item_sounds.metal_small_inventory_move,
+        pick_sound = item_sounds.metal_small_inventory_pickup,
+        drop_sound = item_sounds.metal_small_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-carbon-spore-filter",
+        icon = "__tenebris-prime__/graphics/icons/filter/carbon-filter.png",
+        icon_size = 64,
+        subgroup = "tenebris-ceramic-products",
+        stack_size = 50,
+        weight = 1 * kg,
+        inventory_move_sound = item_sounds.metal_small_inventory_move,
+        pick_sound = item_sounds.metal_small_inventory_pickup,
+        drop_sound = item_sounds.metal_small_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-used-carbon-spore-filter",
+        icon = "__tenebris-prime__/graphics/icons/filter/carbon-filter-used.png",
+        icon_size = 64,
+        subgroup = "tenebris-ceramic-products",
+        stack_size = 50,
+        weight = 1 * kg,
+        inventory_move_sound = item_sounds.metal_small_inventory_move,
+        pick_sound = item_sounds.metal_small_inventory_pickup,
+        drop_sound = item_sounds.metal_small_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-crystal-seedling",
+        icon = "__tenebris-prime__/graphics/icons/crystal-seedling.png",
+        icon_size = 64,
+        subgroup = "tenebris-crystal-processing",
+        stack_size = 50,
+        weight = 0.1 * kg,
+        inventory_move_sound = space_age_item_sounds.calcite_inventory_move,
+        pick_sound = space_age_item_sounds.calcite_inventory_pickup,
+        drop_sound = space_age_item_sounds.calcite_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-ceramic-circuitry",
+        icon = "__tenebris-prime__/graphics/icons/ceramic-circuitry.png",
+        subgroup = "tenebris-ceramic-products",
+        stack_size = 200,
+        weight = 0.5 * kg,
+        inventory_move_sound = item_sounds.electric_small_inventory_move,
+        pick_sound = item_sounds.electric_small_inventory_pickup,
+        drop_sound = item_sounds.electric_small_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-crystal-oscillator",
+        icon = "__tenebris-prime__/graphics/icons/crystal-oscillator.png",
+        subgroup = "tenebris-crystal-processing",
+        stack_size = 100,
+        weight = 1 * kg,
+        inventory_move_sound = item_sounds.electric_large_inventory_move,
+        pick_sound = item_sounds.electric_large_inventory_pickup,
+        drop_sound = item_sounds.electric_large_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-ceramic-robot-frame",
+        icon = "__base__/graphics/icons/flying-robot-frame.png", -- Placeholder
+        subgroup = "tenebris-ceramic-products",
+        stack_size = 50,
+        weight = 2 * kg,
+        inventory_move_sound = item_sounds.robotic_inventory_move,
+        pick_sound = item_sounds.robotic_inventory_pickup,
+        drop_sound = item_sounds.robotic_inventory_move,
+    },
+    
+    -- ========================================
+    -- MERCURY PRODUCTS
+    -- ========================================
+    {
+        type = "item",
+        name = "tenebris-cupric-mercury-amalgam",
+        icon = "__base__/graphics/icons/copper-plate.png", -- Placeholder
+        subgroup = "tenebris-mercury-products",
+        stack_size = 100,
+        weight = 2 * kg,
+        inventory_move_sound = item_sounds.metal_small_inventory_move,
+        pick_sound = item_sounds.metal_small_inventory_pickup,
+        drop_sound = item_sounds.metal_small_inventory_move,
+    },
+    
+    -- ========================================
+    -- PIEZOELECTRIC PRODUCTS
+    -- ========================================
+    {
+        type = "item",
+        name = "piezoelectric-converter",
+        icon = "__base__/graphics/icons/accumulator.png", -- Placeholder
+        subgroup = "tenebris-piezoelectric-products",
+        stack_size = 50,
+        weight = 5 * kg,
+        inventory_move_sound = item_sounds.electric_large_inventory_move,
+        pick_sound = item_sounds.electric_large_inventory_pickup,
+        drop_sound = item_sounds.electric_large_inventory_move,
+    },
+    {
+        type = "item",
+        name = "piezoelectric-motor",
+        icon = "__tenebris-prime__/graphics/icons/piezoelectric-motor.png",
+        subgroup = "tenebris-piezoelectric-products",
+        stack_size = 50,
+        weight = 3 * kg,
+        inventory_move_sound = item_sounds.mechanical_inventory_move,
+        pick_sound = item_sounds.mechanical_inventory_pickup,
+        drop_sound = item_sounds.mechanical_inventory_move,
+    },
+    
+    -- ========================================
+    -- TOOLS & EQUIPMENT
+    -- ========================================
+    
+    -- ========================================
+    -- MACHINES & BUILDINGS
+    -- ========================================
+    {
+        type = "item",
         name = "tenebris-bioinfusor",
-        subgroup = "bioluminescent-production-machine",
-        order = "t[tenebris]-a[tenebris-bioinfusor]",
+        subgroup = "tenebris-machines",
         stack_size = 10,
         icon = "__tenebris-prime__/graphics/icons/tenebris-bioinfusor.png",
         pictures = {
@@ -338,14 +673,13 @@ data:extend({
         pick_sound = item_sounds.electric_large_inventory_pickup,
         drop_sound = item_sounds.electric_large_inventory_move,
         weight = 100 * kg,
-        default_import_location = "tenebris",
-        place_result = "tenebris-bioinfusor"
+        default_import_location = tenebris.PLANET.TENEBRIS,
+        place_result = "tenebris-bioinfusor",
     },
     {
         type = "item",
         name = "tenebris-biobeacon",
-        subgroup = "bioluminescent-production-machine",
-        order = "t[tenebris]-b[tenebris-biobeacon]",
+        subgroup = "tenebris-machines",
         stack_size = 10,
         icon = "__tenebris-prime__/graphics/icons/tenebris-biobeacon.png",
         pictures = {
@@ -358,100 +692,365 @@ data:extend({
         pick_sound = item_sounds.electric_large_inventory_pickup,
         drop_sound = item_sounds.electric_large_inventory_move,
         weight = 100 * kg,
-        default_import_location = "tenebris",
-        place_result = "tenebris-biobeacon"
+        default_import_location = tenebris.PLANET.TENEBRIS,
+        place_result = "tenebris-biobeacon",
     },
     {
-        type = "module",
-        name = "spore-removal-module",
-        localised_description = {"item-description.speed-module"},
-        icon = "__base__/graphics/icons/speed-module.png",
-        subgroup = "module",
-        color_hint = { text = "S" },
-        category = "efficiency",
-        tier = 3,
-        order = "t[tenebris]-a[tenebris-spore-removal-module]",
-        inventory_move_sound = item_sounds.module_inventory_move,
-        pick_sound = item_sounds.module_inventory_pickup,
-        drop_sound = item_sounds.module_inventory_move,
+        type = "item",
+        name = "tenebris-heated-atmosphere-scrubber",
+        icons = {
+            { icon = "__atan-air-scrubbing__/graphics/icons/air-scrubber.png", icon_size = 64, tint = tenebris.TINT.HEAT_LIGHT },
+        },
+        subgroup = "tenebris-machines",
         stack_size = 50,
         weight = 20 * kg,
-        effect = {pollution = 0.3, consumption = 0.5},
-        beacon_tint =
-        {
-          primary = {0.423, 0.0, 0.632, 1.000}, -- #6C00A1FF
-          secondary = {0.631, 0.137, 0.82, 1.000}, -- #A123D1FF
-        },
-        default_import_location = "tenebris",
-        art_style = "vanilla",
-        requires_beacon_alt_mode = false
+        place_result = "tenebris-heated-atmosphere-scrubber",
+        inventory_move_sound = item_sounds.mechanical_large_inventory_move,
+        pick_sound = item_sounds.mechanical_large_inventory_pickup,
+        drop_sound = item_sounds.mechanical_large_inventory_move,
     },
     {
         type = "item",
-        name = "tenebris-heated-air-scrubber",
-        subgroup = "bioluminescent-production-machine",
-        icon = "__atan-air-scrubbing__/graphics/icons/air-scrubber.png",
-        inventory_move_sound = item_sounds.mechanical_inventory_move,
-        pick_sound = item_sounds.mechanical_inventory_pickup,
-        drop_sound = item_sounds.mechanical_inventory_move,
-        place_result = "tenebris-heated-air-scrubber",
+        name = "tenebris-heated-pumpjack",
+        icons = {
+            { icon = "__base__/graphics/icons/pumpjack.png", icon_size = 64, tint = tenebris.TINT.HEAT },
+        },
+        subgroup = "tenebris-machines",
         stack_size = 20,
         weight = 50 * kg,
+        place_result = "tenebris-heated-pumpjack",
+        inventory_move_sound = item_sounds.mechanical_large_inventory_move,
+        pick_sound = item_sounds.mechanical_large_inventory_pickup,
+        drop_sound = item_sounds.mechanical_large_inventory_move,
     },
     {
         type = "item",
-        name = "tenebris-spore-filter",
-        subgroup = "atan-filters",
-        icon = "__atan-air-scrubbing__/graphics/icons/pollution-filter.png",
-        inventory_move_sound = item_sounds.metal_small_inventory_move,
-        pick_sound = item_sounds.metal_small_inventory_pickup,
-        drop_sound = item_sounds.metal_small_inventory_move,
+        name = "tenebris-heated-agricultural-tower",
+        icons = {
+            { icon = "__space-age__/graphics/icons/agricultural-tower.png", icon_size = 64, tint = tenebris.TINT.HEAT_LIGHT },
+        },
+        subgroup = "tenebris-heated-agriculture",
+        stack_size = 20,
+        weight = 50 * kg,
+        place_result = "tenebris-heated-agricultural-tower",
+        inventory_move_sound = item_sounds.mechanical_large_inventory_move,
+        pick_sound = item_sounds.mechanical_large_inventory_pickup,
+        drop_sound = item_sounds.mechanical_large_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-heated-big-mining-drill",
+        icons = {
+            { icon = "__space-age__/graphics/icons/big-mining-drill.png", icon_size = 64, tint = tenebris.TINT.HEAT },
+        },
+        subgroup = "tenebris-machines",
+        stack_size = 20,
+        weight = 100 * kg,
+        place_result = "tenebris-heated-big-mining-drill",
+        inventory_move_sound = item_sounds.mechanical_large_inventory_move,
+        pick_sound = item_sounds.mechanical_large_inventory_pickup,
+        drop_sound = item_sounds.mechanical_large_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-crystal-resonance-chamber",
+        icon = "__tenebris-prime__/graphics/icons/crystal-resonance-chamber.png",
+        icon_size = 64,
+        subgroup = "tenebris-machines",
+        stack_size = 20,
+        weight = 100 * kg,
+        place_result = "tenebris-crystal-resonance-chamber",
+        inventory_move_sound = item_sounds.mechanical_large_inventory_move,
+        pick_sound = item_sounds.mechanical_large_inventory_pickup,
+        drop_sound = item_sounds.mechanical_large_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-quartz-ortet-robo-interface",
+        icon = "__base__/graphics/icons/roboport.png", -- Placeholder
+        subgroup = "tenebris-machines",
+        stack_size = 10,
+        weight = 100 * kg,
+        place_result = "tenebris-quartz-ortet-robo-interface",
+        inventory_move_sound = item_sounds.robotic_inventory_move,
+        pick_sound = item_sounds.robotic_inventory_pickup,
+        drop_sound = item_sounds.robotic_inventory_move,
+    },
+    
+    -- ========================================
+    -- PIPES
+    -- ========================================
+    {
+        type = "item",
+        name = "tenebris-biopipe",
+        icons = {
+            { icon = "__base__/graphics/icons/pipe.png", icon_size = 64, tint = tenebris.TINT.CHITOSAN },
+        },
+        subgroup = "tenebris-fluid-logistics",
+        factoriopedia_alternative = "pipe",
+        stack_size = 100,
+        weight = 1 * kg,
+        place_result = "tenebris-biopipe",
+        inventory_move_sound = item_sounds.pipe_inventory_move,
+        pick_sound = item_sounds.pipe_inventory_pickup,
+        drop_sound = item_sounds.pipe_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-biopipe-to-ground",
+        icons = {
+            { icon = "__base__/graphics/icons/pipe-to-ground.png", icon_size = 64, tint = tenebris.TINT.CHITOSAN },
+        },
+        subgroup = "tenebris-fluid-logistics",
+        factoriopedia_alternative = "pipe-to-ground",
+        stack_size = 50,
+        weight = 2 * kg,
+        place_result = "tenebris-biopipe-to-ground",
+        inventory_move_sound = item_sounds.pipe_inventory_move,
+        pick_sound = item_sounds.pipe_inventory_pickup,
+        drop_sound = item_sounds.pipe_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-ceramic-plated-heat-pipe",
+        icons = {
+            {
+                icon = "__base__/graphics/icons/heat-pipe.png",
+                icon_size = 64,
+                tint = tenebris.TINT.CERAMIC,
+            }
+        },
+        subgroup = "tenebris-thermal-energy",
+        stack_size = 50,
+        weight = 5 * kg,
+        place_result = "tenebris-ceramic-plated-heat-pipe",
+        inventory_move_sound = item_sounds.pipe_inventory_move,
+        pick_sound = item_sounds.pipe_inventory_pickup,
+        drop_sound = item_sounds.pipe_inventory_move,
+    },
+    -- Debug heat interface with nearly limitless transfer
+    {
+        type = "item",
+        name = "tenebris-thermal-battery",
+        icons = {
+            {
+                icon = "__tenebris-prime__/graphics/icons/thermal-battery.png",
+                icon_size = 64,
+                tint = tenebris.TINT.HEAT_LIGHT,
+            }
+        },
+        subgroup = "tenebris-thermal-energy",
+        stack_size = 50,
+        weight = 20 * kg,
+        place_result = "tenebris-thermal-battery",
+        inventory_move_sound = item_sounds.pipe_inventory_move,
+        pick_sound = item_sounds.pipe_inventory_pickup,
+        drop_sound = item_sounds.pipe_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-steel-thermal-diode",
+        icons = {
+            {
+                icon = "__base__/graphics/icons/decider-combinator.png",
+                icon_size = 64,
+                tint = tenebris.TINT.HEAT_LIGHT,
+            }
+        },
+        subgroup = "tenebris-thermal-energy",
         stack_size = 50,
         weight = 10 * kg,
+        place_result = "tenebris-steel-thermal-diode",
+        inventory_move_sound = item_sounds.pipe_inventory_move,
+        pick_sound = item_sounds.pipe_inventory_pickup,
+        drop_sound = item_sounds.pipe_inventory_move,
     },
     {
         type = "item",
-        name = "tenebris-used-spore-filter",
-        subgroup = "atan-filters",
-        icon = "__atan-air-scrubbing__/graphics/icons/used-pollution-filter.png",
-        inventory_move_sound = item_sounds.metal_small_inventory_move,
-        pick_sound = item_sounds.metal_small_inventory_pickup,
-        drop_sound = item_sounds.metal_small_inventory_move,
-        stack_size = 50,
-        weight = 15 * kg,
-    },
-    {
-        type = "item",
-        name = "lightless-beacon",
-        icon = "__tenebris-prime__/graphics/icons/tenebris-biobeacon.png",
-        pictures =
-        {
-            size = 64,
-            filename = "__tenebris-prime__/graphics/icons/tenebris-biobeacon.png",
-            scale = 0.5,
-            draw_as_glow = true,
+        name = "tenebris-ceramic-thermal-diode",
+        icons = {
+            {
+                icon = "__base__/graphics/icons/decider-combinator.png",
+                icon_size = 64,
+                tint = tenebris.TINT.CERAMIC,
+            }
         },
-        subgroup = "bioluminescent-production-machine",
-        order = "t[tenebris]-c[lightless-beacon]",
-        inventory_move_sound = item_sounds.electric_large_inventory_move,
-        pick_sound = item_sounds.electric_large_inventory_pickup,
-        drop_sound = item_sounds.electric_large_inventory_move,
+        subgroup = "tenebris-thermal-energy",
         stack_size = 50,
-        weight = 2 * kg
+        weight = 10 * kg,
+        place_result = "tenebris-ceramic-thermal-diode",
+        inventory_move_sound = item_sounds.pipe_inventory_move,
+        pick_sound = item_sounds.pipe_inventory_pickup,
+        drop_sound = item_sounds.pipe_inventory_move,
     },
+    
+    -- ========================================
+    -- INSERTERS & LOGISTICS
+    -- ========================================
+    {
+        type = "item",
+        name = "piezoelectric-inserter",
+        icons = {
+            { icon = "__base__/graphics/icons/bulk-inserter.png", icon_size = 64, tint = tenebris.TINT.DARK_ORANGE },
+        },
+        subgroup = "tenebris-inserter",
+        stack_size = 50,
+        weight = 2 * kg,
+        place_result = "piezoelectric-inserter",
+        inventory_move_sound = item_sounds.inserter_inventory_move,
+        pick_sound = item_sounds.inserter_inventory_pickup,
+        drop_sound = item_sounds.inserter_inventory_move,
+    },
+    {
+        type = "item",
+        name = "piezoelectric-lamp",
+        icon = "__base__/graphics/icons/small-lamp.png", -- Placeholder
+        subgroup = "circuit-network",
+        stack_size = 50,
+        weight = 1 * kg,
+        place_result = "piezoelectric-lamp",
+        inventory_move_sound = item_sounds.electric_small_inventory_move,
+        pick_sound = item_sounds.electric_small_inventory_pickup,
+        drop_sound = item_sounds.electric_small_inventory_move,
+    },
+    
+    -- ========================================
+    -- ROBOTS
+    -- ========================================
+    {
+        type = "item",
+        name = "tenebris-ceramic-construction-robot",
+        icon = "__base__/graphics/icons/construction-robot.png", -- Placeholder
+        subgroup = "logistic-network",
+        order = "b[robot]-z[tenebris-ceramic-construction]",
+        stack_size = 50,
+        weight = 1 * kg,
+        -- place_result = "ceramic-construction-robot", -- TODO: Entity not implemented yet
+        inventory_move_sound = item_sounds.robotic_inventory_move,
+        pick_sound = item_sounds.robotic_inventory_pickup,
+        drop_sound = item_sounds.robotic_inventory_move,
+    },
+    {
+        type = "item",
+        name = "tenebris-ceramic-logistic-robot",
+        icon = "__base__/graphics/icons/logistic-robot.png", -- Placeholder
+        subgroup = "logistic-network",
+        order = "b[robot]-z[tenebris-ceramic-logistic]",
+        stack_size = 50,
+        weight = 1 * kg,
+        -- place_result = "ceramic-logistic-robot", -- TODO: Entity not implemented yet
+        inventory_move_sound = item_sounds.robotic_inventory_move,
+        pick_sound = item_sounds.robotic_inventory_pickup,
+        drop_sound = item_sounds.robotic_inventory_move,
+    },
+    
+    -- ========================================
+    -- CAPSULES & COMBAT
+    -- ========================================
+    {
+        type = "ammo",
+        name = "piezoelectric-converter-capture-bot-rocket",
+        icons = {
+            {
+                icon = "__space-age__/graphics/icons/capture-bot.png",
+                icon_size = 64,
+                tint = tenebris.TINT.DARK_ORANGE,
+            }
+        },
+        ammo_category = "rocket",
+        ammo_type = {
+            action = {
+                type = "direct",
+                action_delivery = {
+                    type = "projectile",
+                    projectile = "piezoelectric-capture-robot-rocket",
+                    starting_speed = 0.1
+                }
+            },
+            target_filter = { "tenebris-quartz-forest-ortet", "tenebris-quartz-ortet-bud-spawner" }
+        },
+        subgroup = "ammo",
+        stack_size = 10,
+        weight = 100 * kg,
+        shoot_protected = true,
+        inventory_move_sound = item_sounds.robotic_inventory_move,
+        pick_sound = item_sounds.robotic_inventory_pickup,
+        drop_sound = item_sounds.robotic_inventory_move,
+    },
+    
+    -- ========================================
+    -- SPACE EXPLORATION
+    -- ========================================
     {
         type = "item",
         name = "bismuth-asteroid-chunk",
         icon = "__space-age__/graphics/icons/promethium-asteroid-chunk.png",
         subgroup = "space-material",
-        order = "t[tenebris]-a[bismuth-asteroid-chunk]",
+        stack_size = 1,
+        weight = 100 * kg,
         inventory_move_sound = space_age_item_sounds.rock_inventory_move,
         pick_sound = space_age_item_sounds.rock_inventory_pickup,
         drop_sound = space_age_item_sounds.rock_inventory_move,
-        stack_size = 1,
-        weight = 100 * kg,
         random_tint_color = item_tints.iron_rust
     },
+    {
+        type = "item",
+        name = "infected-carbonic-chunk",
+        icons = {
+            {
+                icon = "__space-age__/graphics/icons/carbonic-asteroid-chunk.png",
+                icon_size = 64,
+                tint = centipede_constants.EGGROID_ICON_TINT,
+            },
+        },
+        subgroup = "space-material",
+        order = "b[carbonic]-z[infected]",
+        stack_size = 1,
+        weight = 100 * kg,
+        spoil_ticks = ticks_per_minute * 5,  -- 5 minutes to hatch
+        spoil_to_trigger_result = {
+            items_per_trigger = 1,
+            trigger = {
+                type = "direct",
+                action_delivery = {
+                    type = "instant",
+                    source_effects = {
+                        {
+                            type = "create-entity",
+                            entity_name = "centipede-head-premature",
+                            repeat_count = 2,
+                            repeat_count_deviation = 2,  -- Spawns 1-4 centipedes (2 ± 2, min 1)
+                            affects_target = true,
+                            show_in_tooltip = true,
+                            as_enemy = true,
+                            find_non_colliding_position = true,
+                            offset_deviation = {{-5, -5}, {5, 5}},
+                        },
+                    }
+                }
+            }
+        },
+        inventory_move_sound = space_age_item_sounds.rock_inventory_move,
+        pick_sound = space_age_item_sounds.rock_inventory_pickup,
+        drop_sound = space_age_item_sounds.rock_inventory_move,
+    },
+    {
+        type = "item",
+        name = "observation-satellite",
+        icon = "__base__/graphics/icons/satellite.png",
+        subgroup = "space-related",
+        stack_size = 1,
+        weight = 1000 * kg,
+        send_to_orbit_mode = "automated",
+        rocket_launch_products = {
+            { type = "item", name = "space-science-pack", amount_min = 10, amount_max = 100 },
+        },
+    },
+    
+    -- ========================================
+    -- SCIENCE PACKS
+    -- ========================================
     bioluminescent_science_pack,
-    lightless_science_pack,
+    piezoelectric_science_pack,
 })
+

@@ -5,76 +5,160 @@ space_age_tiles_util = space_age_tiles_util or {}
 local tile_trigger_effects = require("__base__.prototypes.tile.tile-trigger-effects")
 local tile_sounds = require("__space-age__/prototypes/tile/tile-sounds")
 
-local lake_ambience =
-{
-  {
-    sound =
+local ambience = require("__tenebris-prime__/prototypes/tile/ambience.lua")
+local tenebris = require("lib.tenebris")
+
+local ABSORPTION = tenebris.ABSORPTION
+
+-- Mercury pools - shallow toxic liquid around mercury pool spots
+local mercury_swamp = {
+    type = "tile",
+    name = "tenebris-mercury-tile",
+    order = "t[tenebris]-a[tenebris-mercury-tile]",
+    subgroup = "gleba-water-tiles",
+    collision_mask = tile_collision_masks.shallow_water(),
+    -- Base autoplace (overridden by property_expression_names in map_gen)
+    autoplace = {probability_expression = "tenebris_tile_mercury"},
+    lowland_fog = true,
+    absorptions_per_second = ABSORPTION.NEUTRAL,
+    particle_tints = tile_graphics.gleba_shallow_water_particle_tints,
+    layer = 1,
+    layer_group = "water-overlay",
+    sprite_usage_surface = "gleba",
+    variants =
     {
-      variations = sound_variations("__base__/sound/world/water/waterlap", 10, 0.4),
-      advanced_volume_control =
-      {
-        fades = {fade_in = {curve_type = "cosine", from = {control = 0.5, volume_percentage = 0.0}, to = {1.5, 100.0}}}
-      }
-    },
-    radius = 7.5,
-    min_entity_count = 10,
-    max_entity_count = 30,
-    entity_to_sound_ratio = 0.1,
-    average_pause_seconds = 8
-  },
-  {
-    sound =
-      {
-        variations = sound_variations("__space-age__/sound/world/tiles/rain-on-water", 10, 0.2),
-        advanced_volume_control =
+        main =
         {
-          fades = {fade_in = {curve_type = "cosine", from = {control = 0.5, volume_percentage = 0.0}, to = {1.5, 100.0}}},
-        }
-      },
-      min_entity_count = 10,
-      max_entity_count = 25,
-      entity_to_sound_ratio = 0.1,
-      average_pause_seconds = 5,
-  }
+            {
+                picture = "__tenebris-prime__/graphics/tile/mercury.png",
+                count = 1,
+                scale = 0.5,
+                size = 1
+            }
+        },
+        empty_transitions=true,
+    },
+    transitions = {lava_to_out_of_map_transition},
+    transitions_between_transitions = data.raw.tile["water"].transitions_between_transitions,
+    walking_sound = sound_variations("__base__/sound/walking/shallow-water", 7, 1),
+    landing_steps_sound = tile_sounds.landing.wet,
+    driving_sound = wetland_driving_sound,
+    map_color = {140, 140, 148},
+    walking_speed_modifier = 0.2,
+    vehicle_friction_modifier = 20.0,
+    default_cover_tile = "landfill",
+    fluid = "tenebris-mercury",
+    ambient_sounds = ambience.lake_ambience
 }
 
-data:extend({
-    {
-        type = "tile",
-        name = "sulfuric-acid-tile",
-        order = "b[tenebris]-a[sulfuric-acid]",
-        subgroup = "gleba-water-tiles",
-        collision_mask = tile_collision_masks.shallow_water(),
-        autoplace = {probability_expression = "noise_layer_noise(1) - 0.4"},
-        lowland_fog = true,
-        particle_tints = tile_graphics.gleba_shallow_water_particle_tints,
-        layer = 1,
-        layer_group = "water-overlay",
-        sprite_usage_surface = "gleba",
-        variants =
-        {
-          main =
-          {
+-- Abyssal gashes - deep impassable trenches that wind through the terrain
+-- These are dark, foreboding chasms that block player movement
+local abyssal_water = {
+    type = "tile",
+    name = "tenebris-abyssal-water",
+    order = "t[tenebris]-b[tenebris-abyssal-water]",
+    subgroup = "gleba-water-tiles",
+    collision_mask = tile_collision_masks.water(),  -- Full water collision (impassable)
+    -- Autoplace with high priority order (z- prefix ensures it's placed last/on top)
+    autoplace = {
+        probability_expression = "tenebris_tile_abyssal",
+        order = "z[tenebris]-a[abyssal]"
+    },
+    layer = 2,
+    layer_group = "water",
+    sprite_usage_surface = "nauvis",
+    variants = {
+        main = {
             {
-              picture = "__tenebris-prime__/graphics/tile/sulfuric-acid.png",
-              count = 1,
-              scale = 0.5,
-              size = 1
+                picture = "__base__/graphics/terrain/deepwater/deepwater1.png",
+                count = 1,
+                scale = 0.5,
+                size = 1
             }
-          },
-          empty_transitions=true,
         },
-        transitions = {lava_to_out_of_map_transition},
-        transitions_between_transitions = data.raw.tile["water"].transitions_between_transitions,
-        walking_sound = sound_variations("__base__/sound/walking/shallow-water", 7, 1),
-        landing_steps_sound = tile_sounds.landing.wet,
-        driving_sound = wetland_driving_sound,
-        map_color = {155,142,58},
-        walking_speed_modifier = 0.4,
-        vehicle_friction_modifier = 12.0,
-        -- trigger_effect = tile_trigger_effects.shallow_water_trigger_effect(),
-        default_cover_tile = "landfill",
-        fluid = "sulfuric-acid",
-        ambient_sounds = lake_ambience
-      }
+        empty_transitions = true  -- No wispy transitions
+    },
+    transitions = {lava_to_out_of_map_transition},  -- Simple clean transition
+    walking_sound = data.raw.tile["deepwater"].walking_sound,
+    map_color = {15, 15, 25},  -- Very dark, almost black
+    walking_speed_modifier = 1,
+    vehicle_friction_modifier = 1,
+    effect = "water",
+    effect_color = {15, 15, 30},  -- Dark murky water effect
+    effect_color_secondary = {5, 5, 15},
+    ambient_sounds = ambience.lake_ambience,
+    absorptions_per_second = ABSORPTION.EXTREME,
+}
+
+-- Debug visualization tiles with distinct colors
+-- These are temporary for biome debugging
+
+-- Highlands - Bright Cyan
+local debug_highlands = table.deepcopy(data.raw.tile["highland-dark-rock"])
+debug_highlands.name = "tenebris-debug-highlands"
+debug_highlands.order = "t[tenebris]-d[debug]-a[highlands]"
+debug_highlands.autoplace = {probability_expression = "tenebris_tile_highlands"}
+debug_highlands.map_color = {0, 200, 255}  -- Bright cyan
+debug_highlands.absorptions_per_second = ABSORPTION.NEUTRAL
+
+-- Lowlands - Bright Green
+local debug_lowlands = table.deepcopy(data.raw.tile["lowland-cream-cauliflower"])
+debug_lowlands.name = "tenebris-debug-lowlands"
+debug_lowlands.order = "t[tenebris]-d[debug]-b[lowlands]"
+debug_lowlands.autoplace = {probability_expression = "tenebris_tile_lowlands"}
+debug_lowlands.map_color = {0, 255, 100}  -- Bright green
+debug_lowlands.absorptions_per_second = ABSORPTION.HIGH
+
+-- Wastes - Bright Yellow/Orange
+local debug_wastes = table.deepcopy(data.raw.tile["dust-lumpy"])
+debug_wastes.name = "tenebris-debug-wastes"
+debug_wastes.order = "t[tenebris]-d[debug]-c[wastes]"
+debug_wastes.autoplace = {probability_expression = "tenebris_tile_wastes"}
+debug_wastes.map_color = {255, 200, 0}  -- Bright yellow/orange
+debug_wastes.absorptions_per_second = ABSORPTION.LOW
+
+-- Sulfur geysers - Bright Red
+local debug_sulfur = table.deepcopy(data.raw.tile["pit-rock"])
+debug_sulfur.name = "tenebris-debug-sulfur"
+debug_sulfur.order = "t[tenebris]-d[debug]-d[sulfur]"
+debug_sulfur.autoplace = {probability_expression = "tenebris_tile_sulfur"}
+debug_sulfur.map_color = {255, 50, 50}  -- Bright red
+debug_sulfur.absorptions_per_second = ABSORPTION.NEUTRAL
+
+-- Quartz forests - Violet
+local debug_quartz = table.deepcopy(data.raw.tile["dust-lumpy"])
+debug_quartz.name = "tenebris-debug-quartz"
+debug_quartz.order = "t[tenebris]-d[debug]-e[quartz]"
+debug_quartz.autoplace = {probability_expression = "tenebris_quartz_forest_mask"}
+debug_quartz.map_color = {138, 43, 226}  -- Violet
+debug_quartz.absorptions_per_second = ABSORPTION.NEUTRAL
+
+-- Overgrowth Luciferin Soil - for growing lucifunnels
+local base_overgrowth_yumako = data.raw["tile"]["overgrowth-yumako-soil"]
+local overgrowth_luciferin_soil = table.deepcopy(base_overgrowth_yumako)
+overgrowth_luciferin_soil.name = "overgrowth-luciferin-soil"
+overgrowth_luciferin_soil.order = "t[tenebris]-e[overgrowth-luciferin-soil]"
+overgrowth_luciferin_soil.subgroup = "tenebris-artificial-terrain"
+overgrowth_luciferin_soil.minable = {mining_time = 0.5, result = "overgrowth-luciferin-soil"}
+overgrowth_luciferin_soil.map_color = {100, 200, 150}  -- Greenish tint for luciferin
+
+-- Overgrowth Tenecap Soil - for growing tenecaps
+local base_overgrowth_jellynut = data.raw["tile"]["overgrowth-jellynut-soil"]
+local overgrowth_tenecap_soil = table.deepcopy(base_overgrowth_jellynut)
+overgrowth_tenecap_soil.name = "overgrowth-tenecap-soil"
+overgrowth_tenecap_soil.order = "t[tenebris]-f[overgrowth-tenecap-soil]"
+overgrowth_tenecap_soil.subgroup = "tenebris-artificial-terrain"
+overgrowth_tenecap_soil.minable = {mining_time = 0.5, result = "overgrowth-tenecap-soil"}
+overgrowth_tenecap_soil.map_color = {150, 100, 180}  -- Purplish tint for tenecap
+
+data:extend({
+    mercury_swamp,
+    abyssal_water,
+    debug_highlands,
+    debug_lowlands,
+    debug_wastes,
+    debug_sulfur,
+    debug_quartz,
+    overgrowth_luciferin_soil,
+    overgrowth_tenecap_soil,
 })

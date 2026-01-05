@@ -3,12 +3,12 @@ local asteroid_functions = {}
 asteroid_functions.standard_speed = 1 * meter/second
 
 asteroid_functions.weighted_average = function(A, B, weight)
-  local result = A + ((B-A)*weight)
+  local result = A + ((B - A)*weight)
   return result
 end
 
-asteroid_functions.fulgora_ratio            = {4, 3, 1, 0, 0}
-asteroid_functions.tenebris_ratio           = {2, 7, 1, 0, 0}
+asteroid_functions.fulgora_ratio            = {4, 3, 1, 0, 0}  -- metallic, carbonic, oxide, promethium, bismuth
+asteroid_functions.tenebris_ratio           = {2, 7, 1, 0, 0}  -- No bismuth in base ratio (added separately where needed)
 asteroid_functions.iridescent_river_ratio   = {3, 4, 6, 0, 22}
 asteroid_functions.lightless_abyss_ratio    = {0.0000001, 0, 0, 0, 0}
 
@@ -33,6 +33,37 @@ asteroid_functions.huge_angle = 0.4
 
 asteroid_functions.fulgora_tenebris =
 {
+  -- Moderate centipede presence approaching Tenebris
+  eggroid_spawns = {
+    {name = "centipede-eggroid-small", spawn_points = {
+      {distance = 0.3, probability = 0, speed = 0.015},
+      {distance = 0.5, probability = 0.0005, speed = 0.015},
+      {distance = 0.9, probability = 0.002, speed = 0.015},
+    }},
+    {name = "centipede-eggroid-medium", spawn_points = {
+      {distance = 0.4, probability = 0, speed = 0.012},
+      {distance = 0.6, probability = 0.0002, speed = 0.012},
+      {distance = 0.9, probability = 0.001, speed = 0.012},
+    }},
+    {name = "centipede-eggroid-large", spawn_points = {
+      {distance = 0.5, probability = 0, speed = 0.01},
+      {distance = 0.7, probability = 0.0001, speed = 0.01},
+      {distance = 0.9, probability = 0.0005, speed = 0.01},
+    }},
+  },
+  -- Small and medium bismuth asteroids only (no big/huge)
+  bismuth_spawns = {
+    {name = "small-bismuth-asteroid", spawn_points = {
+      {distance = 0.75, probability = 0, speed = 0.02},
+      {distance = 0.8, probability = 0.001, speed = 0.02},
+      {distance = 0.9, probability = 0.002, speed = 0.02},
+    }},
+    {name = "medium-bismuth-asteroid", spawn_points = {
+      {distance = 0.75, probability = 0, speed = 0.015},
+      {distance = 0.8, probability = 0.0005, speed = 0.015},
+      {distance = 0.9, probability = 0.001, speed = 0.015},
+    }},
+  },
   probability_on_range_chunk =
   {
     {position = 0.1, probability = asteroid_functions.fulgora_chunks, angle_when_stopped = asteroid_functions.chunk_angle},
@@ -65,6 +96,24 @@ asteroid_functions.fulgora_tenebris =
 asteroid_functions.tenebris_iridescent_river =
 {
   has_iridescent_asteroids = true,
+  -- Light centipede presence - mostly giants patrolling
+  eggroid_spawns = {
+    {name = "centipede-eggroid-small", spawn_points = {
+      {distance = 0.4, probability = 0, speed = 0.015},
+      {distance = 0.7, probability = 0.0002, speed = 0.015},
+      {distance = 0.9, probability = 0.0005, speed = 0.015},
+    }},
+    {name = "centipede-eggroid-medium", spawn_points = {
+      {distance = 0.5, probability = 0, speed = 0.012},
+      {distance = 0.8, probability = 0.0001, speed = 0.012},
+      {distance = 0.9, probability = 0.0003, speed = 0.012},
+    }},
+    {name = "centipede-eggroid-giant", spawn_points = {
+      {distance = 0.3, probability = 0, speed = 0.008},
+      {distance = 0.5, probability = 0.0001, speed = 0.008},
+      {distance = 0.9, probability = 0.0005, speed = 0.008},
+    }},
+  },
   probability_on_range_chunk =
   {
     {position = 0.1, probability = asteroid_functions.tenebris_chunks, angle_when_stopped = asteroid_functions.chunk_angle},
@@ -89,8 +138,66 @@ asteroid_functions.tenebris_iridescent_river =
   }
 }
 
+asteroid_functions.the_nest_route =
+{
+  -- Dense centipede presence - The Nest is heavily guarded
+  eggroid_spawns = {
+    {name = "centipede-eggroid-small", spawn_points = {
+      {distance = 0.1, probability = 0.001, speed = 0.015},
+      {distance = 0.5, probability = 0.003, speed = 0.015},
+      {distance = 0.9, probability = 0.005, speed = 0.015},
+    }},
+    {name = "centipede-eggroid-medium", spawn_points = {
+      {distance = 0.1, probability = 0.0005, speed = 0.012},
+      {distance = 0.5, probability = 0.002, speed = 0.012},
+      {distance = 0.9, probability = 0.004, speed = 0.012},
+    }},
+    {name = "centipede-eggroid-large", spawn_points = {
+      {distance = 0.2, probability = 0.0002, speed = 0.01},
+      {distance = 0.6, probability = 0.001, speed = 0.01},
+      {distance = 0.9, probability = 0.003, speed = 0.01},
+    }},
+    {name = "centipede-eggroid-giant", spawn_points = {
+      {distance = 0.3, probability = 0.0001, speed = 0.008},
+      {distance = 0.6, probability = 0.0008, speed = 0.008},
+      {distance = 0.9, probability = 0.002, speed = 0.008},
+    }},
+    {name = "centipede-eggroid-leviathan", spawn_points = {
+      {distance = 0.5, probability = 0, speed = 0.005},
+      {distance = 0.7, probability = 0.0002, speed = 0.005},
+      {distance = 0.9, probability = 0.0008, speed = 0.005},
+    }},
+  },
+  probability_on_range_chunk =
+  {
+    {position = 0.1, probability = asteroid_functions.iridescent_river_chunks, angle_when_stopped = asteroid_functions.chunk_angle},
+    {position = 0.9, probability = asteroid_functions.iridescent_river_chunks * 0.5, angle_when_stopped = asteroid_functions.chunk_angle}
+  },
+  probability_on_range_huge =
+  {
+    {position = 0.1, probability = asteroid_functions.iridescent_river_huge, angle_when_stopped = asteroid_functions.huge_angle},
+    {position = 0.9, probability = asteroid_functions.iridescent_river_huge * 0.3, angle_when_stopped = asteroid_functions.huge_angle}
+  },
+  type_ratios =
+  {
+    {position = 0.1, ratios = asteroid_functions.iridescent_river_ratio},
+    {position = 0.3, ratios = {2, 3, 4, 0, 15}},
+    {position = 0.5, ratios = {1, 2, 3, 0, 10}},
+    {position = 0.7, ratios = {1, 1, 2, 0, 8}},
+    {position = 0.9, ratios = {0.5, 0.5, 1, 0, 5}},  -- Sparse asteroids near The Nest
+  }
+}
+
 asteroid_functions.tenebris_lightless_abyss =
 {
+  -- Sparse but dangerous - giant centipedes lurk in the darkness
+  eggroid_spawns = {
+    {name = "centipede-eggroid-giant", spawn_points = {
+      {distance = 0.2, probability = 0, speed = 0.008},
+      {distance = 0.5, probability = 0.0002, speed = 0.008},
+      {distance = 0.9, probability = 0.0006, speed = 0.008},
+    }},
+  },
   probability_on_range_chunk =
   {
     {position = 0.001, probability = asteroid_functions.tenebris_chunks, angle_when_stopped = asteroid_functions.chunk_angle},
@@ -260,6 +367,27 @@ asteroid_functions.spawn_definitions = function(data, planet)
   end
   if data.has_promethium_asteroids == true then
     asteroid_types = {"metallic", "carbonic", "oxide", "promethium", "bismuth"}
+  end
+  
+  -- Add centipede eggroid spawns (per-route customization)
+  if data.eggroid_spawns and planet == nil then
+    for _, eggroid in pairs(data.eggroid_spawns) do
+      table.insert(asteroid_spawn_definitions, {
+        type = "entity",
+        asteroid = eggroid.name,
+        spawn_points = eggroid.spawn_points,
+      })
+    end
+  end
+  
+  -- Add custom bismuth asteroid spawns (allows specific sizes without enabling all sizes)
+  if data.bismuth_spawns and planet == nil then
+    for _, bismuth in pairs(data.bismuth_spawns) do
+      table.insert(asteroid_spawn_definitions, {
+        asteroid = bismuth.name,
+        spawn_points = bismuth.spawn_points,
+      })
+    end
   end
   for k, asteroid_size in pairs(asteroid_sizes) do
     for k, asteroid_type in pairs(asteroid_types) do

@@ -1,10 +1,12 @@
+local constants = require("lib.constants")
+
 data:extend(
 {
     {
         type = "change-surface-achievement",
         name = "visit-tenebris",
         order = "a[progress]-g[visit-planet]-t[tenebris]",
-        surface = "tenebris",
+        surface = constants.PLANET.TENEBRIS,
         icon = "__space-age__/graphics/achievement/visit-fulgora.png",
         icon_size = 128,
     },
@@ -12,7 +14,7 @@ data:extend(
         type = "research-with-science-pack-achievement",
         name = "research-with-lightless",
         order = "e[research]-a[research-with]-t[lightless]",
-        science_pack = "lightless-science-pack",
+        science_pack = "piezoelectric-science-pack",
         icon = "__space-age__/graphics/achievement/research-with-promethium.png",
         icon_size = 128
       },
@@ -32,16 +34,6 @@ data:extend(
         reversed = false,
         tracked_connection = "lightless-gateway-lightless-abyss",
         icon = "__space-age__/graphics/achievement/shattered-planet-1.png",
-        icon_size = 128
-      },
-      {
-        type = "produce-achievement",
-        name = "shiny-objects",
-        order = "d[production]-t[tenebris-shiny-objects]",
-        item_product = { name = "quartziferous-bismuthal-plate" },
-        amount = 1,
-        limited_to_one_game = false,
-        icon = "__space-age__/graphics/achievement/my-modules-are-legendary.png",
         icon_size = 128
       },
       {
