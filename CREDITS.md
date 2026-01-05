@@ -1,5 +1,14 @@
 # Credits & Attributions
 
+## Original Mod
+
+This revamp is built upon the original Tenebris Prime mod. Special thanks to:
+
+- **nicholasgower** - Creator and maintainer of [Tenebris Prime](https://github.com/nicholasgower/tenebris-prime)
+- Thank you for creating and maintaining the original mod, and for allowing this major revamp to be developed.
+
+---
+
 ## Starmap Planet Graphics
 
 The following starmap icons use modified graphics from third-party mods, used under the MIT License:
@@ -272,7 +281,7 @@ The GNU General Public License v3 permits use and modification, provided that th
 ### GNU LGPLv3 License
 The GNU Lesser General Public License v3 permits use and modification, provided that the original copyright notice is retained and modifications are documented. The LGPL allows linking to proprietary code while keeping the LGPL-licensed components open source.
 
-We thank grog2, Valerian, Malcolm Riley, Mr.SmoothieHuman, Krastor, Linver, SaffTheLamb, and thesixthroc for making their work available under permissive licensing.
+We thank everyone above for making their work available under permissive licensing.
 
 ---
 
