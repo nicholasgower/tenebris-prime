@@ -33,29 +33,29 @@ data:extend({
 
         pictures = {
             {
-                size = 256,
-                scale = 0.2,
+                size = 500,
+                scale = 0.15,
                 filename = "__tenebris-prime__/graphics/entity/glowdentale/glowdentale-1.png",
                 draw_as_glow = true,
                 shift = { 0, -0.5 },
             },
             {
-                size = 256,
-                scale = 0.2,
+                size = 500,
+                scale = 0.15,
                 filename = "__tenebris-prime__/graphics/entity/glowdentale/glowdentale-2.png",
                 draw_as_glow = true,
                 shift = { 0, -0.5 },
             },
             {
-                size = 256,
-                scale = 0.2,
+                size = 500,
+                scale = 0.15,
                 filename = "__tenebris-prime__/graphics/entity/glowdentale/glowdentale-3.png",
                 draw_as_glow = true,
                 shift = { 0, -0.5 },
             },
             {
-                size = 256,
-                scale = 0.2,
+                size = 500,
+                scale = 0.15,
                 filename = "__tenebris-prime__/graphics/entity/glowdentale/glowdentale-4.png",
                 draw_as_glow = true,
                 shift = { 0, -0.5 },
@@ -101,7 +101,7 @@ data:extend({
         mined_sound = sound_variations("__space-age__/sound/mining/mined-stingfrond", 5, 0.4),
         max_health = 50,
         collision_box = { { -0.6, -0.8 }, { 0.6, 0.8 } },
-        selection_box = { { -1, -1 }, { 1, 1 } },
+        selection_box = { { -0.6, -0.8 }, { 0.6, 0.8 } },
         drawing_box_vertical_extension = 0.8,
         subgroup = "trees",
         order = "t[tenebris]-b[lucifunnel]",
@@ -109,12 +109,34 @@ data:extend({
         -- factoriopedia_simulation = simulations.factoriopedia_stingfrond,
 
         pictures = {
-            width = 1024,
-            height = 1024,
-            scale = 0.1,
-            filename = "__tenebris-prime__/graphics/entity/lucifunnel.png",
-            draw_as_glow = true,
-            shift = { 0, -0.5 },
+            {
+                size = 500,
+                scale = 0.3,
+                filename = "__tenebris-prime__/graphics/entity/lucifunnel-1.png",
+                draw_as_glow = true,
+                shift = { 0, -0.5 },
+            },
+            {
+                size = 500,
+                scale = 0.3,
+                filename = "__tenebris-prime__/graphics/entity/lucifunnel-2.png",
+                draw_as_glow = true,
+                shift = { 0, -0.5 },
+            },
+            {
+                size = 500,
+                scale = 0.3,
+                filename = "__tenebris-prime__/graphics/entity/lucifunnel-3.png",
+                draw_as_glow = true,
+                shift = { 0, -0.5 },
+            },
+            {
+                size = 500,
+                scale = 0.3,
+                filename = "__tenebris-prime__/graphics/entity/lucifunnel-4.png",
+                draw_as_glow = true,
+                shift = { 0, -0.5 },
+            }
         },
 
         stateless_visualisation_variations = {
@@ -156,7 +178,7 @@ data:extend({
         mining_sound = sound_variations("__space-age__/sound/mining/axe-mining-stingfrond", 5, 0.5),
         mined_sound = sound_variations("__space-age__/sound/mining/mined-stingfrond", 5, 0.4),
         max_health = 50,
-        selection_box = { { -0.5, -0.5 }, { 0.5, 0.5 } },
+        selection_box = { { -0.75, -0.75 }, { 0.75, 0.75 } },
         collision_box = { { -0.5, -0.5 }, { 0.5, 0.5 } },
         drawing_box_vertical_extension = 0.8,
         subgroup = "trees",
@@ -165,22 +187,33 @@ data:extend({
         -- factoriopedia_simulation = simulations.factoriopedia_stingfrond,
 
         pictures = {
-            layers = {
-                {
-                    width = 256,
-                    height = 259,
-                    scale = 0.1,
-                    filename = "__tenebris-prime__/graphics/entity/tenecap.png",
-                    shift = { 0, -0.25 },
-                },
-                {
-                    width = 512,
-                    height = 256,
-                    scale = 0.075,
-                    filename = "__tenebris-prime__/graphics/entity/tenecap-shadow.png",
-                    draw_as_shadow = true,
-                    shift = { 0.55, 0 },
-                }
+            {
+                width = 256,
+                height = 259,
+                scale = 0.25,
+                filename = "__tenebris-prime__/graphics/entity/tenecap-1.png",
+                shift = { 0, -0.3 },
+            },
+            {
+                width = 256,
+                height = 259,
+                scale = 0.25,
+                filename = "__tenebris-prime__/graphics/entity/tenecap-2.png",
+                shift = { 0, -0.3 },
+            },
+            {
+                width = 256,
+                height = 259,
+                scale = 0.25,
+                filename = "__tenebris-prime__/graphics/entity/tenecap-3.png",
+                shift = { 0, -0.3 },
+            },
+            {
+                width = 256,
+                height = 259,
+                scale = 0.25,
+                filename = "__tenebris-prime__/graphics/entity/tenecap-4.png",
+                shift = { 0, -0.3 },
             }
         },
 
@@ -244,25 +277,25 @@ data:extend({
                 filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-1.png",
                 width = 256,
                 height = 256,
-                scale = 0.3,
+                scale = 0.4,
             },
             {
                 filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-2.png",
                 width = 256,
                 height = 256,
-                scale = 0.3,
+                scale = 0.4,
             },
             {
                 filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-3.png",
                 width = 256,
                 height = 256,
-                scale = 0.3,
+                scale = 0.4,
             },
             {
                 filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-4.png",
                 width = 256,
                 height = 256,
-                scale = 0.3,
+                scale = 0.4,
             },
         }
     },

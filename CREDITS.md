@@ -262,6 +262,16 @@ The following starmap icons use modified graphics from third-party mods, used un
 - **File:** `graphics/icons/crystal-seedling.png`
 - **Original:** `enriched-zinc-1.png`
 
+### Plant Graphics (Glowdentale, Lucifunnel, Tenecap, Quartz Node)
+- **Source:** [Tenebris Plants Retexture](https://mods.factorio.com/mod/Tenebris_plants_retexture) by mafisto
+- **License:** MIT
+- **Files:**
+  - `graphics/entity/glowdentale/glowdentale-1.png` through `glowdentale-4.png`
+  - `graphics/entity/lucifunnel-1.png` through `lucifunnel-4.png`
+  - `graphics/entity/tenecap-1.png` through `tenecap-4.png`
+  - `graphics/entity/quartz-node/quartz-node-1.png` through `quartz-node-4.png`
+- **Note:** High-quality plant retextures for Tenebris plants
+
 ---
 
 ## Audio
