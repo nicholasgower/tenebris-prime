@@ -3,6 +3,7 @@
 
 local hit_effects = require("__base__.prototypes.entity.hit-effects")
 local sounds = require("__base__.prototypes.entity.sounds")
+local tenebris = require("__tenebris-prime__.lib.tenebris")
 
 data:extend({
     {
@@ -14,8 +15,8 @@ data:extend({
         minable = {mining_time = 0.5, result = "tenebris-crystal-resonance-chamber"},
         fast_replaceable_group = "assembling-machine",
         max_health = 500,
-        corpse = "assembling-machine-3-remnants",
-        dying_explosion = "assembling-machine-3-explosion",
+        corpse = "tenebris-crystal-resonance-chamber-remnants",
+        dying_explosion = "big-explosion",
         alert_icon_shift = util.by_pixel(0, -12),
         resistances = {
             {
@@ -23,8 +24,8 @@ data:extend({
                 percent = 70
             }
         },
-        collision_box = {{-1.7, -1.7}, {1.7, 1.7}},
-        selection_box = {{-2.0, -2.0}, {2.0, 2.0}},
+        collision_box = {{-3.375, -3.375}, {3.375, 3.375}},
+        selection_box = {{-3.5, -3.5}, {3.5, 3.5}},
         damaged_trigger_effect = hit_effects.entity(),
         drawing_box_vertical_extension = 0.3,
         module_slots = 4,
@@ -45,28 +46,65 @@ data:extend({
             max_transfer = "2GW",
             min_working_temperature = 500,
             minimum_glow_temperature = 350,
+            emissions_per_minute = {
+                tenecap_spore_clearance = 100,
+            },
             connections = {
                 -- Northwest corner
                 {
-                    position = {-1.5, -1.5},
+                    position = {-2.85, -2.85},
                     direction = defines.direction.north
+                },
+                {
+                    position = {-2.85, -2.85},
+                    direction = defines.direction.west
                 },
                 -- Northeast corner
                 {
-                    position = {1.5, -1.5},
+                    position = {2.85, -2.85},
                     direction = defines.direction.north
+                },
+                {
+                    position = {2.85, -2.85},
+                    direction = defines.direction.east
                 },
                 -- Southwest corner
                 {
-                    position = {-1.5, 1.5},
+                    position = {-2.85, 2.85},
                     direction = defines.direction.south
+                },
+                {
+                    position = {-2.85, 2.85},
+                    direction = defines.direction.west
                 },
                 -- Southeast corner
                 {
-                    position = {1.5, 1.5},
+                    position = {2.85, 2.85},
                     direction = defines.direction.south
-                }
+                },
+                {
+                    position = {2.85, 2.85},
+                    direction = defines.direction.east
+                },
             },
+            pipe_covers =
+                make_4way_animation_from_spritesheet(
+                {
+                    filename = "__base__/graphics/entity/heat-exchanger/heatex-endings.png",
+                    width = 64,
+                    height = 64,
+                    direction_count = 4,
+                    scale = 0.5
+                }),
+            heat_pipe_covers =
+                make_4way_animation_from_spritesheet(
+                apply_heat_pipe_glow{
+                    filename = "__base__/graphics/entity/heat-exchanger/heatex-endings-heated.png",
+                    width = 64,
+                    height = 64,
+                    direction_count = 4,
+                    scale = 0.5
+                }),
             heat_buffer_capacity = "10MJ",
             burns_fluid = false,
             scale_fluid_usage = false,
@@ -85,52 +123,176 @@ data:extend({
         graphics_set = {
             animation = {
                 north = {
-                    filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-north.png",
-                    priority = "high",
-                    width = 159,
-                    height = 169,
-                    frame_count = 1,
-                    shift = util.by_pixel(0, -10),
-                    scale = 0.85
+                    layers = {
+                        {
+                            filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-north.png",
+                            priority = "high",
+                            width = 460,
+                            height = 520,
+                            frame_count = 1,
+                            shift = {0, -0.2},
+                            scale = 0.5,
+                            tint = tenebris.TINT.HEAT_LIGHT
+                        },
+                        {
+                            filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-sh.png",
+                            priority = "high",
+                            width = 498,
+                            height = 438,
+                            shift = {0.33, 0.32},
+                            frame_count = 1,
+                            scale = 0.5,
+                            draw_as_shadow = true
+                        }
+                    }
                 },
                 east = {
-                    filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-south.png",
-                    priority = "high",
-                    width = 159,
-                    height = 178,
-                    frame_count = 1,
-                    shift = util.by_pixel(0, -10),
-                    scale = 0.85
+                    layers = {
+                        {
+                            filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-east.png",
+                            priority = "high",
+                            width = 460,
+                            height = 520,
+                            frame_count = 1,
+                            shift = {0, -0.2},
+                            scale = 0.5,
+                            tint = tenebris.TINT.HEAT_LIGHT
+                        },
+                        {
+                            filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-sh.png",
+                            priority = "high",
+                            width = 498,
+                            height = 438,
+                            shift = {0.33, 0.32},
+                            frame_count = 1,
+                            scale = 0.5,
+                            draw_as_shadow = true
+                        }
+                    }
                 },
                 south = {
-                    filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-west.png",
-                    priority = "high",
-                    width = 162,
-                    height = 188,
-                    frame_count = 1,
-                    shift = util.by_pixel(0, -10),
-                    scale = 0.85
+                    layers = {
+                        {
+                            filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-south.png",
+                            priority = "high",
+                            width = 460,
+                            height = 520,
+                            frame_count = 1,
+                            shift = {0, -0.2},
+                            scale = 0.5,
+                            tint = tenebris.TINT.HEAT_LIGHT
+                        },
+                        {
+                            filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-sh.png",
+                            priority = "high",
+                            width = 498,
+                            height = 438,
+                            shift = {0.33, 0.32},
+                            frame_count = 1,
+                            scale = 0.5,
+                            draw_as_shadow = true
+                        }
+                    }
                 },
                 west = {
-                    filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-east.png",
-                    priority = "high",
-                    width = 167,
-                    height = 169,
-                    frame_count = 1,
-                    shift = util.by_pixel(0, -10),
-                    scale = 0.85
+                    layers = {
+                        {
+                            filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-west.png",
+                            priority = "high",
+                            width = 460,
+                            height = 520,
+                            frame_count = 1,
+                            shift = {0, -0.2},
+                            scale = 0.5,
+                            tint = tenebris.TINT.HEAT_LIGHT
+                        },
+                        {
+                            filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-sh.png",
+                            priority = "high",
+                            width = 498,
+                            height = 438,
+                            shift = {0.33, 0.32},
+                            frame_count = 1,
+                            scale = 0.5,
+                            draw_as_shadow = true
+                        }
+                    }
+                }
+            },
+            working_visualisations = {
+                {
+                    animation = {
+                        filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-working.png",
+                        priority = "high",
+                        width = 340,
+                        height = 370,
+                        shift = {0.3, -0.59},
+                        frame_count = 30,
+                        line_length = 6,
+                        animation_speed = 0.6,
+                        scale = 0.5
+                    }
+                },
+                {
+                    apply_recipe_tint = "primary",
+                    animation = {
+                        filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-dirty-mask.png",
+                        width = 156,
+                        height = 120,
+                        scale = 0.5,
+                        frame_count = 30,
+                        line_length = 6,
+                        animation_speed = 0.6,
+                        shift = {1.61, -1.02}
+                    }
+                },
+                {
+                    apply_recipe_tint = "secondary",
+                    animation = {
+                        filename = "__tenebris-prime__/graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-clear-mask.png",
+                        width = 156,
+                        height = 120,
+                        scale = 0.5,
+                        frame_count = 30,
+                        line_length = 6,
+                        animation_speed = 0.6,
+                        shift = {1.61, 1.31}
+                    }
                 }
             }
         },
-        fluid_boxes_off_when_no_fluid_recipe = true,
         fluid_boxes = {
             {
                 production_type = "input",
                 pipe_picture = assembler3pipepictures(),
                 pipe_covers = pipecoverspictures(),
                 volume = 1000,
-                pipe_connections = {{flow_direction="input", direction = defines.direction.north, position = {1.5, -1.5}}},
+                pipe_connections = {{flow_direction="input", direction = defines.direction.north, position = {0, -3.08}}},
                 secondary_draw_orders = {north = -1}
+            },
+            {
+                production_type = "input",
+                pipe_picture = assembler3pipepictures(),
+                pipe_covers = pipecoverspictures(),
+                volume = 1000,
+                pipe_connections = {{flow_direction="input", direction = defines.direction.south, position = {0, 3.08}}},
+                secondary_draw_orders = {south = -1}
+            },
+            {
+                production_type = "input",
+                pipe_picture = assembler3pipepictures(),
+                pipe_covers = pipecoverspictures(),
+                volume = 1000,
+                pipe_connections = {{flow_direction="input", direction = defines.direction.west, position = {-3.08, 0}}},
+                secondary_draw_orders = {west = -1}
+            },
+            {
+                production_type = "input",
+                pipe_picture = assembler3pipepictures(),
+                pipe_covers = pipecoverspictures(),
+                volume = 1000,
+                pipe_connections = {{flow_direction="input", direction = defines.direction.east, position = {3.08, 0}}},
+                secondary_draw_orders = {east = -1}
             }
         },
         open_sound = sounds.machine_open,
@@ -138,11 +300,10 @@ data:extend({
         impact_category = "metal",
         working_sound = {
             sound = {
-                filename = "__base__/sound/assembling-machine-t3-1.ogg",
-                volume = 0.7
+                filename = "__tenebris-prime__/sounds/buildings/crystal-resonance-chamber.ogg",
+                volume = 0.5
             },
-            fade_in_ticks = 4,
-            fade_out_ticks = 20
+            idle_sound = { filename = "__base__/sound/idle1.ogg" },
         }
     }
 })

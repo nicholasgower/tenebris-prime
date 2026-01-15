@@ -81,13 +81,11 @@ local function build_connection_icons(from_prototype, to_prototype)
     end
 end
 
--- Get original connection parameters from prototype
+-- Get baseline connection length (use constant since fulgora-tenebris may have been deleted by other mods)
 local fulgora_tenebris = data.raw["space-connection"]["fulgora-tenebris"]
-if not fulgora_tenebris then
-    log("[Tenebris Prime] fulgora-tenebris connection not found, skipping compat")
-    return
-end
-local fulgora_tenebris_length = fulgora_tenebris.length
+local fulgora_tenebris_length = fulgora_tenebris and fulgora_tenebris.length or constants.SPACE_CONNECTION.FULGORA_TENEBRIS_LENGTH
+log(string.format("[Tenebris Prime] Using fulgora-tenebris length: %d (from %s)", 
+    fulgora_tenebris_length, fulgora_tenebris and "prototype" or "constant"))
 
 -- Get Tenebris position for distance calculations
 local tenebris_x, tenebris_y = get_planet_position(constants.PLANET.TENEBRIS)
@@ -159,70 +157,67 @@ if #candidates == 0 then
     return
 end
 
--- Find the closest candidate
-log(string.format("[Tenebris Prime] Comparing %d candidates:", #candidates))
+-- Log all candidates
+log(string.format("[Tenebris Prime] Found %d candidates:", #candidates))
 for i, c in ipairs(candidates) do
     log(string.format("[Tenebris Prime]   %d. %s: distance = %.2f", i, c.name, c.distance))
 end
 
-table.sort(candidates, function(a, b) return a.distance < b.distance end)
-local closest = candidates[1]
+-- Create connections for ALL candidates
+for _, candidate in ipairs(candidates) do
+    -- Calculate scaled route length based on distance
+    local new_length = fulgora_tenebris_length
+    if fulgora_to_tenebris_dist and fulgora_to_tenebris_dist > 0 then
+        local scale_factor = candidate.distance / fulgora_to_tenebris_dist
+        new_length = math.max(fulgora_tenebris_length, fulgora_tenebris_length * scale_factor)
+    end
 
-log(string.format("[Tenebris Prime] Selected closest planet: %s (distance: %.2f)", closest.name, closest.distance))
-if #candidates > 1 then
-    log(string.format("[Tenebris Prime] Runner-up: %s (distance: %.2f)", candidates[2].name, candidates[2].distance))
-end
+    local connection_name = candidate.name .. "-tenebris"
 
--- Calculate scaled route length
-local new_length = fulgora_tenebris_length
-if fulgora_to_tenebris_dist and fulgora_to_tenebris_dist > 0 then
-    local scale_factor = closest.distance / fulgora_to_tenebris_dist
-    new_length = math.max(fulgora_tenebris_length, fulgora_tenebris_length * scale_factor)
-end
+    -- Delete any existing connection (it might be incomplete from the other mod)
+    if candidate.existing_connection then
+        log(string.format("[Tenebris Prime] Deleting existing %s connection to recreate it", connection_name))
+        data.raw["space-connection"][connection_name] = nil
+    end
 
-local connection_name = closest.name .. "-tenebris"
+    -- Create our own connection
+    local icons = build_connection_icons(candidate.planet, tenebris_planet)
 
--- Check if connection already exists (created by the other mod)
-if closest.existing_connection then
-    -- Mark the existing connection as allowed and update it
-    closest.existing_connection.tenebris_prime_connection = true
-    closest.existing_connection.redrawn_connections_exclude = true
-    -- Update length to our scaled value
-    closest.existing_connection.length = math.floor(new_length)
-    -- Replace asteroids with our Tenebris-appropriate spawns
-    closest.existing_connection.asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.fulgora_tenebris)
-    log(string.format("[Tenebris Prime] Marked existing %s as allowed (length: %d, asteroids updated)", connection_name, math.floor(new_length)))
-else
-    -- Create the connection ourselves
-    local icons = build_connection_icons(closest.planet, tenebris_planet)
-    
     local new_connection = {
         type = "space-connection",
         name = connection_name,
-        subgroup = fulgora_tenebris.subgroup or "planet-connections",
-        from = closest.name,
+        subgroup = "planet-connections",
+        from = candidate.name,
         to = constants.PLANET.TENEBRIS,
         length = math.floor(new_length),
         asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.fulgora_tenebris),
         tenebris_prime_connection = true,
-        redrawn_connections_exclude = true,
+        redrawn_connections_keep = true,
     }
-    
+
     if icons then
         new_connection.icons = icons
     else
         new_connection.icon = "__space-age__/graphics/icons/planet-route.png"
         new_connection.icon_size = 64
     end
-    
+
     data:extend({ new_connection })
-    log(string.format("[Tenebris Prime] Created %s connection (length: %d)", connection_name, math.floor(new_length)))
+    log(string.format("[Tenebris Prime] Created %s connection (length: %d, redrawn_connections_keep=%s)", 
+        connection_name, math.floor(new_length), tostring(new_connection.redrawn_connections_keep)))
+
+    -- Verify the connection was actually added with the property
+    local verify = data.raw["space-connection"][connection_name]
+    if verify then
+        log(string.format("[Tenebris Prime] Verified %s exists, redrawn_connections_keep=%s", 
+            connection_name, tostring(verify.redrawn_connections_keep)))
+    else
+        log(string.format("[Tenebris Prime] ERROR: %s was not added to data.raw!", connection_name))
+    end
 end
 
--- Delete fulgora-tenebris since we have an alternative
-data.raw["space-connection"]["fulgora-tenebris"] = nil
-log("[Tenebris Prime] Deleted fulgora-tenebris (alternative route exists)")
-
--- Note: Any other connections (e.g., maraxsis-tenebris when paracelsin is closer)
--- will be deleted by tenespace-connections-cleanup.lua since they won't have
--- tenebris_prime_connection = true
+-- Delete fulgora-tenebris since we have alternatives
+if data.raw["space-connection"]["fulgora-tenebris"] then
+    data.raw["space-connection"]["fulgora-tenebris"] = nil
+    log("[Tenebris Prime] Deleted fulgora-tenebris (alternative routes exist)")
+end

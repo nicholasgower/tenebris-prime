@@ -152,7 +152,7 @@ data:extend({
         icons = {
             {
                 icon = "__tenebris-prime__/graphics/icons/mercurial-archaea.png",
-                icon_size = 1024,
+                icon_size = 64,
                 tint = {r = 0.85, g = 0.85, b = 0.90, a = 1.0},  -- Strong silver tint
             },
         },
@@ -391,6 +391,8 @@ data:extend({
         inventory_move_sound = space_age_item_sounds.rock_inventory_move,
         pick_sound = space_age_item_sounds.rock_inventory_pickup,
         drop_sound = space_age_item_sounds.rock_inventory_move,
+        place_result = "quartz-node",
+        plant_result = "quartz-node",
     },
     
     -- ========================================
@@ -481,7 +483,7 @@ data:extend({
         icons = {
             {
                 icon = "__tenebris-prime__/graphics/icons/mercurial-lattice.png",
-                icon_size = 1024,
+                icon_size = 64,
                 tint = {r = 0.85, g = 0.85, b = 0.90, a = 1.0},  -- Silver tint to match archaea
             },
         },

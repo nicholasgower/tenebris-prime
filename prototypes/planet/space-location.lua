@@ -24,14 +24,14 @@ local tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), {
     starmap_icon = "__tenebris-prime__/graphics/icons/starmap-icon-tenebris.png",
     starmap_icon_size = 3840,
     map_gen_settings = meld.overwrite(tenebris_map_gen()),
-    gravity_pull = 10,
+    gravity_pull = 30,
     orbit = {
         type = "planet",
         parent = {
             type = "space-location",
             name ="star",
             },
-        distance = 45,
+        distance = 48,
         orientation = 0.60,
     },
     magnitude = 1.2,
@@ -43,7 +43,7 @@ local tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), {
     {
         ["day-night-cycle"] = 20 * 60,
         ["magnetic-field"] = meld.delete(),
-        pressure = 18000,
+        pressure = 48000,
         ["solar-power"] = 0,
         gravity = 30,
         ["innate-energy-luminosity"] = 100,  -- High innate energy from piezoelectric quartz
@@ -74,7 +74,7 @@ local tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), {
     asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.fulgora_tenebris, 0.9),
     procession_graphic_catalogue = planet_catalogue_tenebris,
     draw_orbit = false,
-    redrawn_connections_exclude = true,  -- Exclude from Redrawn Space Connections mod
+    redrawn_connections_keep = true,  -- Exclude from Redrawn Space Connections mod
     player_effects =
     { -- TODO: replace with shader & find a way to have rain appear and disappear with weather system.
       type = "cluster",
@@ -88,13 +88,17 @@ local tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), {
         {
           type = "create-trivial-smoke",
           smoke_name = "gleba-raindrops",
-          speed = {-0.2, 0.7},
+          speed = {4.2, 4.7},
           initial_height = 1,
           speed_multiplier = 0.2,
           speed_multiplier_deviation = 0.05,
           starting_frame = 2,
           starting_frame_deviation = 10,
-          offset_deviation = {{-96, -56}, {96, 40}},
+          offset_deviation = {
+            {-96, -56}, 
+            {96, 40}, 
+            0.16
+          },
           speed_from_center = 0.01,
           speed_from_center_deviation = 0.02
         }
@@ -125,7 +129,7 @@ local iridescent_river = { -- Bismuth harvesting route
     asteroid_spawn_influence = 1,
     asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.tenebris_iridescent_river, 0.9),
     solar_power_in_space = 1,
-    redrawn_connections_exclude = true,  -- Exclude from Redrawn Space Connections mod
+    redrawn_connections_keep = true,  -- Exclude from Redrawn Space Connections mod
 }
 
 local the_nest = { -- Leviathan centipede spawning grounds
@@ -146,7 +150,7 @@ local the_nest = { -- Leviathan centipede spawning grounds
     asteroid_spawn_influence = 1,
     asteroid_spawn_definitions = tenebris_asteroid_util.spawn_definitions(tenebris_asteroid_util.the_nest_route, 0.9),
     solar_power_in_space = 1,
-    redrawn_connections_exclude = true,  -- Exclude from Redrawn Space Connections mod
+    redrawn_connections_keep = true,  -- Exclude from Redrawn Space Connections mod
 }
 
 local lightless_gateway = { -- Deep space endurance challenge on limited resources
@@ -167,7 +171,7 @@ local lightless_gateway = { -- Deep space endurance challenge on limited resourc
     asteroid_spawn_influence = 1,
     asteroid_spawn_definitions = {},
     solar_power_in_space = 0,
-    redrawn_connections_exclude = true,  -- Exclude from Redrawn Space Connections mod
+    redrawn_connections_keep = true,  -- Exclude from Redrawn Space Connections mod
 }
 
 local lightless_abyss = { -- Deep space endurance challenge on limited resources
@@ -187,7 +191,7 @@ local lightless_abyss = { -- Deep space endurance challenge on limited resources
     asteroid_spawn_influence = 0,
     asteroid_spawn_definitions = {},
     solar_power_in_space = 0,
-    redrawn_connections_exclude = true,  -- Exclude from Redrawn Space Connections mod
+    redrawn_connections_keep = true,  -- Exclude from Redrawn Space Connections mod
 }
 
 PlanetsLib:extend({tenebris})

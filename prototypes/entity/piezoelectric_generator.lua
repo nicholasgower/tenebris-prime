@@ -111,6 +111,9 @@ for _, tier in ipairs(TIERS) do
             max_transfer = "2GW",
             min_working_temperature = tier.min_working_temp,
             minimum_glow_temperature = tier.min_working_temp + 50,
+            emissions_per_minute = {
+                tenecap_spore_clearance = 150,
+            },
             -- Heat pipe connections on all 4 sides (visible to player)
             connections = {
                 { position = {0, -2}, direction = defines.direction.north },

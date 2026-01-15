@@ -119,6 +119,9 @@ local tenebris_heated_pumpjack = meld(table.deepcopy(data.raw["mining-drill"]["p
       max_transfer = "500kW",
       min_working_temperature = 500,
       minimum_glow_temperature = 350,
+      emissions_per_minute = {
+        tenecap_spore_clearance = 40,
+      },
       connections =
       {
         {
@@ -216,7 +219,7 @@ local tenebris_air_scrubber = meld(table.deepcopy(data.raw["furnace"]["atan-air-
       min_working_temperature = 600,
       minimum_glow_temperature = 850,
       emissions_per_minute = {
-        tenecap_spore_clearance = 100,
+        tenecap_spore_clearance = 300,
       },
       connections =
       {
@@ -458,7 +461,7 @@ local tenebris_heated_agricultural_tower = meld(table.deepcopy(data.raw["agricul
         min_working_temperature = 500,
         minimum_glow_temperature = 350,
         emissions_per_minute = {
-            tenecap_spore_clearance = 50,
+            tenecap_spore_clearance = 70,
         },
         connections = {
             { position = {0, 1.2}, direction = defines.direction.south },
@@ -605,6 +608,9 @@ local tenebris_heated_big_mining_drill = meld(table.deepcopy(data.raw["mining-dr
         max_transfer = "2GW",
         min_working_temperature = 650,
         minimum_glow_temperature = 500,
+        emissions_per_minute = {
+            tenecap_spore_clearance = 30,
+        },
         connections = {
             { position = {-2, 0}, direction = defines.direction.west },
             { position = {2, 0}, direction = defines.direction.east },

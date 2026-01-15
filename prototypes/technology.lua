@@ -187,8 +187,8 @@ data:extend({
         -- TODO: This should trigger on mining a quartz geode entity, not crafting the item
         -- Need to create a mineable quartz-geode entity in the world
         research_trigger = {
-            type = "craft-item",
-            item = "tenebris-quartz-geode"
+            type = "mine-entity",
+            entity = "quartz-node"
         }
     },
     {

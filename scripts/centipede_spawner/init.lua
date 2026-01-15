@@ -41,14 +41,62 @@ local function untrack_centipede(unit_number)
 end
 
 --- Check and kill old centipedes
--- Distance from platform center within which centipedes are considered "engaged"
+-- Distance from platform hub within which centipedes are considered "engaged"
 local ENGAGED_RADIUS = 150
 
-local function check_old_centipedes()
+--- Ensure hub cache is populated for a surface
+--- @param surface LuaSurface The surface to cache hubs for
+--- @param hub_cache table<number, LuaEntity[]> Cache of hubs per surface index
+local function ensure_hub_cache(surface, hub_cache)
+    local surface_index = surface.index
+    if not hub_cache[surface_index] then
+        hub_cache[surface_index] = surface.find_entities_filtered({
+            name = "space-platform-hub",
+        })
+    end
+end
+
+--- Get the nearest platform hub to an entity
+--- @param entity LuaEntity The entity to check
+--- @param hub_cache table<number, LuaEntity[]> Cache of hubs per surface index
+--- @return LuaEntity|nil hub The nearest valid hub, or nil if none found
+--- @return number distance The distance to the nearest hub, or math.huge if no hub found
+local function get_nearest_hub(entity, hub_cache)
+    local surface = entity.surface
+    local surface_index = surface.index
+    local pos = entity.position
+    
+    ensure_hub_cache(surface, hub_cache)
+    local hubs = hub_cache[surface_index]
+    
+    if #hubs == 0 then
+        return nil, math.huge
+    end
+    
+    local min_distance = math.huge
+    local nearest_hub = nil
+    for _, hub in pairs(hubs) do
+        if hub.valid then
+            local hub_pos = hub.position
+            local dx = pos.x - hub_pos.x
+            local dy = pos.y - hub_pos.y
+            local distance = math.sqrt(dx * dx + dy * dy)
+            if distance < min_distance then
+                min_distance = distance
+                nearest_hub = hub
+            end
+        end
+    end
+    
+    return nearest_hub, min_distance
+end
+
+local function check_and_retarget_centipedes()
     ensure_storage()
     
     local current_tick = game.tick
     local to_remove = {}
+    local hub_cache = {}  -- Cache hubs per surface for this check cycle
     
     for unit_number, data in pairs(storage[STORAGE_KEY]) do
         local entity = data.entity
@@ -57,19 +105,27 @@ local function check_old_centipedes()
         -- Check if entity is still valid
         if not entity or not entity.valid then
             table.insert(to_remove, unit_number)
-        -- Check if lifespan exceeded
-        elseif (current_tick - spawn_tick) >= CENTIPEDE_LIFESPAN then
-            -- Only destroy if the centipede is far from the platform center
-            -- If it's close, it's probably engaged in combat
-            local pos = entity.position
-            local distance = math.sqrt(pos.x * pos.x + pos.y * pos.y)
+        else
+            local nearest_hub, distance = get_nearest_hub(entity, hub_cache)
             
-            if distance > ENGAGED_RADIUS then
-                -- Far from platform - probably wandered off, destroy it
-                entity.destroy()
-                table.insert(to_remove, unit_number)
+            -- Re-issue attack command to keep centipedes engaged
+            if entity.commandable and nearest_hub and nearest_hub.valid then
+                entity.commandable.set_command({
+                    type = defines.command.attack,
+                    target = nearest_hub,
+                    distraction = defines.distraction.by_anything,
+                })
             end
-            -- If close to center, keep it alive (actively engaged)
+            
+            -- Check if should despawn (expired AND far from hub)
+            if (current_tick - spawn_tick) >= CENTIPEDE_LIFESPAN then
+                if distance > ENGAGED_RADIUS then
+                    -- Far from platform - probably wandered off, destroy it
+                    entity.destroy()
+                    table.insert(to_remove, unit_number)
+                end
+                -- If close to hub, keep it alive (actively engaged)
+            end
         end
     end
     
@@ -279,9 +335,9 @@ function centipede_spawner.register_events()
         tenebris.PRIORITY.CLEANUP
     )
     
-    -- Periodic check for old centipedes
+    -- Periodic check for old centipedes and retargeting
     tenebris.event_manager.subscribe_nth_tick(CHECK_INTERVAL, "centipede_lifespan_check", function()
-        check_old_centipedes()
+        check_and_retarget_centipedes()
     end, tenebris.PRIORITY.CLEANUP)
     
     -- Initialize storage

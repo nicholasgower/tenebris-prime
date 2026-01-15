@@ -228,14 +228,21 @@ The following starmap icons use modified graphics from third-party mods, used un
 - **Note:** Tinted light orange for heat component appearance
 
 ### Crystal Resonance Chamber
-- **Source:** Arch666angel (shared on Factorio forums)
-- **License:** MIT
+- **Source:** [Krastorio 2](https://mods.factorio.com/mod/Krastorio2) by Krastor, Linver
+- **License:** GNU LGPLv3
 - **Files:** 
   - `graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-north.png`
   - `graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-east.png`
   - `graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-south.png`
   - `graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-west.png`
-- **Original:** `hexi-crystaliser-base.png` (4 directional variants)
+  - `graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-sh.png`
+  - `graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-working.png`
+  - `graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-dirty-mask.png`
+  - `graphics/entity/crystal-resonance-chamber/crystal-resonance-chamber-clear-mask.png`
+  - `graphics/icons/crystal-resonance-chamber.png`
+  - `graphics/remnants/crystal-resonance-chamber-remnants.png`
+  - `sounds/buildings/crystal-resonance-chamber.ogg`
+- **Original:** `filtration-plant.png` (entity sprites), `filtration-plant-sh.png` (shadow), `filtration-plant-working.png` (working animation), `filtration-plant-dirty-mask.png` and `filtration-plant-clear-mask.png` (recipe tint masks), `filtration-plant.png` (icon), `big-random-pipes-remnants.png` (remnants), and `filtration-plant.ogg` (working sound)
 
 ### Salination Plant (Reserved for Phase 2)
 - **Source:** Arch666angel (shared on Factorio forums)
@@ -254,6 +261,18 @@ The following starmap icons use modified graphics from third-party mods, used un
 - **License:** GNU LGPLv3
 - **File:** `graphics/icons/crystal-seedling.png`
 - **Original:** `enriched-zinc-1.png`
+
+---
+
+## Audio
+
+### Voyager 2 Neptune Encounter Plasma Wave Recordings
+- **Source:** NASA/JPL-Caltech Voyager Plasma Wave Science Instrument
+- **Archive:** University of Iowa Department of Physics and Astronomy, Plasma Wave Group
+- **URL:** https://space.physics.uiowa.edu/plasma-wave/voyager/
+- **License:** Public Domain (U.S. Government Work)
+- **Files:** `sound/voyager-neptune/*.ogg` (processed from original MP3 recordings)
+- **Note:** Raw plasma wave data from Voyager 2's August 1989 Neptune encounter, sonified for human hearing. Original recordings capture electromagnetic waves in Neptune's magnetosphere converted to audio frequencies.
 
 ---
 
@@ -282,7 +301,7 @@ The GNU General Public License v3 permits use and modification, provided that th
 ### GNU LGPLv3 License
 The GNU Lesser General Public License v3 permits use and modification, provided that the original copyright notice is retained and modifications are documented. The LGPL allows linking to proprietary code while keeping the LGPL-licensed components open source.
 
-We thank everyone above for making their work available under permissive licensing.
+Thanks everyone above for making their work available under permissive licensing.
 
 ---
 

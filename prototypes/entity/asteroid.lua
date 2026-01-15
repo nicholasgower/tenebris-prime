@@ -534,19 +534,19 @@ data:extend{{
       {
         color_texture = {
           filename = "__space-age__/graphics/entity/asteroid/carbonic/chunk/asteroid-carbonic-chunk-colour-01.png",
-          size = 64,
+          size = 50,
           scale = 0.5,
         },
         normal_map = {
           filename = "__space-age__/graphics/entity/asteroid/carbonic/chunk/asteroid-carbonic-chunk-normal-01.png",
           premul_alpha = false,
-          size = 64,
+          size = 50,
           scale = 0.5,
         },
         roughness_map = {
           filename = "__space-age__/graphics/entity/asteroid/carbonic/chunk/asteroid-carbonic-chunk-roughness-01.png",
           premul_alpha = false,
-          size = 64,
+          size = 50,
           scale = 0.5,
         },
         shadow_shift = {0.15, 0.15},

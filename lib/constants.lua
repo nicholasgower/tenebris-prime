@@ -69,6 +69,15 @@ constants.TINT = {
 
 --#endregion
 
+--#region Space Connection Constants
+
+--- Space connection lengths
+constants.SPACE_CONNECTION = {
+    FULGORA_TENEBRIS_LENGTH = 75000,  -- Base length for fulgora-tenebris route
+}
+
+--#endregion
+
 --#region Gameplay Constants
 
 --- Pollution absorption rates for tenecap_spore_clearance
@@ -238,6 +247,82 @@ constants.ENTITY = {
     BIOINFUSOR = "tenebris-bioinfusor",
     LIGHTNING_FURNACE = "tenebris-lightning-furnace",
     LIGHTNING_COLLECTOR_HIDDEN = "tenebris-lightning-collector-hidden"
+}
+
+--#endregion
+
+--#region Tenespace Effects Configuration
+
+--- Tenespace effects and corrosion configuration
+constants.TENESPACE = {
+    -- How often to check for platforms and spawn effects (ticks)
+    UPDATE_INTERVAL = 10,
+    
+    -- How often to rebuild chunk cache while in tenespace (ticks) - 1 minute
+    -- Catches platform changes during travel
+    CACHE_REBUILD_INTERVAL = 3600,
+    
+    -- How many chunks to process per tick during incremental cache rebuild
+    CHUNKS_PER_REBUILD_TICK = 20,
+    
+    -- How many chunks to process for corrosion per tick
+    CORROSION_CHUNKS_PER_TICK = 2,
+    
+    -- How many random chunks to spawn effects in per update
+    CHUNKS_PER_UPDATE = 5,
+    
+    -- Corrosion damage configuration (max_entities uses same setting as ground system)
+    CORROSION = {
+        -- Damage amount per check (acid damage, applied every 30 seconds by default)
+        damage_amount = 20,
+        -- Damage type
+        damage_type = "acid",
+    },
+    
+    -- Cyan glow dots (small scattered particles)
+    CYAN_GLOW = {
+        spawn_chance = 1.0,           -- Always spawn
+        count_min = 30,
+        count_max = 40,
+        speed_min = 0.002,
+        speed_max = 0.01,
+    },
+    
+    -- Brighter cyan dots (fewer, slightly larger)
+    CYAN_BRIGHT = {
+        spawn_chance = 0.8,
+        count_min = 20,
+        count_max = 25,
+        speed_min = 0.001,
+        speed_max = 0.008,
+    },
+    
+    -- Small spore clouds (reduced)
+    SPORE_SMALL = {
+        spawn_chance = 0.08,
+        count_min = 1,
+        count_max = 1,
+        speed_min = 0.002,
+        speed_max = 0.008,
+    },
+    
+    -- Large spore clouds (rare)
+    SPORE_LARGE = {
+        spawn_chance = 0.02,
+        count_min = 1,
+        count_max = 1,
+        speed_min = 0.001,
+        speed_max = 0.003,
+    },
+    
+    -- Wispy tendrils (reduced)
+    SPORE_WISP = {
+        spawn_chance = 0.1,
+        count_min = 1,
+        count_max = 2,
+        speed_min = 0.015,
+        speed_max = 0.04,
+    },
 }
 
 --#endregion

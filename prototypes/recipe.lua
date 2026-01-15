@@ -4,6 +4,7 @@
 local constants = require("__tenebris-prime__.prototypes.constants")
 local tenebris = require("__tenebris-prime__.lib.tenebris")
 local centipede_constants = require("lib.centipede_constants")
+local piezo = require("lib.piezoelectric_constants")
 
 -- Crystal icon data for generating composite icons
 local crystal_icons = {
@@ -144,6 +145,12 @@ local piezoelectric_science_template = {
 	subgroup = "tenebris-cr-science",
 	enabled = false,
 	energy_required = 20,
+	surface_conditions = {
+		{
+			property = "innate-energy-luminosity",
+			min = 1,
+		},
+	},
 	ingredients = {
 		{ type = "item", name = "tenebris-ceramic-plate", amount = 2 },
 		{ type = "item", name = "tenebris-chitosan", amount = 2 },
@@ -637,6 +644,7 @@ local all_recipes = {
 			enabled = true,
 			hide_from_player_crafting = true,
 			energy_required = 60,
+			emissions_multiplier = 1,
 			icons = {
 				{ icon = "__PlanetsLib__/graphics/icons/reprocessing-arrow.png", icon_size = 64, scale = 0.5 },
 				{ icon = "__tenebris-prime__/graphics/icons/fluid/tenebris-atmosphere.png", icon_size = 64, shift = {-8, 0}, scale = 0.35 },
@@ -650,7 +658,6 @@ local all_recipes = {
 				{ type = "item", name = "tenecap-spore", amount_min = 2, amount_max = 16 },
 			},
 			main_product = "tenebris-used-carbon-spore-filter",
-			allow_productivity = false,
 			allow_quality = false,
 		},
 		{
@@ -661,6 +668,7 @@ local all_recipes = {
 			enabled = true,
 			hide_from_player_crafting = true,
 			energy_required = 60,
+			emissions_multiplier = 4,
 			icons = {
 				{ icon = "__PlanetsLib__/graphics/icons/reprocessing-arrow.png", icon_size = 64, scale = 0.5 },
 				{ icon = "__tenebris-prime__/graphics/icons/fluid/tenebris-atmosphere.png", icon_size = 64, shift = {-8, 0}, scale = 0.35 },
@@ -674,7 +682,6 @@ local all_recipes = {
 				{ type = "item", name = "tenecap-spore", amount_min = 4, amount_max = 24 },
 			},
 			main_product = "tenebris-used-ceramic-filter",
-			allow_productivity = false,
 			allow_quality = false,
 		},
 		{
@@ -713,13 +720,13 @@ local all_recipes = {
 			results = {
 				{ type = "item", name = "tenebris-crystal-seedling", amount = 2, probability = 0.01 },
 			},
+			allow_productivity = true,
 		},
 		{
 			type = "recipe",
 			name = "tenebris-quartz-geode-processing",
 			category = "crystal-resonance",
 			subgroup = "tenebris-minerals",
-			enabled = false,
 			energy_required = 6,
 			icons = {
 				-- Left column (back): citrine, onyx, prasiolite
@@ -730,8 +737,8 @@ local all_recipes = {
 				{ icon = "__tenebris-prime__/graphics/icons/crystals/amethyst.png", icon_size = 64, shift = {12, -10}, scale = 0.2 },
 				{ icon = "__tenebris-prime__/graphics/icons/crystals/agate.png", icon_size = 64, shift = {12, 0}, scale = 0.2 },
 				{ icon = "__tenebris-prime__/graphics/icons/crystals/agate.png", icon_size = 64, shift = {12, 10}, scale = 0.2, tint = tenebris.TINT.SAPPHIRE },
-				-- Front: quartz geode
-				{ icon = "__tenebris-prime__/graphics/icons/quartz-ore.png", icon_size = 64, scale = 0.45 },
+			-- Front: quartz geode
+			{ icon = "__tenebris-prime__/graphics/icons/quartz-geode.png", icon_size = 64, scale = 0.45 },
 			},
 			ingredients = {
 				{ type = "item", name = "tenebris-quartz-geode", amount = 1 },
@@ -744,6 +751,7 @@ local all_recipes = {
 				{ type = "item", name = "tenebris-ruby-agate", amount_min = 1, amount_max = 2, probability = 0.12 },
 				{ type = "item", name = "tenebris-sapphire-agate", amount_min = 1, amount_max = 3, probability = 0.08 },
 			},
+			allow_productivity = true,
 		},
 
 		-- ========================================
@@ -948,6 +956,7 @@ local all_recipes = {
 				{ type = "item", name = "tenecap-spore", amount = 10 },
 			},
 			main_product = "molten-iron",
+			allow_productivity = true,
 		},
 		{
 			type = "recipe",
@@ -970,6 +979,7 @@ local all_recipes = {
 				{ type = "item", name = "tenecap-spore", amount = 10 },
 			},
 			main_product = "molten-copper",
+			allow_productivity = true,
 		},
 		{
 			type = "recipe",
@@ -1032,6 +1042,7 @@ local all_recipes = {
 				{ type = "item", name = "tenebris-centipede-corpse", amount = 1, probability = 0.2 },
 			},
 			main_product = "tenebris-radiation-hardened-chitin",
+			allow_productivity = true,
 		},
 		{
 			type = "recipe",
@@ -1052,6 +1063,7 @@ local all_recipes = {
 				{ type = "item", name = "tenebris-radiation-hardened-chitin", amount = 1, probability = 0.2 },
 			},
 			main_product = "tenebris-chitin",
+			allow_productivity = true,
 			surface_conditions = {
 				{
 					property = "innate-energy-luminosity",
@@ -1073,6 +1085,7 @@ local all_recipes = {
 			results = {
 				{ type = "item", name = "tenebris-cupric-mercury-amalgam", amount = 2 },
 			},
+			allow_productivity = true,
 		},
 		-- Biopipe from chitin (early, tenecap-processing)
 		{
@@ -1164,6 +1177,7 @@ local all_recipes = {
 			results = {
 				{ type = "fluid", name = "lubricant", amount = 10 },
 			},
+			allow_productivity = true,
 		},
 		{
 			type = "recipe",
@@ -1278,6 +1292,7 @@ local all_recipes = {
 			results = {
 				{ type = "item", name = "tenebris-ceramic-robot-frame", amount = 1 },
 			},
+			allow_productivity = true,
 		},
 		{
 			type = "recipe",
@@ -1741,6 +1756,7 @@ local all_recipes = {
 				{ type = "item", name = "bismuth-asteroid-chunk", amount = 1, probability = 0.2 },
 			},
 			main_product = "tenebris-bismuth-ore",
+			allow_productivity = true,
 		},
 
 		{
@@ -1808,6 +1824,7 @@ local all_recipes = {
 			results = {
 				{ type = "item", name = "tenebris-mercurial-lattice", amount = 1 },
 			},
+			allow_productivity = true,
 		},
 		{
 			type = "recipe",
@@ -1830,7 +1847,6 @@ local all_recipes = {
 		-- ========================================
 		-- Piezoelectric heating recipe (uses centralized constants)
 		(function()
-			local piezo = require("lib.piezoelectric_constants")
 			return {
 				type = "recipe",
 				name = piezo.RECIPE.name,

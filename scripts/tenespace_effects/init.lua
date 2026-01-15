@@ -31,77 +31,8 @@ for _, loc in ipairs(tenebris.ALL_TENEBRIS_LOCATIONS) do
     TENESPACE_LOCATIONS[loc] = true
 end
 
--- Effect configuration
-local CONFIG = {
-    -- How often to check for platforms and spawn effects (ticks)
-    UPDATE_INTERVAL = 10,
-    
-    -- How often to rebuild chunk cache while in tenespace (ticks) - 1 minute
-    -- Catches platform changes during travel
-    CACHE_REBUILD_INTERVAL = 3600,
-    
-    -- How many chunks to process per tick during incremental cache rebuild
-    CHUNKS_PER_REBUILD_TICK = 20,
-    
-    -- How many chunks to process for corrosion per tick
-    CORROSION_CHUNKS_PER_TICK = 2,
-    
-    -- How many random chunks to spawn effects in per update
-    CHUNKS_PER_UPDATE = 5,
-    
-    -- Corrosion damage configuration (max_entities uses same setting as ground system)
-    CORROSION = {
-        -- Damage amount per tick (mild acid damage)
-        damage_amount = 2,
-        -- Damage type
-        damage_type = "acid",
-    },
-    
-    -- Cyan glow dots (small scattered particles)
-    CYAN_GLOW = {
-        spawn_chance = 1.0,           -- Always spawn
-        count_min = 10,
-        count_max = 20,
-        speed_min = 0.002,
-        speed_max = 0.01,
-    },
-    
-    -- Brighter cyan dots (fewer, slightly larger)
-    CYAN_BRIGHT = {
-        spawn_chance = 0.8,
-        count_min = 5,
-        count_max = 10,
-        speed_min = 0.001,
-        speed_max = 0.008,
-    },
-    
-    -- Small spore clouds (reduced)
-    SPORE_SMALL = {
-        spawn_chance = 0.08,
-        count_min = 1,
-        count_max = 1,
-        speed_min = 0.002,
-        speed_max = 0.008,
-    },
-    
-    -- Large spore clouds (rare)
-    SPORE_LARGE = {
-        spawn_chance = 0.02,
-        count_min = 1,
-        count_max = 1,
-        speed_min = 0.001,
-        speed_max = 0.003,
-    },
-    
-    -- Wispy tendrils (reduced)
-    SPORE_WISP = {
-        spawn_chance = 0.1,
-        count_min = 1,
-        count_max = 2,
-        speed_min = 0.015,
-        speed_max = 0.04,
-    },
-}
+-- Effect configuration from shared constants
+local CONFIG = require("lib.constants").TENESPACE
 
 --- Ensure storage is initialized
 local function ensure_storage()
@@ -283,6 +214,14 @@ local function cache_needs_rebuild(cache, current_tick)
     return (current_tick - (cache.last_rebuild or 0)) >= CONFIG.CACHE_REBUILD_INTERVAL
 end
 
+-- Routes that connect to Tenebris from outside tenespace
+-- Effects scale based on travel progress on these routes
+local TENEBRIS_APPROACH_ROUTES = {
+    ["fulgora-tenebris"] = true,
+    ["maraxsis-tenebris"] = true,
+    ["paracelsin-tenebris"] = true,
+}
+
 --- Check if a platform is currently in tenespace
 --- @param platform LuaSpacePlatform
 --- @return boolean
@@ -315,32 +254,87 @@ local function is_platform_in_tenespace(platform)
     return false
 end
 
---- Spawn smoke effects at random positions within bounds
+--- Calculate the proximity to Tenebris for effect scaling
+--- Returns 1.0 when at/near Tenebris, 0.0 when far from Tenebris
+--- For approach routes, scales based on travel progress
+--- @param platform LuaSpacePlatform
+--- @return number proximity 0.0 to 1.0
+local function get_tenebris_proximity(platform)
+    if not platform or not platform.valid then
+        return 0
+    end
+    
+    -- If at a Tenebris location, full intensity
+    local location = platform.space_location
+    if location and TENESPACE_LOCATIONS[location.name] then
+        return 1.0
+    end
+    
+    -- Check if traveling on an approach route
+    local connection = platform.space_connection
+    if not connection then
+        return 0
+    end
+    
+    local connection_name = connection.name
+    if not TENEBRIS_APPROACH_ROUTES[connection_name] then
+        -- On a route fully within tenespace, full intensity
+        local from_name = connection.from and connection.from.name
+        local to_name = connection.to and connection.to.name
+        if (from_name and TENESPACE_LOCATIONS[from_name]) or (to_name and TENESPACE_LOCATIONS[to_name]) then
+            return 1.0
+        end
+        return 0
+    end
+    
+    -- On an approach route - scale by travel progress
+    local distance = platform.distance or 0  -- 0-1 progress along route
+    local to_name = connection.to and connection.to.name
+    
+    -- If traveling TO Tenebris, distance increases toward 1 as we approach
+    if to_name and TENESPACE_LOCATIONS[to_name] then
+        return distance
+    end
+    
+    -- If traveling FROM Tenebris, invert (start at 1, decrease to 0)
+    local from_name = connection.from and connection.from.name
+    if from_name and TENESPACE_LOCATIONS[from_name] then
+        return 1 - distance
+    end
+    
+    return 0
+end
+
+--- Spawn smoke effects in a 3x3 chunk area centered on the given chunk
 --- @param surface LuaSurface
---- @param bounds table {min_x, max_x, min_y, max_y}
+--- @param chunk_x number Chunk X coordinate (center of 3x3 area)
+--- @param chunk_y number Chunk Y coordinate (center of 3x3 area)
 --- @param smoke_name string
 --- @param config table
 --- @param scale_factor number Multiplier for particle counts based on platform size
-local function spawn_smoke_effect_in_bounds(surface, bounds, smoke_name, config, scale_factor)
-    if math.random() > config.spawn_chance then
+--- @param proximity number 0-1 proximity to Tenebris (scales spawn chance and counts)
+local function spawn_smoke_effect_in_chunk_area(surface, chunk_x, chunk_y, smoke_name, config, scale_factor, proximity)
+    -- Scale spawn chance by proximity
+    local effective_spawn_chance = config.spawn_chance * proximity
+    if math.random() > effective_spawn_chance then
         return
     end
     
-    -- Scale particle counts by platform size
-    local scaled_min = math.max(1, math.floor(config.count_min * scale_factor))
-    local scaled_max = math.max(1, math.floor(config.count_max * scale_factor))
+    -- Scale particle counts by platform size AND proximity
+    local proximity_scale = scale_factor * proximity
+    local scaled_min = math.max(1, math.floor(config.count_min * proximity_scale))
+    local scaled_max = math.max(1, math.floor(config.count_max * proximity_scale))
     local count = math.random(scaled_min, scaled_max)
     
-    local width = bounds.max_x - bounds.min_x
-    local height = bounds.max_y - bounds.min_y
-    
-    if width <= 0 or height <= 0 then
-        return
-    end
+    -- 3x3 chunk area = 96x96 tiles centered on the chunk
+    local min_x = (chunk_x - 1) * 32
+    local min_y = (chunk_y - 1) * 32
+    local width = 96  -- 3 chunks * 32 tiles
+    local height = 96
     
     for _ = 1, count do
-        local x = bounds.min_x + math.random() * width
-        local y = bounds.min_y + math.random() * height
+        local x = min_x + math.random() * width
+        local y = min_y + math.random() * height
         local speed_x = (math.random() * 2 - 1) * (config.speed_max - config.speed_min) + config.speed_min
         local speed_y = (math.random() * 2 - 1) * (config.speed_max - config.speed_min) + config.speed_min
         
@@ -467,7 +461,7 @@ local function apply_corrosion_random(platform, cache)
     return total_damaged
 end
 
---- Spawn all tenespace effects within platform bounds
+--- Spawn all tenespace effects in random player-occupied chunks
 --- @param platform LuaSpacePlatform
 --- @param cache table The platform's cache entry
 local function spawn_tenespace_effects_on_platform(platform, cache)
@@ -476,9 +470,15 @@ local function spawn_tenespace_effects_on_platform(platform, cache)
         return
     end
     
-    local bounds = cache.bounds
-    if bounds.max_x <= bounds.min_x or bounds.max_y <= bounds.min_y then
+    -- Need chunks with player entities to spawn effects
+    if cache.chunk_count == 0 then
         return
+    end
+    
+    -- Calculate proximity to Tenebris (scales effects on approach routes)
+    local proximity = get_tenebris_proximity(platform)
+    if proximity <= 0 then
+        return  -- No effects if not approaching/in Tenebris
     end
     
     -- Scale particle counts based on platform size using square root for gentler scaling
@@ -486,12 +486,18 @@ local function spawn_tenespace_effects_on_platform(platform, cache)
     local total_chunks = cache.total_chunks or baseline_chunks
     local scale_factor = math.max(0.3, math.sqrt(total_chunks / baseline_chunks))
     
-    -- Spawn effects at random positions within bounds
-    spawn_smoke_effect_in_bounds(surface, bounds, "tenespace-cyan-glow", CONFIG.CYAN_GLOW, scale_factor)
-    spawn_smoke_effect_in_bounds(surface, bounds, "tenespace-cyan-glow-bright", CONFIG.CYAN_BRIGHT, scale_factor)
-    spawn_smoke_effect_in_bounds(surface, bounds, "tenespace-spore-cloud-small", CONFIG.SPORE_SMALL, scale_factor)
-    spawn_smoke_effect_in_bounds(surface, bounds, "tenespace-spore-cloud-large", CONFIG.SPORE_LARGE, scale_factor)
-    spawn_smoke_effect_in_bounds(surface, bounds, "tenespace-spore-wisp", CONFIG.SPORE_WISP, scale_factor)
+    -- Pick random chunks with player entities and spawn effects in 3x3 area around them
+    local chunks_to_process = math.min(CONFIG.CHUNKS_PER_UPDATE, cache.chunk_count)
+    for _ = 1, chunks_to_process do
+        local chunk = cache.chunks[math.random(cache.chunk_count)]
+        if chunk then
+            spawn_smoke_effect_in_chunk_area(surface, chunk.x, chunk.y, "tenespace-cyan-glow", CONFIG.CYAN_GLOW, scale_factor, proximity)
+            spawn_smoke_effect_in_chunk_area(surface, chunk.x, chunk.y, "tenespace-cyan-glow-bright", CONFIG.CYAN_BRIGHT, scale_factor, proximity)
+            spawn_smoke_effect_in_chunk_area(surface, chunk.x, chunk.y, "tenespace-spore-cloud-small", CONFIG.SPORE_SMALL, scale_factor, proximity)
+            spawn_smoke_effect_in_chunk_area(surface, chunk.x, chunk.y, "tenespace-spore-cloud-large", CONFIG.SPORE_LARGE, scale_factor, proximity)
+            spawn_smoke_effect_in_chunk_area(surface, chunk.x, chunk.y, "tenespace-spore-wisp", CONFIG.SPORE_WISP, scale_factor, proximity)
+        end
+    end
 end
 
 --- Show corrosion alert to players
@@ -507,10 +513,21 @@ local function show_corrosion_alert(platform, damaged)
         return
     end
     
+    local hub = platform.hub
+    if not hub or not hub.valid then
+        -- Fallback: just print the message if hub is unavailable
+        for _, player in pairs(force.players) do
+            if player.valid and player.connected then
+                player.print({"", "[color=red]Tenecap Spore Corrosion[/color]: ", damaged, " entities damaged on [color=cyan]", platform.name, "[/color]"})
+            end
+        end
+        return
+    end
+    
     for _, player in pairs(force.players) do
         if player.valid and player.connected then
             player.add_custom_alert(
-                platform.hub,
+                hub,
                 {type = "virtual", name = "signal-alert"},
                 {"", "[color=red]Tenecap Spore Corrosion[/color]: ", damaged, " entities damaged on [color=cyan]", platform.name, "[/color]"},
                 true  -- show_on_map

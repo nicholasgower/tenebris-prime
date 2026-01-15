@@ -22,7 +22,7 @@ end
 local centipede_corpse = {
     name = centipede_constants.ENTITY_NAMES.CORPSE,
     type = "asteroid-chunk",
-    icon = "__tenebris-prime__/graphics/icons/chitin.png",
+    icon = "__tenebris-prime__/graphics/icons/centipede-corpse.png",
     icon_size = 64,
     subgroup = "space-material",
     order = "z[centipede-corpse]",
