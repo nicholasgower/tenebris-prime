@@ -9,3 +9,8 @@
 .cursorrules
 .cursor/
 .DS_Store
+
+# Experimental/test files
+prototypes/planet/test_sulfur_pits.lua
+prototypes/planet/test_sulfur_planet.lua
+docs/

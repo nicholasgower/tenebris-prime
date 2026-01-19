@@ -84,6 +84,39 @@ data:extend({
     },
     
     -- ========================================
+    -- TENEBRIS MECH ARMOR ADAPTATION
+    -- ========================================
+    {
+        type = "technology",
+        name = "tenebris-mech-adaptation",
+        icons = {
+            { icon = "__space-age__/graphics/technology/mech-armor.png", icon_size = 256 },
+            { icon = "__tenebris-prime__/graphics/icons/starmap-icon-tenebris.png", icon_size = 3840, scale = 0.025, shift = {0, 60} },
+        },
+        effects = {
+            {
+                type = "nothing",
+                icon = "__space-age__/graphics/icons/mech-armor.png",
+                icon_size = 64,
+                effect_description = {"tenebris-mech-adaptation.effect-description"}
+            }
+        },
+        localised_description = {"technology-description.tenebris-mech-adaptation"},
+        prerequisites = { "tenebris-atmospheric-distillation" },
+        unit = {
+            count = 100000,
+            ingredients = {
+                { "chemical-science-pack",        1 },
+                { "military-science-pack",        1 },
+                { "utility-science-pack",         1 },
+                { "space-science-pack",           1 },
+                { "electromagnetic-science-pack", 1 },
+            },
+            time = 60
+        },
+    },
+    
+    -- ========================================
     -- TENEBRIS BIOLOGICAL PROCESSING
     -- ========================================
     {

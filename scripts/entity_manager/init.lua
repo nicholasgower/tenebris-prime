@@ -8,6 +8,7 @@
 
 local tenebris = require("lib.tenebris")
 local banned = require("scripts.entity_manager.banned_entities")
+local constants = require("lib.constants")
 
 local entity_manager = {}
 
@@ -48,6 +49,19 @@ end
 --- @return boolean is_immune True if entity should never be affected by spores
 local function is_spore_immune(entity)
     return banned.SPORE_IMMUNE and banned.SPORE_IMMUNE[entity.name] or false
+end
+
+
+--- Checks if an entity is a debug or infinite entity (should be excluded from tracking)
+--- @param entity LuaEntity The entity to check
+--- @return boolean is_debug_or_infinite True if entity is a debug/admin/infinite entity
+local function is_debug_or_infinite_entity(entity)
+    for _, entity_type in ipairs(constants.DEBUG_AND_INFINITE_ENTITY_TYPES) do
+        if entity.type == entity_type then
+            return true
+        end
+    end
+    return false
 end
 
 
@@ -151,8 +165,8 @@ function entity_manager.on_built_entity(entity)
     
     ensure_storage_initialized()
     
-    -- Skip heated entities and spore-immune entities for tracking
-    if is_heated_entity(entity) or is_spore_immune(entity) then
+    -- Skip heated entities, debug/infinite entities, and spore-immune entities for tracking
+    if is_heated_entity(entity) or is_debug_or_infinite_entity(entity) or is_spore_immune(entity) then
         return
     end
 
@@ -190,7 +204,7 @@ end
 --- Handles entity destruction on Tenebris
 --- @param entity LuaEntity The entity that was destroyed
 function entity_manager.on_entity_destroyed(entity)
-    if is_heated_entity(entity) then
+    if is_heated_entity(entity) or is_debug_or_infinite_entity(entity) then
         return
     end
 

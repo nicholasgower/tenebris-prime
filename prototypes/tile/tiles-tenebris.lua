@@ -7,10 +7,16 @@ local tile_sounds = require("__space-age__/prototypes/tile/tile-sounds")
 
 local ambience = require("__tenebris-prime__/prototypes/tile/ambience.lua")
 local tenebris = require("lib.tenebris")
+local constants = require("lib.constants")
+
+-- Load tile effects first (they must be registered before tiles that use them)
+require("__tenebris-prime__/prototypes/tile/tile-effects")
 
 local ABSORPTION = tenebris.ABSORPTION
+local TILE_COLOR = constants.TILE_COLOR
 
--- Mercury pools - shallow toxic liquid around mercury pool spots
+-- Mercury pools - shallow toxic liquid metal around mercury pool spots
+-- Uses lava shader for flowing liquid metal appearance
 local mercury_swamp = {
     type = "tile",
     name = "tenebris-mercury-tile",
@@ -24,7 +30,11 @@ local mercury_swamp = {
     particle_tints = tile_graphics.gleba_shallow_water_particle_tints,
     layer = 1,
     layer_group = "water-overlay",
-    sprite_usage_surface = "gleba",
+    sprite_usage_surface = "gleba",  -- Group with Gleba atlas (uses wetland-water shader)
+    -- Liquid metal effect (lava shader with silver colors)
+    effect = "tenebris-mercury",
+    effect_color = TILE_COLOR.MERCURY_EFFECT,
+    effect_color_secondary = TILE_COLOR.MERCURY_EFFECT_SECONDARY,
     variants =
     {
         main =
@@ -40,15 +50,15 @@ local mercury_swamp = {
     },
     transitions = {lava_to_out_of_map_transition},
     transitions_between_transitions = data.raw.tile["water"].transitions_between_transitions,
-    walking_sound = sound_variations("__base__/sound/walking/shallow-water", 7, 1),
-    landing_steps_sound = tile_sounds.landing.wet,
+    walking_sound = tile_sounds.walking.warm_stone,  -- Metallic feel
+    landing_steps_sound = tile_sounds.landing.rock,
     driving_sound = wetland_driving_sound,
     map_color = {140, 140, 148},
-    walking_speed_modifier = 0.2,
-    vehicle_friction_modifier = 20.0,
+    walking_speed_modifier = 0.6,
+    vehicle_friction_modifier = 12.0,
     default_cover_tile = "landfill",
     fluid = "tenebris-mercury",
-    ambient_sounds = ambience.lake_ambience
+    ambient_sounds = tile_sounds.ambient.lava  -- Bubbling liquid metal
 }
 
 -- Abyssal gashes - deep impassable trenches that wind through the terrain
@@ -101,13 +111,21 @@ debug_highlands.autoplace = {probability_expression = "tenebris_tile_highlands"}
 debug_highlands.map_color = {0, 200, 255}  -- Bright cyan
 debug_highlands.absorptions_per_second = ABSORPTION.NEUTRAL
 
--- Lowlands - Bright Green
+-- Lowlands - Dark murky with violet fog
 local debug_lowlands = table.deepcopy(data.raw.tile["lowland-cream-cauliflower"])
 debug_lowlands.name = "tenebris-debug-lowlands"
 debug_lowlands.order = "t[tenebris]-d[debug]-b[lowlands]"
 debug_lowlands.autoplace = {probability_expression = "tenebris_tile_lowlands"}
-debug_lowlands.map_color = {0, 255, 100}  -- Bright green
+debug_lowlands.map_color = {0, 255, 100}  -- Bright green (debug)
 debug_lowlands.absorptions_per_second = ABSORPTION.HIGH
+debug_lowlands.walking_speed_modifier = 0.85  -- Slight slowdown in murky lowlands
+debug_lowlands.vehicle_friction_modifier = 1.5  -- Vehicles struggle slightly
+-- Lowland fog/puddle effect
+debug_lowlands.lowland_fog = true
+debug_lowlands.effect = "tenebris-murky-puddle"
+debug_lowlands.effect_is_opaque = false
+debug_lowlands.effect_color = TILE_COLOR.LOWLAND_FOG
+debug_lowlands.effect_color_secondary = TILE_COLOR.LOWLAND_FOG_SECONDARY
 
 -- Wastes - Bright Yellow/Orange
 local debug_wastes = table.deepcopy(data.raw.tile["dust-lumpy"])

@@ -44,6 +44,12 @@ require("scripts.quartz_forest.map_generation").register_events()
 -- Tenespace ambient visual effects
 require("scripts.tenespace_effects.init")
 
+-- Flight restriction system (prevents mech hover until tech researched)
+require("scripts.flight_restriction.init")
+
+-- Mercury poisoning (damages players walking through mercury pools)
+require("scripts.mercury_poisoning.init")
+
 -- Optional: GVV debugger support
 if script.active_mods["gvv"] then require("__gvv__.gvv")() end
 

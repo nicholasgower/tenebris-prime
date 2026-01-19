@@ -1,9 +1,28 @@
-
 local explosion_animations = require("__space-age__.prototypes.entity.explosion-animations")
 local space_age_sounds = require ("__space-age__.prototypes.entity.sounds")
+local smoke_animations = require("__base__.prototypes.entity.smoke-animations")
+local constants = require("__tenebris-prime__.lib.constants")
+local TINT = constants.TINT
 
 
 data:extend({
+-- Purple spore smoke for tenebrace/tenecap explosions
+{
+  type = "trivial-smoke",
+  name = "tenebris-spore-smoke",
+  animation = smoke_animations.trivial_smoke_fast({
+    scale = 1.0,
+    tint = TINT.TENEBRACE,
+  }),
+  render_layer = "smoke",
+  affected_by_wind = false,
+  movement_slow_down_factor = 0.96,
+  duration = 90,
+  fade_away_duration = 45,
+  start_scale = 0.5,
+  end_scale = 1.5,
+  show_when_smoke_off = true,
+},
 {
     type = "explosion",
     name = "bismuth-asteroid-explosion-1",
@@ -495,5 +514,93 @@ data:extend({
         }
       }
     }
+  },
+  -- Tenebrace spore explosion - large purple cloud when tenebrace dies/mined
+  {
+    type = "explosion",
+    name = "tenebrace-spore-explosion",
+    flags = {"not-on-map"},
+    hidden = true,
+    animations = util.empty_sprite(),
+    created_effect = {
+      type = "direct",
+      action_delivery = {
+        type = "instant",
+        target_effects = {
+          -- Large purple smoke cloud
+          {
+            type = "create-trivial-smoke",
+            smoke_name = "tenebris-spore-smoke",
+            repeat_count = 30,
+            starting_frame_deviation = 10,
+            offset_deviation = {{-2.5, -2.5}, {2.5, 2.5}},
+            speed_from_center = 0.04,
+          },
+          -- Area poison effect - larger radius
+          {
+            type = "nested-result",
+            action = {
+              type = "area",
+              radius = 6,
+              action_delivery = {
+                type = "instant",
+                target_effects = {
+                  {
+                    type = "create-sticker",
+                    sticker = "tenebris-tenebrace-spore-sticker",
+                  },
+                  {
+                    type = "damage",
+                    damage = {amount = 100, type = "acid"},
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  -- Tenecap spore explosion - spawns when tenecap is mined or killed
+  {
+    type = "explosion",
+    name = "tenecap-spore-explosion",
+    flags = {"not-on-map"},
+    hidden = true,
+    animations = util.empty_sprite(),
+    created_effect = {
+      type = "direct",
+      action_delivery = {
+        type = "instant",
+        target_effects = {
+          -- Purple smoke puffs
+          {
+            type = "create-trivial-smoke",
+            smoke_name = "tenebris-spore-smoke",
+            repeat_count = 15,
+            starting_frame_deviation = 5,
+            offset_deviation = {{-1.5, -1.5}, {1.5, 1.5}},
+            speed_from_center = 0.03,
+          },
+          -- Area poison effect
+          {
+            type = "nested-result",
+            action = {
+              type = "area",
+              radius = 4,
+              action_delivery = {
+                type = "instant",
+                target_effects = {
+                  {
+                    type = "create-sticker",
+                    sticker = "tenebris-tenebrace-spore-sticker",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   }
 })

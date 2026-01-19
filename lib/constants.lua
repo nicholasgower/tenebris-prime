@@ -67,6 +67,28 @@ constants.TINT = {
     CERAMIC = {r = 0.95, g = 0.9, b = 0.8, a = 1.0},  -- Off-white/cream for ceramic
     CYAN = {r = 0.3, g = 0.9, b = 1.0, a = 1.0},  -- Bright cyan for quartz ortet
     CYAN_DULL = {r = 0.2, g = 0.6, b = 0.7, a = 1.0},  -- Duller cyan for quartz buds
+    MERCURIAL = {r = 0.7, g = 0.7, b = 0.8, a = 1.0},  -- Silvery blue-grey for mercurial entities
+    TENEBRACE = {r = 0.3, g = 0.2, b = 0.4, a = 1.0},  -- Dark violet for tenebrace spore plants
+}
+
+--#endregion
+
+--#region Tile Effect Colors
+
+--- Tile effect colors (0-255 RGB for tile-effects)
+--- These are used for puddle/fog effects on tiles
+constants.TILE_COLOR = {
+    -- Dark murky lowlands fog - vaguely violet, mostly dark
+    LOWLAND_FOG = { 30, 25, 42 },           -- Primary: dark violet-grey
+    LOWLAND_FOG_SECONDARY = { 18, 15, 28 }, -- Secondary: deeper darkness
+    LOWLAND_FOAM = { 12, 8, 18 },           -- Very dark purple foam
+    LOWLAND_SPECULAR = { 5, 8, 12 },        -- Barely visible blue-violet specular
+    
+    -- Mercury (liquid metal) - silvery with slight blue-green iridescence
+    MERCURY_EFFECT = { 140, 145, 155 },          -- Silvery with cool tint
+    MERCURY_EFFECT_SECONDARY = { 95, 100, 115 }, -- Darker silver-blue
+    MERCURY_FOAM = { 180, 185, 195 },            -- Bright silver foam/reflection
+    MERCURY_SPECULAR = { 45, 50, 60 },           -- Blue-grey specular
 }
 
 --#endregion
@@ -325,6 +347,27 @@ constants.TENESPACE = {
         speed_min = 0.015,
         speed_max = 0.04,
     },
+}
+
+--#endregion
+
+--#region Debug and Infinite Entity Types
+
+--- Entity types to exclude from spore tracking and disabling
+--- These are admin/debug entities that should never be affected by the spore system
+constants.DEBUG_AND_INFINITE_ENTITY_TYPES = {
+    -- Infinity entities (admin-only items)
+    "infinity-container",
+    "infinity-pipe",
+    "infinity-cargo-wagon",
+    
+    -- Simple debug entities
+    "simple-entity",
+    "simple-entity-with-force",
+    "simple-entity-with-owner",
+    
+    -- Valve entities (flow control, hidden technical entities)
+    "valve",
 }
 
 --#endregion
