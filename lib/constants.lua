@@ -65,6 +65,8 @@ constants.TINT = {
     ONYX = {r = 0.15, g = 0.15, b = 0.15, a = 1.0},  -- Near-black for onyx
     SAPPHIRE = {r = 0.4, g = 0.5, b = 1.0, a = 1.0},  -- Blue tint for sapphire agate
     CERAMIC = {r = 0.95, g = 0.9, b = 0.8, a = 1.0},  -- Off-white/cream for ceramic
+    CYAN = {r = 0.3, g = 0.9, b = 1.0, a = 1.0},  -- Bright cyan for quartz ortet
+    CYAN_DULL = {r = 0.2, g = 0.6, b = 0.7, a = 1.0},  -- Duller cyan for quartz buds
 }
 
 --#endregion
@@ -281,25 +283,25 @@ constants.TENESPACE = {
     
     -- Cyan glow dots (small scattered particles)
     CYAN_GLOW = {
-        spawn_chance = 1.0,           -- Always spawn
-        count_min = 30,
-        count_max = 40,
+        spawn_chance = 0.25,           -- Always spawn
+        count_min = 4,
+        count_max = 8,
         speed_min = 0.002,
         speed_max = 0.01,
     },
     
     -- Brighter cyan dots (fewer, slightly larger)
     CYAN_BRIGHT = {
-        spawn_chance = 0.8,
-        count_min = 20,
-        count_max = 25,
+        spawn_chance = 0.05,
+        count_min = 2,
+        count_max = 5,
         speed_min = 0.001,
         speed_max = 0.008,
     },
     
     -- Small spore clouds (reduced)
     SPORE_SMALL = {
-        spawn_chance = 0.08,
+        spawn_chance = 0.0025,
         count_min = 1,
         count_max = 1,
         speed_min = 0.002,
@@ -308,7 +310,7 @@ constants.TENESPACE = {
     
     -- Large spore clouds (rare)
     SPORE_LARGE = {
-        spawn_chance = 0.02,
+        spawn_chance = 0.0005,
         count_min = 1,
         count_max = 1,
         speed_min = 0.001,
@@ -317,7 +319,7 @@ constants.TENESPACE = {
     
     -- Wispy tendrils (reduced)
     SPORE_WISP = {
-        spawn_chance = 0.1,
+        spawn_chance = 0.005,
         count_min = 1,
         count_max = 2,
         speed_min = 0.015,

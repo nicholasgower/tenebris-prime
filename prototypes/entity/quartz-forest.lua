@@ -61,6 +61,7 @@ require("__base__.prototypes.entity.spawner-animation")
 local enemy_autoplace = require("__base__.prototypes.entity.enemy-autoplace-utils")
 local hit_effects = require("__base__.prototypes.entity.hit-effects")
 local sounds = require("__base__.prototypes.entity.sounds")
+local constants = require("lib.constants")
 
 -- =============================================================================
 -- CAPTURE ROCKET TARGETING
@@ -141,19 +142,19 @@ data.extend({
 		},
 		working_sound = {
 			sound = {
-				category = "enemy",
-				filename = "__base__/sound/creatures/spawner.ogg",
-				volume = 0.6,
-				modifiers = volume_multiplier("main-menu", 0.7),
+				filename = "__base__/sound/express-transport-belt.ogg",
+				volume = 0.35,
+				audible_distance_modifier = 0.5,
 			},
+			fade_in_ticks = 4,
+			fade_out_ticks = 20,
 			max_sounds_per_prototype = 3,
 		},
 		dying_sound = {
 			variations = sound_variations(
-				"__base__/sound/creatures/spawner-death",
-				5,
-				0.7,
-				volume_multiplier("main-menu", 0.55)
+				"__base__/sound/fight/large-explosion",
+				2,
+				0.8
 			),
 			aggregation = { max_count = 2, remove = true, count_already_playing = true },
 		},
@@ -176,10 +177,42 @@ data.extend({
 		},
 		graphics_set = {
 			animations = {
-				spawner_idle_animation(0, biter_spawner_tint),
-				spawner_idle_animation(1, biter_spawner_tint),
-				spawner_idle_animation(2, biter_spawner_tint),
-				spawner_idle_animation(3, biter_spawner_tint),
+				{
+					filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-1.png",
+					width = 256,
+					height = 256,
+					frame_count = 1,
+					scale = 1.5,
+					tint = { 0.3, 0.9, 1.0, 0.9 },
+					draw_as_glow = true,
+				},
+				{
+					filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-2.png",
+					width = 256,
+					height = 256,
+					frame_count = 1,
+					scale = 1.5,
+					tint = { 0.3, 0.9, 1.0, 0.9 },
+					draw_as_glow = true,
+				},
+				{
+					filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-3.png",
+					width = 256,
+					height = 256,
+					frame_count = 1,
+					scale = 1.5,
+					tint = { 0.3, 0.9, 1.0, 0.9 },
+					draw_as_glow = true,
+				},
+				{
+					filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-4.png",
+					width = 256,
+					height = 256,
+					frame_count = 1,
+					scale = 1.5,
+					tint = { 0.3, 0.9, 1.0, 0.9 },
+					draw_as_glow = true,
+				},
 			},
 		},
 		-- Spawns hidden units that die immediately to create buds
@@ -213,6 +246,7 @@ data.extend({
 				"tenebris-debug-quartz",
 			},
 		},
+		map_color = constants.TINT.CYAN,
 	},
 
 	-- =============================================================================
@@ -290,38 +324,41 @@ data.extend({
 			draw_as_light = true,
 			tint = { r = 0.4, g = 0.9, b = 1.0, a = 0.6 },
 		},
-		variations = {
+		pictures = {
 			{
-				trunk = {
-					filename = "__space-age__/graphics/entity/plant/yumako-tree/yumako-tree-trunk.png",
-					width = 640,
-					height = 560,
-					frame_count = 1,
-					scale = 0.2,
-					shift = util.by_pixel(26, -40),
-					draw_as_glow = true,
-				},
-				leaves = {
-					filename = "__space-age__/graphics/entity/plant/yumako-tree/yumako-tree-harvest.png",
-					width = 640,
-					height = 560,
-					frame_count = 1,
-					scale = 0.2,
-					shift = util.by_pixel(26, -40),
-					draw_as_glow = true,
-				},
-				shadow = {
-					filename = "__space-age__/graphics/entity/plant/yumako-tree/yumako-tree-shadow.png",
-					width = 640,
-					height = 560,
-					frame_count = 2,
-					scale = 0.2,
-					shift = util.by_pixel(26, -40),
-					draw_as_shadow = true,
-				},
+				filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-1.png",
+				width = 256,
+				height = 256,
+				scale = 0.5,
+				tint = { 0.3, 0.9, 1.0, 0.9 },
+				draw_as_glow = true,
+			},
+			{
+				filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-2.png",
+				width = 256,
+				height = 256,
+				scale = 0.5,
+				tint = { 0.3, 0.9, 1.0, 0.9 },
+				draw_as_glow = true,
+			},
+			{
+				filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-3.png",
+				width = 256,
+				height = 256,
+				scale = 0.5,
+				tint = { 0.3, 0.9, 1.0, 0.9 },
+				draw_as_glow = true,
+			},
+			{
+				filename = "__tenebris-prime__/graphics/entity/quartz-node/quartz-node-4.png",
+				width = 256,
+				height = 256,
+				scale = 0.5,
+				tint = { 0.3, 0.9, 1.0, 0.9 },
+				draw_as_glow = true,
 			},
 		},
-		map_color = { 200, 200, 20 },
+		map_color = constants.TINT.CYAN_DULL,
 		colors = {
 			{ r = 255, g = 255, b = 255 },
 			{ r = 220, g = 255, b = 255 },
@@ -368,6 +405,7 @@ data.extend({
 		captured_spawner_entity = "tenebris-quartz-ortet-bud-capture-proxy",
 		-- Invisible - plant provides the graphics, spawner handles selection/capture
 		graphics_set = {},
+		map_color = constants.TINT.CYAN_DULL,
 	},
 
 	-- =============================================================================

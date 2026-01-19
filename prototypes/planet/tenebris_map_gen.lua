@@ -67,6 +67,15 @@ data:extend{
         parameters = {"input", "from", "to", "slope", "min", "max"},
         expression = "clamp(min(input - (from - slope), to + slope - input) / slope, min, max)"
     },
+    {
+        -- Combined decorative placement function (Gleba clustering + Vulcanus capping + Fulgora simplicity)
+        -- Uses random_penalty for natural clustering, capped at base_prob
+        -- Works standalone with tile_restriction
+        type = "noise-function",
+        name = "trpi",
+        parameters = {"base_prob"},
+        expression = "min(base_prob, base_prob * clamp(random_penalty{x = x, y = y, seed = 1, source = 1, amplitude = 1} + 0.5, 0, 1))"
+    },
 
     --------------------------------------------------------------------------------
     -- Starting Area Configuration
@@ -189,13 +198,23 @@ data:extend{
     {
         -- Final elevation (ranges: <0 water, 0-20 lowland, 20-80 wastes, 80+ highlands)
         -- Quartz forests get elevation boost to create cliff rings at edges
+        -- Sulfuric geyser pits get elevation drop to create cliff-ringed depressions
         type = "noise-expression",
         name = "tenebris_elevation",
-        expression = "tenebris_elevation_raw + 3 * (0.5 - abs(high_freq)) + quartz_elevation_boost",
+        expression = "tenebris_elevation_raw + 3 * (0.5 - abs(high_freq)) + quartz_elevation_boost - sulfur_pit_drop",
         local_expressions = {
             high_freq = "multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 1, octaves = 3, input_scale = 1/18}",
             -- Boost elevation inside quartz forests so cliffs form at edges
-            quartz_elevation_boost = "100 * max(tenebris_quartz_forest_raw, tenebris_spawn_quartz_forest)"
+            quartz_elevation_boost = "100 * max(tenebris_quartz_forest_raw, tenebris_spawn_quartz_forest)",
+            -- Drop elevation inside sulfur pits in stepped rings (like nested craters)
+            -- spot_noise is highest at center, 0 at edges, -1 outside
+            -- Use threshold comparisons to create discrete rings (no floor() available)
+            sulfur_spot = "tenebris_sulfur_geyser_spots",
+            -- Each ring adds 40 tiles of drop when threshold is crossed
+            sulfur_ring_1_drop = "40 * (sulfur_spot > 0.05)",
+            sulfur_ring_2_drop = "40 * (sulfur_spot > 0.15)",
+            sulfur_ring_3_drop = "40 * (sulfur_spot > 0.30)",
+            sulfur_pit_drop = "sulfur_ring_1_drop + sulfur_ring_2_drop + sulfur_ring_3_drop"
         }
     },
 
@@ -227,12 +246,21 @@ data:extend{
     {
         type = "noise-expression",
         name = "tenebris_cliffiness",
-        -- Standard cliffiness - cliffs now form naturally at elevation transitions
-        -- Quartz forests get elevation boost which creates cliff rings at their edges
+        -- Cliffiness with strong boosts for quartz forest edges and sulfur pits
+        -- Using higher values like Fulgora (up to 4) instead of clamping to 1
         -- Reduce cliffiness in the spawn quartz forest area to ensure ortet can spawn
-        expression = "clamp(0.7 + 0.5 * cliffiness_basic, 0, 1) * spawn_exclusion",
+        expression = "max(0, (0.7 + 0.5 * cliffiness_basic + quartz_edge_boost + sulfur_pit_boost) * spawn_exclusion)",
         local_expressions = {
             cliffiness_basic = "multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 1300, octaves = 2, input_scale = 1/100}",
+            -- Strong boost at quartz forest edges (pyramid value 0.1 to 0.3 = transition zone)
+            quartz_edge_boost = "3 * tenebris_quartz_forest_cells * (tenebris_quartz_pyramids > 0.1) * (tenebris_quartz_pyramids < 0.3)",
+            -- Strong boost at sulfur pit ring edges (where elevation steps)
+            -- Match thresholds from elevation: 0.05, 0.15, 0.30
+            sulfur_spot_val = "tenebris_sulfur_geyser_spots",
+            sulfur_cliff_1 = "(sulfur_spot_val > 0.03) * (sulfur_spot_val < 0.07)",
+            sulfur_cliff_2 = "(sulfur_spot_val > 0.12) * (sulfur_spot_val < 0.18)",
+            sulfur_cliff_3 = "(sulfur_spot_val > 0.25) * (sulfur_spot_val < 0.35)",
+            sulfur_pit_boost = "5 * (sulfur_cliff_1 + sulfur_cliff_2 + sulfur_cliff_3)",
             -- Reduce cliffs within 50 tiles of spawn ortet location (300, 300)
             spawn_distance = "sqrt((x - 300)^2 + (y - 300)^2)",
             spawn_exclusion = "clamp((spawn_distance - 20) / 30, 0, 1)"
@@ -475,9 +503,63 @@ data:extend{
     },
     {
         type = "noise-expression",
+        name = "tenebris_sulfur_geyser_edge_noise_combined",
+        -- Combined spots + edge noise for cell selection
+        expression = "(tenebris_sulfur_geyser_spots + tenebris_sulfur_geyser_edge_noise) > 0"
+    },
+
+    --------------------------------------------------------------------------------
+    -- Sulfuric Geyser Pits - Voronoi System (inverted mesa structure)
+    -- Creates cliff-ringed depressions instead of plateaus
+    --------------------------------------------------------------------------------
+    {
+        -- Grid size controls spacing between potential pit centers (~1500 tiles)
+        type = "noise-expression",
+        name = "tenebris_sulfur_grid",
+        expression = "1500"
+    },
+    {
+        -- Distorted X coordinate for organic shapes (reuse wobble)
+        type = "noise-expression",
+        name = "tenebris_sulfur_wx",
+        expression = "x + tenebris_wobble_x + tenebris_wobble_large_x"
+    },
+    {
+        -- Distorted Y coordinate for organic shapes
+        type = "noise-expression",
+        name = "tenebris_sulfur_wy",
+        expression = "y + tenebris_wobble_y + tenebris_wobble_large_y"
+    },
+    {
+        -- Voronoi cell IDs - each cell gets unique ID 0-1
+        type = "noise-expression",
+        name = "tenebris_sulfur_cells",
+        expression = "voronoi_cell_id{x = tenebris_sulfur_wx, y = tenebris_sulfur_wy, seed0 = map_seed, seed1 = 2300, grid_size = tenebris_sulfur_grid, distance_type = 'euclidean', jitter = 0.7}"
+    },
+    {
+        -- Voronoi pyramids - pit shapes (high in center ~0.5, low at edges ~0)
+        type = "noise-expression",
+        name = "tenebris_sulfur_pyramids",
+        expression = "voronoi_pyramid_noise{x = tenebris_sulfur_wx, y = tenebris_sulfur_wy, seed0 = map_seed, seed1 = 2300, grid_size = tenebris_sulfur_grid, distance_type = 'euclidean', jitter = 0.7}"
+    },
+    {
+        -- Cells with spots AND high cell ID become sulfur pits
+        -- Exclude quartz forest areas (quartz forests take priority)
+        type = "noise-expression",
+        name = "tenebris_sulfur_pit_cells",
+        expression = "tenebris_sulfur_geyser_edge_noise_combined * (tenebris_sulfur_cells > 0.6) * (1 - tenebris_quartz_forest_mask)"
+    },
+    {
+        -- Inverted pyramid: this value will be SUBTRACTED from elevation
+        type = "noise-expression",
+        name = "tenebris_sulfur_pit_raw",
+        expression = "(tenebris_sulfur_pyramids - 0.15) * 4 * tenebris_sulfur_pit_cells"
+    },
+    {
+        -- Mask for sulfur geyser areas (based on spot_noise directly)
+        type = "noise-expression",
         name = "tenebris_sulfur_geyser_mask",
-        -- Excluded from lowlands (elevation < 20)
-        expression = "(tenebris_elevation >= 20) * ((tenebris_sulfur_geyser_spots + tenebris_sulfur_geyser_edge_noise) > 0)"
+        expression = "((tenebris_sulfur_geyser_spots + tenebris_sulfur_geyser_edge_noise) > 0) * (1 - tenebris_quartz_forest_mask)"
     },
 
     --------------------------------------------------------------------------------
@@ -723,10 +805,10 @@ tenebris = function()
         {
             name = "cliff-tenebris",
             control = "tenebris_cliff",
-            -- Cliffs at elevation 90+ (quartz forests are boosted to 100+)
-            -- This creates natural cliff rings around quartz forests like Fulgora islands
-            cliff_elevation_interval = 40,
-            cliff_elevation_0 = 90,
+            -- Lowered cliff_elevation_0 to allow cliffs in more areas
+            -- Cliffs can now form at quartz forest edges and in sulfur pits
+            cliff_elevation_interval = 30,
+            cliff_elevation_0 = 40,
             richness = 0.80,
             cliff_smoothing = 0
         },
@@ -793,8 +875,21 @@ tenebris = function()
                     ["tenebris-debug-wastes"] = {},      -- Wastes (yellow/orange)
                 }
             },
-            -- Decoratives: inherit from Gleba (no override)
-            -- ["decorative"]w = { settings = {} },
+            ["decorative"] = {
+                settings = {
+                    -- Lowland decoratives
+                    ["tenebris-nerve-roots"] = {},
+                    ["tenebris-wispy-lichen"] = {},
+                    -- Mercury shore decoratives
+                    ["tenebris-mercury-stain"] = {},
+                    ["tenebris-mercury-coral"] = {},
+                    -- Highland decoratives
+                    ["tenebris-highland-roots"] = {},
+                    ["tenebris-mycelium"] = {},
+                    -- Wastes decoratives
+                    ["tenebris-cracked-mud"] = {},
+                }
+            },
             ["entity"] =
             {
                 settings =
