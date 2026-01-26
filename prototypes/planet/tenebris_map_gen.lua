@@ -1,12 +1,18 @@
 -- Tenebris Biome System
 -- 
--- Biome Hierarchy:
---   Layer 1 (base): Desolate Wastes (default)
---   Layer 2 (elevation): Lucifunnel Highlands (high) / Tenecap Lowlands (low)
---   Layer 3 (spots): Quartz Forests, Mercury Pools, Sulfuric Geysers
---   Layer 4 (override): Abyssal Gashes (impassable trenches)
+-- Architecture:
+--   Layer 1: Base Terrain Properties (elevation_base, aux, vapor_pressure)
+--   Layer 2: Biome Regions (raw masks, no exclusions)
+--   Layer 3: Priority Resolution (exclusion chain)
+--   Layer 4: Biome Effects (elevation mods, cliffiness, tiles)
+--   Layer 5: Subbiomes (rings, edges, shores)
 --
--- Starting area: Desolate Wastes, minimum 5000 tiles from abyssal gashes
+-- Priority (highest wins):
+--   100: Abyssal Gash (impassable)
+--   50:  Quartz Forests (elevated plateaus)
+--   40:  Sulfur Pits (cliff-ringed depressions)
+--   30:  Mercury Pools (liquid)
+--   10:  Base terrain (highlands/wastes/lowlands)
 
 data:extend{
     --------------------------------------------------------------------------------
@@ -34,7 +40,6 @@ data:extend{
 
     --------------------------------------------------------------------------------
     -- Coordinate Wobble (domain distortion for organic shapes)
-    -- Must be defined early as many expressions depend on these
     --------------------------------------------------------------------------------
     {
         type = "noise-expression",
@@ -58,7 +63,7 @@ data:extend{
     },
 
     --------------------------------------------------------------------------------
-    -- Helper Functions (like Gleba)
+    -- Helper Functions
     --------------------------------------------------------------------------------
     {
         -- Smooth selection function: returns min-max based on input range
@@ -68,9 +73,7 @@ data:extend{
         expression = "clamp(min(input - (from - slope), to + slope - input) / slope, min, max)"
     },
     {
-        -- Combined decorative placement function (Gleba clustering + Vulcanus capping + Fulgora simplicity)
-        -- Uses random_penalty for natural clustering, capped at base_prob
-        -- Works standalone with tile_restriction
+        -- Decorative placement with clustering
         type = "noise-function",
         name = "trpi",
         parameters = {"base_prob"},
@@ -92,17 +95,11 @@ data:extend{
         expression = "map_seed_normalized * 3600"
     },
     {
-        -- Direction for spiral/rotation effects
         type = "noise-expression",
         name = "tenebris_starting_direction",
         expression = "-1 + 2 * (map_seed_small & 1)"
     },
-
-    --------------------------------------------------------------------------------
-    -- Starting Area Features (placed at specific angles around spawn)
-    --------------------------------------------------------------------------------
     {
-        -- Highlands to the "north" of starting orientation
         type = "noise-expression",
         name = "tenebris_starting_highlands",
         expression = "starting_spot_at_angle{angle = tenebris_starting_angle + 60 * tenebris_starting_direction,\z
@@ -112,7 +109,6 @@ data:extend{
             y_distortion = tenebris_wobble_y * 12}"
     },
     {
-        -- Lowlands to the "south" of starting orientation
         type = "noise-expression",
         name = "tenebris_starting_lowlands",
         expression = "starting_spot_at_angle{angle = tenebris_starting_angle + 240 * tenebris_starting_direction,\z
@@ -122,7 +118,6 @@ data:extend{
             y_distortion = tenebris_wobble_y * 12}"
     },
     {
-        -- Wastes landing zone (where player spawns)
         type = "noise-expression",
         name = "tenebris_starting_wastes",
         expression = "starting_spot_at_angle{angle = tenebris_starting_angle + 180 * tenebris_starting_direction,\z
@@ -131,14 +126,23 @@ data:extend{
             x_distortion = tenebris_wobble_x * 8,\z
             y_distortion = tenebris_wobble_y * 8}"
     },
+    {
+        type = "noise-expression",
+        name = "tenebris_starting_circle",
+        expression = "if(distance < 200, 1, 0)"
+    },
 
     --------------------------------------------------------------------------------
-    -- Tri-Ridge Noise (creates interesting terrain patterns like Gleba)
+    --
+    -- LAYER 1: Base Terrain Properties
+    -- These are fundamental noise-generated properties, independent of biomes
+    --
     --------------------------------------------------------------------------------
+
+    -- Tri-Ridge noise for interesting terrain patterns
     {
         type = "noise-expression",
         name = "tenebris_tri_ridge",
-        -- Three competing noise layers create ridge patterns
         expression = "0.5 * ((tri_bc < tri_a) * (tri_a - tri_bc) + (tri_ac < tri_b) * (tri_b - tri_ac) + (tri_ab < tri_c) * (tri_c - tri_ab))",
         local_expressions = {
             wobble_x = "x + tenebris_wobble_x * 20",
@@ -151,77 +155,46 @@ data:extend{
             tri_bc = "max(tri_b, tri_c)"
         }
     },
-
-    --------------------------------------------------------------------------------
-    -- Base Terrain: Elevation (Gleba-inspired)
-    --------------------------------------------------------------------------------
     {
-        -- Peak noise for highland mountains
         type = "noise-expression",
         name = "tenebris_peaks",
         expression = "multioctave_noise{x = x + tenebris_wobble_x * 25, y = y + tenebris_wobble_y * 25, persistence = 0.7, seed0 = map_seed, seed1 = 1000000, octaves = 3, input_scale = 1/200}"
     },
     {
-        -- Small-scale ridge detail
         type = "noise-expression",
         name = "tenebris_ridges_small",
         expression = "abs(multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 1000001, octaves = 3, input_scale = 1/150})"
     },
     {
-        -- Combined ridges from tri-ridge and peaks
         type = "noise-expression",
         name = "tenebris_ridges",
         expression = "max(-tenebris_tri_ridge * 0.8, tenebris_peaks) * 2.4 + 0.2 * tenebris_ridges_small"
     },
     {
-        -- Terrace the ridges for plateau effects
-        -- Center around 45 (middle of wastes 20-80), with gentle variation
-        -- Wastes should be most common, then lowlands, then highlands
         type = "noise-expression",
         name = "tenebris_ridge_terrace",
         expression = "terrace{value = clamp(45 + tenebris_ridges * 35, -20, 120), offset = 50, width = 30, strength = 0.2}"
     },
     {
-        -- Starting area elevation blend
         type = "noise-expression",
         name = "tenebris_starting_elevation",
-        expression = "max(5 * min(tenebris_starting_wastes * 2, 1),\z
-                          80 * min(tenebris_starting_highlands * 2, 1),\z
-                          -10 * min(tenebris_starting_lowlands * 2, 1)) + 4 * tenebris_ridges_small"
+        expression = "max(45 * min(tenebris_starting_wastes * 2, 1),\z
+                          100 * min(tenebris_starting_highlands * 2, 1),\z
+                          10 * min(tenebris_starting_lowlands * 2, 1)) + 4 * tenebris_ridges_small"
     },
     {
-        -- Raw elevation before biome adjustments
+        -- BASE ELEVATION: Before any biome modifications
+        -- This is used for base terrain biome selection (highlands/lowlands/wastes)
+        -- Boosted by 200 to give headroom for sulfur pit drops to create multiple cliff levels
         type = "noise-expression",
-        name = "tenebris_elevation_raw",
-        expression = "lerp(tenebris_ridge_terrace, tenebris_starting_elevation, clamp(1.5 - (distance / tenebris_starting_area_multiplier / 400), 0, 1))"
-    },
-    {
-        -- Final elevation (ranges: <0 water, 0-20 lowland, 20-80 wastes, 80+ highlands)
-        -- Quartz forests get elevation boost to create cliff rings at edges
-        -- Sulfuric geyser pits get elevation drop to create cliff-ringed depressions
-        type = "noise-expression",
-        name = "tenebris_elevation",
-        expression = "tenebris_elevation_raw + 3 * (0.5 - abs(high_freq)) + quartz_elevation_boost - sulfur_pit_drop",
+        name = "tenebris_elevation_base",
+        expression = "200 + lerp(tenebris_ridge_terrace, tenebris_starting_elevation, clamp(1.5 - (distance / tenebris_starting_area_multiplier / 400), 0, 1)) + high_freq_detail",
         local_expressions = {
-            high_freq = "multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 1, octaves = 3, input_scale = 1/18}",
-            -- Boost elevation inside quartz forests so cliffs form at edges
-            quartz_elevation_boost = "100 * max(tenebris_quartz_forest_raw, tenebris_spawn_quartz_forest)",
-            -- Drop elevation inside sulfur pits in stepped rings (like nested craters)
-            -- spot_noise is highest at center, 0 at edges, -1 outside
-            -- Use threshold comparisons to create discrete rings (no floor() available)
-            sulfur_spot = "tenebris_sulfur_geyser_spots",
-            -- Each ring adds 40 tiles of drop when threshold is crossed
-            sulfur_ring_1_drop = "40 * (sulfur_spot > 0.05)",
-            sulfur_ring_2_drop = "40 * (sulfur_spot > 0.15)",
-            sulfur_ring_3_drop = "40 * (sulfur_spot > 0.30)",
-            sulfur_pit_drop = "sulfur_ring_1_drop + sulfur_ring_2_drop + sulfur_ring_3_drop"
+            high_freq_detail = "3 * (0.5 - abs(multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 1, octaves = 3, input_scale = 1/18}))"
         }
     },
-
-    --------------------------------------------------------------------------------
-    -- Aux, Moisture, Temperature
-    --------------------------------------------------------------------------------
     {
+        -- AUX: Substrate/mineral variation (0-1)
         type = "noise-expression",
         name = "tenebris_aux",
         expression = "clamp(0.5 + 0.5 * aux_noise, 0, 1)",
@@ -230,12 +203,17 @@ data:extend{
         }
     },
     {
+        -- VAPOR PRESSURE: Chemical concentration (replaces moisture)
+        -- Independent noise, not derived from elevation
         type = "noise-expression",
-        name = "tenebris_moisture",
-        -- Moisture follows elevation: lowlands wet, highlands dry
-        expression = "clamp(1 - min(0.25 + (tenebris_elevation / 80), 0.5 + (tenebris_elevation - 20) / 200), 0, 1)"
+        name = "tenebris_vapor_pressure",
+        expression = "clamp(0.5 + 0.5 * vapor_noise, 0, 1)",
+        local_expressions = {
+            vapor_noise = "multioctave_noise{x = x + tenebris_wobble_x * 8, y = y + tenebris_wobble_y * 8, persistence = 0.6, octaves = 4, input_scale = 1/120, seed0 = map_seed, seed1 = 8000}"
+        }
     },
     {
+        -- TEMPERATURE
         type = "noise-expression",
         name = "tenebris_temperature",
         expression = "10 + 10 * temp_noise",
@@ -243,121 +221,137 @@ data:extend{
             temp_noise = "clamp(0.8 * multioctave_noise{x = x + tenebris_wobble_x * 6, y = y + tenebris_wobble_y * 6, persistence = 0.65, octaves = 4, input_scale = 1/4, seed0 = map_seed, seed1 = 18000}, -1, 1)"
         }
     },
+
+    --------------------------------------------------------------------------------
+    --
+    -- LAYER 2: Biome Regions (raw masks, NO exclusions)
+    -- Each expression defines WHERE a biome wants to exist, ignoring other biomes
+    --
+    --------------------------------------------------------------------------------
+
+    -- ABYSSAL GASH region
     {
         type = "noise-expression",
-        name = "tenebris_cliffiness",
-        -- Cliffiness with strong boosts for quartz forest edges and sulfur pits
-        -- Using higher values like Fulgora (up to 4) instead of clamping to 1
-        -- Reduce cliffiness in the spawn quartz forest area to ensure ortet can spawn
-        expression = "max(0, (0.7 + 0.5 * cliffiness_basic + quartz_edge_boost + sulfur_pit_boost) * spawn_exclusion)",
+        name = "tenebris_gash_min_distance",
+        expression = "4000"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_gash_wobble_x",
+        expression = "multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 3000, octaves = 3, input_scale = 1/800, output_scale = 200}"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_gash_wobble_y",
+        expression = "multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 3001, octaves = 3, input_scale = 1/800, output_scale = 200}"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_gash_edge_roughness",
+        expression = "0.08 * multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 3050, octaves = 5, input_scale = 1/15}"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_gash_pattern",
+        expression = "abs(multioctave_noise{x = x + tenebris_gash_wobble_x, y = y + tenebris_gash_wobble_y,\z
+            persistence = 0.5, seed0 = map_seed, seed1 = 3100, octaves = 3, input_scale = 1/1000}) + tenebris_gash_edge_roughness"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_gash_distance_fade",
+        expression = "smoothstep * smoothstep * (3 - 2 * smoothstep)",
         local_expressions = {
-            cliffiness_basic = "multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 1300, octaves = 2, input_scale = 1/100}",
-            -- Strong boost at quartz forest edges (pyramid value 0.1 to 0.3 = transition zone)
-            quartz_edge_boost = "3 * tenebris_quartz_forest_cells * (tenebris_quartz_pyramids > 0.1) * (tenebris_quartz_pyramids < 0.3)",
-            -- Strong boost at sulfur pit ring edges (where elevation steps)
-            -- Match thresholds from elevation: 0.05, 0.15, 0.30
-            sulfur_spot_val = "tenebris_sulfur_geyser_spots",
-            sulfur_cliff_1 = "(sulfur_spot_val > 0.03) * (sulfur_spot_val < 0.07)",
-            sulfur_cliff_2 = "(sulfur_spot_val > 0.12) * (sulfur_spot_val < 0.18)",
-            sulfur_cliff_3 = "(sulfur_spot_val > 0.25) * (sulfur_spot_val < 0.35)",
-            sulfur_pit_boost = "5 * (sulfur_cliff_1 + sulfur_cliff_2 + sulfur_cliff_3)",
-            -- Reduce cliffs within 50 tiles of spawn ortet location (300, 300)
-            spawn_distance = "sqrt((x - 300)^2 + (y - 300)^2)",
-            spawn_exclusion = "clamp((spawn_distance - 20) / 30, 0, 1)"
+            smoothstep = "clamp((distance - tenebris_gash_min_distance) / 2000, 0, 1)"
         }
     },
-
-    --------------------------------------------------------------------------------
-    -- Biome Masks (derived from elevation, using tenebris_select)
-    --------------------------------------------------------------------------------
     {
         type = "noise-expression",
-        name = "tenebris_highlands_mask",
-        -- Highlands: elevation > 80 (smooth transition 70-90)
-        expression = "tenebris_select(tenebris_elevation, 80, 1000, 10, 0, 1)"
-    },
-    {
-        type = "noise-expression",
-        name = "tenebris_lowlands_mask",
-        -- Lowlands: elevation < 20 (smooth transition 10-25)
-        expression = "tenebris_select(tenebris_elevation, -100, 20, 10, 0, 1)"
-    },
-    {
-        type = "noise-expression",
-        name = "tenebris_wastes_mask",
-        -- Wastes: elevation 20-80 (default biome)
-        expression = "tenebris_select(tenebris_elevation, 20, 80, 10, 0, 1)"
+        name = "tenebris_region_abyssal",
+        expression = "(tenebris_gash_pattern < 0.16) * tenebris_gash_distance_fade"
     },
 
-    --------------------------------------------------------------------------------
-    -- Quartz Ortet Forests (Voronoi-based like Fulgora islands)
-    --------------------------------------------------------------------------------
+    -- QUARTZ FOREST region
     {
-        -- Grid size controls spacing between potential forest centers (~1000 tiles)
-        type = "noise-expression",                                                                                      
+        type = "noise-expression",
         name = "tenebris_quartz_grid",
         expression = "1000"
     },
     {
-        -- Distorted X coordinate for organic shapes
         type = "noise-expression",
         name = "tenebris_quartz_wx",
         expression = "x + tenebris_wobble_x + tenebris_wobble_large_x"
     },
     {
-        -- Distorted Y coordinate for organic shapes
         type = "noise-expression",
         name = "tenebris_quartz_wy",
         expression = "y + tenebris_wobble_y + tenebris_wobble_large_y"
     },
     {
-        -- Voronoi cell IDs - each cell gets unique ID 0-1
         type = "noise-expression",
         name = "tenebris_quartz_cells",
         expression = "voronoi_cell_id{x = tenebris_quartz_wx, y = tenebris_quartz_wy, seed0 = map_seed, seed1 = 2010, grid_size = tenebris_quartz_grid, distance_type = 'euclidean', jitter = 0.7}"
     },
     {
-        -- Voronoi pyramids - plateau shapes (high in center ~0.5, low at edges ~0)
         type = "noise-expression",
         name = "tenebris_quartz_pyramids",
         expression = "voronoi_pyramid_noise{x = tenebris_quartz_wx, y = tenebris_quartz_wy, seed0 = map_seed, seed1 = 2010, grid_size = tenebris_quartz_grid, distance_type = 'euclidean', jitter = 0.7}"
     },
     {
-        -- Only cells with ID > 0.75 become forests (sparse selection, ~25% of cells)
+        -- Spawn proximity for guaranteed forest near spawn
+        type = "noise-expression",
+        name = "tenebris_spawn_quartz_proximity",
+        expression = "max(0, 1 - sqrt((x - 300)^2 + (y - 300)^2) / 200)"
+    },
+    {
+        -- Cell selection: high ID cells OR cells near spawn
         type = "noise-expression",
         name = "tenebris_quartz_forest_cells",
-        expression = "tenebris_quartz_cells > 0.75"
+        expression = "tenebris_quartz_cells > (0.75 - 0.8 * tenebris_spawn_quartz_proximity)"
     },
     {
-        -- Apply pyramid shape only to selected forest cells, scaled to create plateau
+        -- Continuous value for plateau shape (used for elevation boost and edge detection)
         type = "noise-expression",
-        name = "tenebris_quartz_forest_raw",
-        expression = "(tenebris_quartz_pyramids - 0.15) * 4 * tenebris_quartz_forest_cells"
-    },
-    {
-        -- For cliffiness calculations - raw proximity value
-        type = "noise-expression",
-        name = "tenebris_quartz_forest_spots",
-        expression = "tenebris_quartz_forest_raw"
-    },
-    {
-        -- Guaranteed quartz forest near spawn (centered around 300, 300)
-        type = "noise-expression",
-        name = "tenebris_spawn_quartz_forest",
-        expression = "max(0, 1 - sqrt((x - 300)^2 + (y - 300)^2) / 100)"
+        name = "tenebris_quartz_value",
+        expression = "max(0, (tenebris_quartz_pyramids - 0.15) * 4) * tenebris_quartz_forest_cells"
     },
     {
         type = "noise-expression",
-        name = "tenebris_quartz_forest_mask",
-        -- Combine voronoi forests + spawn forest
-        expression = "(tenebris_quartz_forest_raw > 0) + (tenebris_spawn_quartz_forest > 0.2) > 0"
+        name = "tenebris_region_quartz",
+        expression = "tenebris_quartz_value > 0"
     },
 
-    --------------------------------------------------------------------------------
-    -- Mercury Pools AND Rivers (combined approach)
-    --------------------------------------------------------------------------------
+    -- SULFUR PIT region
     {
-        -- Cluster regions: large spots where mercury pools CAN exist
+        type = "noise-expression",
+        name = "tenebris_sulfur_spots",
+        -- spot_noise for pit placement
+        expression = "spot_noise{x = x + tenebris_wobble_x, y = y + tenebris_wobble_y, seed0 = map_seed, seed1 = 2200,\z
+            candidate_spot_count = 10,\z
+            suggested_minimum_candidate_point_spacing = 800,\z
+            region_size = 1500,\z
+            density_expression = 4,\z
+            spot_quantity_expression = 1,\z
+            spot_radius_expression = 50,\z
+            spot_favorability_expression = 1,\z
+            hard_region_target_quantity = 0,\z
+            basement_value = -1,\z
+            maximum_spot_basement_radius = 80}"
+    },
+    {
+        -- Continuous value (0-1 range, 1 at center, 0 at edge)
+        -- Normalized from spot_noise output
+        type = "noise-expression",
+        name = "tenebris_sulfur_value",
+        expression = "clamp(tenebris_sulfur_spots, 0, 1)"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_region_sulfur",
+        expression = "tenebris_sulfur_spots > 0"
+    },
+
+    -- MERCURY POOL region
+    {
         type = "noise-expression",
         name = "tenebris_mercury_cluster_regions",
         expression = "spot_noise{x = x + tenebris_wobble_large_x, y = y + tenebris_wobble_large_y,\z
@@ -373,50 +367,33 @@ data:extend{
             basement_value = -1,\z
             maximum_spot_basement_radius = 300}"
     },
-    --------------------------------------------------------------------------------
-    -- POOLS: Vulcanus-style inverted plasma (mercury is default, plasma carves land)
-    --------------------------------------------------------------------------------
     {
-        -- Pool plasma layer A: larger scale for main pool shapes
         type = "noise-expression",
         name = "tenebris_mercury_pool_plasma_a",
         expression = "multioctave_noise{x = x + tenebris_wobble_x * 2, y = y + tenebris_wobble_y * 2,\z
             persistence = 0.5, seed0 = map_seed, seed1 = 2110, octaves = 3, input_scale = 1/100}"
     },
     {
-        -- Pool plasma layer B: different seed for variety
         type = "noise-expression",
         name = "tenebris_mercury_pool_plasma_b",
         expression = "multioctave_noise{x = x + tenebris_wobble_x * 2, y = y + tenebris_wobble_y * 2,\z
             persistence = 0.5, seed0 = map_seed, seed1 = 2120, octaves = 3, input_scale = 1/80}"
     },
     {
-        -- Combined plasma: abs(a - b) creates organic crack patterns
-        -- LOW values = cracks = where LAND is carved out
-        -- HIGH values = between cracks = MERCURY remains
         type = "noise-expression",
         name = "tenebris_mercury_pool_plasma",
         expression = "abs(tenebris_mercury_pool_plasma_a - tenebris_mercury_pool_plasma_b)"
     },
     {
-        -- Detail noise for irregular edges (subtracted like Vulcanus)
         type = "noise-expression",
         name = "tenebris_mercury_pool_detail",
         expression = "multioctave_noise{x = x, y = y, persistence = 0.6, seed0 = map_seed, seed1 = 2125, octaves = 4, input_scale = 1/40}"
     },
     {
-        -- Pool value: Vulcanus-style formula with cluster fade
-        -- Baseline -0.15 (biased towards mercury), plasma adds land, detail subtracts for jagged edges
-        -- Cluster region value is SUBTRACTED: high cluster value (center) = more negative = mercury
-        -- At cluster edges (cluster value ~0), pool value shifts positive = land (smooth fade)
-        -- Result: negative = mercury, positive = land
         type = "noise-expression",
         name = "tenebris_mercury_pool_value",
         expression = "-0.15 + tenebris_mercury_pool_plasma - 0.08 * tenebris_mercury_pool_detail - 0.3 * clamp(tenebris_mercury_cluster_regions, 0, 1)"
     },
-    --------------------------------------------------------------------------------
-    -- RIVERS: Plasma noise (separate from pools)
-    --------------------------------------------------------------------------------
     {
         type = "noise-expression",
         name = "tenebris_mercury_river_a",
@@ -430,345 +407,299 @@ data:extend{
             persistence = 0.5, seed0 = map_seed, seed1 = 2150, octaves = 2, input_scale = 1/60}"
     },
     {
-        -- River value: low values (thin cracks) become rivers
         type = "noise-expression",
         name = "tenebris_mercury_river_value",
         expression = "abs(tenebris_mercury_river_a - tenebris_mercury_river_b)"
     },
     {
-        -- Master noise to control where rivers can exist (prevents them everywhere)
         type = "noise-expression",
         name = "tenebris_mercury_river_master",
         expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 2160, octaves = 3, input_scale = 1/400}"
     },
-    --------------------------------------------------------------------------------
-    -- Combined Mercury Masks
-    --------------------------------------------------------------------------------
     {
-        -- For backwards compatibility
+        -- Mercury region: pools within clusters OR rivers (constrained to low elevation_base)
+        -- Threshold boosted by 200 to match elevation_base boost
         type = "noise-expression",
-        name = "tenebris_mercury_pool_spots",
-        expression = "tenebris_mercury_cluster_regions"
-    },
-    {
-        type = "noise-expression",
-        name = "tenebris_mercury_pool_mask",
-        -- POOLS: Within clusters, mercury where pool_value < 0 (inverted Vulcanus style)
-        -- RIVERS: Where plasma cracks are thin (river_value < threshold)
-        -- Excluded from highlands (elevation >= 80)
-        expression = "(tenebris_elevation < 80) * max(\z
+        name = "tenebris_region_mercury",
+        expression = "(tenebris_elevation_base < 280) * max(\z
             (tenebris_mercury_cluster_regions > 0) * (tenebris_mercury_pool_value < 0),\z
             (tenebris_mercury_river_master > 0.3) * (tenebris_mercury_river_value < 0.12))"
     },
+
+    -- BASE TERRAIN regions (from elevation_base)
+    -- Thresholds boosted by 200 to match elevation_base boost
     {
         type = "noise-expression",
-        name = "tenebris_mercury_shore_mask",
-        -- Shore: around pools (near zero) OR along rivers
-        -- Excluded from highlands (elevation >= 80)
-        expression = "(tenebris_elevation < 80) * max(\z
-            (tenebris_mercury_cluster_regions > -0.2) * (tenebris_mercury_pool_value >= 0) * (tenebris_mercury_pool_value < 0.1),\z
-            (tenebris_mercury_river_master > 0.2) * (tenebris_mercury_river_value >= 0.12) * (tenebris_mercury_river_value < 0.20))"
+        name = "tenebris_region_highlands",
+        expression = "tenebris_select(tenebris_elevation_base, 280, 1000, 10, 0, 1)"
     },
     {
-        -- Pool and shore mask for stromatolites: pools AND shores (NOT rivers)
         type = "noise-expression",
-        name = "tenebris_mercury_pool_shore_mask",
-        expression = "(tenebris_elevation < 80) * (tenebris_mercury_cluster_regions > 0) * (tenebris_mercury_pool_value < 0.1)"
+        name = "tenebris_region_lowlands",
+        expression = "tenebris_select(tenebris_elevation_base, 100, 220, 10, 0, 1)"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_region_wastes",
+        expression = "tenebris_select(tenebris_elevation_base, 220, 280, 10, 0, 1)"
     },
 
     --------------------------------------------------------------------------------
-    -- Spot Features: Sulfuric Geyser Peaks
+    --
+    -- LAYER 3: Priority Resolution
+    -- Each biome excludes all higher-priority biomes
+    -- Priority: Abyssal (100) > Quartz (50) > Sulfur (40) > Mercury (30) > Base (10)
+    --
     --------------------------------------------------------------------------------
+
     {
         type = "noise-expression",
-        name = "tenebris_sulfur_geyser_spots",
-        -- Reduced: less frequent, smaller spots
-        expression = "spot_noise{x = x + tenebris_wobble_x, y = y + tenebris_wobble_y, seed0 = map_seed, seed1 = 2200,\z
-            candidate_spot_count = 10,\z
-            suggested_minimum_candidate_point_spacing = 800,\z
-            region_size = 1500,\z
-            density_expression = 4,\z
-            spot_quantity_expression = 1,\z
-            spot_radius_expression = 50,\z
-            spot_favorability_expression = 1,\z
-            hard_region_target_quantity = 0,\z
-            basement_value = -1,\z
-            maximum_spot_basement_radius = 80}"
+        name = "tenebris_biome_abyssal",
+        expression = "tenebris_region_abyssal"
     },
     {
         type = "noise-expression",
-        name = "tenebris_sulfur_geyser_edge_noise",
-        -- Noise for organic geyser zone boundaries
-        expression = "0.2 * multioctave_noise{x = x, y = y, seed0 = map_seed, seed1 = 2250, persistence = 0.6, octaves = 3, input_scale = 1/15}"
+        name = "tenebris_biome_quartz",
+        expression = "tenebris_region_quartz * (1 - tenebris_biome_abyssal)"
     },
     {
         type = "noise-expression",
-        name = "tenebris_sulfur_geyser_edge_noise_combined",
-        -- Combined spots + edge noise for cell selection
-        expression = "(tenebris_sulfur_geyser_spots + tenebris_sulfur_geyser_edge_noise) > 0"
+        name = "tenebris_biome_sulfur",
+        expression = "tenebris_region_sulfur * (1 - tenebris_biome_abyssal) * (1 - tenebris_biome_quartz)"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_biome_mercury",
+        expression = "tenebris_region_mercury * (1 - tenebris_biome_abyssal) * (1 - tenebris_biome_quartz) * (1 - tenebris_biome_sulfur)"
+    },
+    {
+        -- Any special biome (for excluding base terrain)
+        type = "noise-expression",
+        name = "tenebris_biome_any_special",
+        expression = "max(tenebris_biome_abyssal, max(tenebris_biome_quartz, max(tenebris_biome_sulfur, tenebris_biome_mercury)))"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_biome_highlands",
+        expression = "tenebris_region_highlands * (1 - tenebris_biome_any_special)"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_biome_lowlands",
+        expression = "tenebris_region_lowlands * (1 - tenebris_biome_any_special)"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_biome_wastes",
+        expression = "tenebris_region_wastes * (1 - tenebris_biome_any_special)"
     },
 
     --------------------------------------------------------------------------------
-    -- Sulfuric Geyser Pits - Voronoi System (inverted mesa structure)
-    -- Creates cliff-ringed depressions instead of plateaus
+    --
+    -- LAYER 4: Biome Effects
+    -- Elevation modifications, cliffiness, and tiles based on resolved biomes
+    --
     --------------------------------------------------------------------------------
+
+    -- Noise for random inner ring appearance in sulfur pits
     {
-        -- Grid size controls spacing between potential pit centers (~1500 tiles)
         type = "noise-expression",
-        name = "tenebris_sulfur_grid",
-        expression = "1500"
-    },
-    {
-        -- Distorted X coordinate for organic shapes (reuse wobble)
-        type = "noise-expression",
-        name = "tenebris_sulfur_wx",
-        expression = "x + tenebris_wobble_x + tenebris_wobble_large_x"
-    },
-    {
-        -- Distorted Y coordinate for organic shapes
-        type = "noise-expression",
-        name = "tenebris_sulfur_wy",
-        expression = "y + tenebris_wobble_y + tenebris_wobble_large_y"
-    },
-    {
-        -- Voronoi cell IDs - each cell gets unique ID 0-1
-        type = "noise-expression",
-        name = "tenebris_sulfur_cells",
-        expression = "voronoi_cell_id{x = tenebris_sulfur_wx, y = tenebris_sulfur_wy, seed0 = map_seed, seed1 = 2300, grid_size = tenebris_sulfur_grid, distance_type = 'euclidean', jitter = 0.7}"
-    },
-    {
-        -- Voronoi pyramids - pit shapes (high in center ~0.5, low at edges ~0)
-        type = "noise-expression",
-        name = "tenebris_sulfur_pyramids",
-        expression = "voronoi_pyramid_noise{x = tenebris_sulfur_wx, y = tenebris_sulfur_wy, seed0 = map_seed, seed1 = 2300, grid_size = tenebris_sulfur_grid, distance_type = 'euclidean', jitter = 0.7}"
-    },
-    {
-        -- Cells with spots AND high cell ID become sulfur pits
-        -- Exclude quartz forest areas (quartz forests take priority)
-        type = "noise-expression",
-        name = "tenebris_sulfur_pit_cells",
-        expression = "tenebris_sulfur_geyser_edge_noise_combined * (tenebris_sulfur_cells > 0.6) * (1 - tenebris_quartz_forest_mask)"
-    },
-    {
-        -- Inverted pyramid: this value will be SUBTRACTED from elevation
-        type = "noise-expression",
-        name = "tenebris_sulfur_pit_raw",
-        expression = "(tenebris_sulfur_pyramids - 0.15) * 4 * tenebris_sulfur_pit_cells"
-    },
-    {
-        -- Mask for sulfur geyser areas (based on spot_noise directly)
-        type = "noise-expression",
-        name = "tenebris_sulfur_geyser_mask",
-        expression = "((tenebris_sulfur_geyser_spots + tenebris_sulfur_geyser_edge_noise) > 0) * (1 - tenebris_quartz_forest_mask)"
+        name = "tenebris_sulfur_ring_noise",
+        expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 2250, octaves = 2, input_scale = 1/40}"
     },
 
-    --------------------------------------------------------------------------------
-    -- Abyssal Gashes (Maraxsis-style: large organic blob zones as world borders)
-    -- Uses abs(multioctave_noise) like Maraxsis's trench system
-    -- DEBUG MODE: Set to 500 for testing, change to 10000 for production
-    --------------------------------------------------------------------------------
-    {
-        -- Minimum distance from spawn before gashes can appear
-        type = "noise-expression",
-        name = "tenebris_gash_min_distance",
-        expression = "4000"
-    },
-    {
-        -- Wobble for organic shapes
-        type = "noise-expression",
-        name = "tenebris_gash_wobble_x",
-        expression = "multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 3000, octaves = 3, input_scale = 1/800, output_scale = 200}"
-    },
+    -- FINAL ELEVATION with biome modifications
     {
         type = "noise-expression",
-        name = "tenebris_gash_wobble_y",
-        expression = "multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 3001, octaves = 3, input_scale = 1/800, output_scale = 200}"
-    },
-    {
-        -- High-frequency noise to roughen gash edges - creates spikey borders
-        type = "noise-expression",
-        name = "tenebris_gash_edge_roughness",
-        expression = "0.08 * multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 3050, octaves = 5, input_scale = 1/15}"
-    },
-    {
-        -- Core gash pattern: abs(noise) creates blob patterns
-        -- Edge roughness added to create jagged/irregular boundaries
-        type = "noise-expression",
-        name = "tenebris_gash_elevation",
-        expression = "abs(multioctave_noise{x = x + tenebris_gash_wobble_x, y = y + tenebris_gash_wobble_y,\z
-            persistence = 0.5, seed0 = map_seed, seed1 = 3100, octaves = 3, input_scale = 1/1000}) + tenebris_gash_edge_roughness"
-    },
-    {
-        -- Distance fade: smooth cubic transition from 0 at min_distance to 1 over 2000 tiles
-        -- Uses smoothstep-like curve for organic fade-in
-        type = "noise-expression",
-        name = "tenebris_gash_distance_fade_linear",
-        expression = "clamp((distance - tenebris_gash_min_distance) / 2000, 0, 1)"
-    },
-    {
-        -- Smoothstep curve: 3t² - 2t³ for smooth acceleration/deceleration
-        type = "noise-expression",
-        name = "tenebris_gash_distance_fade",
-        expression = "tenebris_gash_distance_fade_linear * tenebris_gash_distance_fade_linear * (3 - 2 * tenebris_gash_distance_fade_linear)"
-    },
-    {
-        -- Raw gash value before distance fade: 1 where gash should appear, 0 elsewhere
-        type = "noise-expression",
-        name = "tenebris_gash_raw",
-        expression = "if(tenebris_gash_elevation < 0.16, 1, 0)"
-    },
-    {
-        -- Final gash mask: multiply raw gash by distance fade for smooth transition
-        -- Gashes gradually appear as you move further from spawn
-        type = "noise-expression",
-        name = "tenebris_abyssal_gash",
-        expression = "tenebris_gash_raw * tenebris_gash_distance_fade"
-    },
-    {
-        type = "noise-expression",
-        name = "tenebris_abyssal_gash_soft",
-        -- Softer version with gradual edge transition, also faded by distance
-        expression = "clamp((0.20 - tenebris_gash_elevation) / 0.06, 0, 1) * tenebris_gash_distance_fade"
+        name = "tenebris_elevation",
+        expression = "max(5, tenebris_elevation_base + quartz_boost - sulfur_drop)",
+        local_expressions = {
+            -- Quartz forests: boost elevation by 100 (creates cliff ring at edges)
+            quartz_boost = "100 * tenebris_quartz_value * tenebris_biome_quartz",
+            
+            -- Sulfur pits: 8 rings with 30-unit drops each
+            -- Ring thresholds based on spot_noise value (higher = closer to center)
+            sulfur_spot = "tenebris_sulfur_value",
+            ring_noise = "tenebris_sulfur_ring_noise",
+            
+            -- First 3 rings: guaranteed at outer edge (low thresholds for spot_noise falloff)
+            sulfur_ring_1 = "30 * (sulfur_spot > 0.001)",
+            sulfur_ring_2 = "30 * (sulfur_spot > 0.01)",
+            sulfur_ring_3 = "30 * (sulfur_spot > 0.03)",
+            
+            -- Additional rings: random appearance based on noise
+            sulfur_ring_4 = "30 * (sulfur_spot > 0.06) * (ring_noise > -0.3)",
+            sulfur_ring_5 = "30 * (sulfur_spot > 0.12) * (ring_noise > 0)",
+            sulfur_ring_6 = "30 * (sulfur_spot > 0.25) * (ring_noise > 0.2)",
+            sulfur_ring_7 = "30 * (sulfur_spot > 0.45) * (ring_noise > 0.4)",
+            sulfur_ring_8 = "30 * (sulfur_spot > 0.70) * (ring_noise > 0.5)",
+            
+            -- Total drop, gated by biome ownership
+            sulfur_total_drop = "sulfur_ring_1 + sulfur_ring_2 + sulfur_ring_3 + sulfur_ring_4 + sulfur_ring_5 + sulfur_ring_6 + sulfur_ring_7 + sulfur_ring_8",
+            sulfur_drop = "sulfur_total_drop * tenebris_biome_sulfur"
+        }
     },
 
-    --------------------------------------------------------------------------------
-    -- Starting Area Helpers
-    --------------------------------------------------------------------------------
+    -- CLIFFINESS: biome-determined
+    -- Sulfur pits get constant 2 (like test map), others get noise-based + boosts
     {
         type = "noise-expression",
-        name = "tenebris_starting_area_multiplier",
-        expression = "1"
-    },
-    {
-        type = "noise-expression",
-        name = "tenebris_starting_circle",
-        -- 1 in starting area, 0 outside
-        expression = "if(distance < 200, 1, 0)"
+        name = "tenebris_cliffiness",
+        expression = "max(sulfur_cliffiness, normal_cliffiness)",
+        local_expressions = {
+            -- Sulfur pits: constant 2, exactly like test map (no noise, no exclusions)
+            sulfur_cliffiness = "2 * tenebris_biome_sulfur",
+            
+            -- Normal areas: noise-based with quartz edge boost
+            base_cliffiness = "0.7 + 0.5 * multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 1300, octaves = 2, input_scale = 1/100}",
+            quartz_edge_boost = "3 * tenebris_biome_quartz * (tenebris_quartz_pyramids > 0.1) * (tenebris_quartz_pyramids < 0.3)",
+            spawn_distance = "sqrt((x - 300)^2 + (y - 300)^2)",
+            spawn_exclusion = "clamp((spawn_distance - 20) / 30, 0, 1)",
+            normal_cliffiness = "max(0, base_cliffiness + quartz_edge_boost) * spawn_exclusion"
+        }
     },
 
-    --------------------------------------------------------------------------------
-    -- Combined Tile Probability Expressions
-    --------------------------------------------------------------------------------
-    -- Abyssal gash tiles (highest priority)
+    -- TILE expressions (just the prioritized biome masks)
     {
         type = "noise-expression",
         name = "tenebris_tile_abyssal",
-        expression = "tenebris_abyssal_gash"
+        expression = "tenebris_biome_abyssal"
     },
-    -- Mercury pool tiles
-    {
-        type = "noise-expression",
-        name = "tenebris_tile_mercury",
-        expression = "tenebris_mercury_pool_mask * (1 - tenebris_abyssal_gash)"
-    },
-    -- Highland tiles (high elevation, not in special zones)
-    {
-        type = "noise-expression",
-        name = "tenebris_tile_highlands",
-        expression = "tenebris_highlands_mask * (1 - tenebris_abyssal_gash) * (1 - tenebris_mercury_pool_mask) * (1 - tenebris_sulfur_geyser_mask)"
-    },
-    -- Lowland tiles (low elevation, not in special zones)
-    {
-        type = "noise-expression",
-        name = "tenebris_tile_lowlands",
-        expression = "tenebris_lowlands_mask * (1 - tenebris_abyssal_gash) * (1 - tenebris_mercury_pool_mask)"
-    },
-    -- Sulfur geyser area tiles
-    {
-        type = "noise-expression",
-        name = "tenebris_tile_sulfur",
-        expression = "tenebris_sulfur_geyser_mask * (1 - tenebris_abyssal_gash) * (1 - tenebris_mercury_pool_mask)"
-    },
-    -- Wastes tiles (default fallback)
-    {
-        type = "noise-expression",
-        name = "tenebris_tile_wastes",
-        expression = "tenebris_wastes_mask * (1 - tenebris_abyssal_gash) * (1 - tenebris_mercury_pool_mask) * (1 - tenebris_sulfur_geyser_mask) * (1 - tenebris_quartz_forest_mask)"
-    },
-    -- Quartz forest tiles
     {
         type = "noise-expression",
         name = "tenebris_tile_quartz",
-        expression = "tenebris_quartz_forest_mask * (1 - tenebris_abyssal_gash)"
+        expression = "tenebris_biome_quartz"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_tile_sulfur",
+        expression = "tenebris_biome_sulfur"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_tile_mercury",
+        expression = "tenebris_biome_mercury"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_tile_highlands",
+        expression = "tenebris_biome_highlands"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_tile_lowlands",
+        expression = "tenebris_biome_lowlands"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_tile_wastes",
+        expression = "tenebris_biome_wastes"
+    },
+
+    --------------------------------------------------------------------------------
+    --
+    -- LAYER 5: Subbiomes
+    -- Variations within biomes (rings, edges, shores)
+    --
+    --------------------------------------------------------------------------------
+
+    -- Sulfur pit rings (for potential tile variation or decoratives)
+    {
+        type = "noise-expression",
+        name = "tenebris_subbiome_sulfur_outer",
+        expression = "tenebris_biome_sulfur * (tenebris_sulfur_value > 0) * (tenebris_sulfur_value < 0.20)"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_subbiome_sulfur_middle",
+        expression = "tenebris_biome_sulfur * (tenebris_sulfur_value >= 0.20) * (tenebris_sulfur_value < 0.65)"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_subbiome_sulfur_inner",
+        expression = "tenebris_biome_sulfur * (tenebris_sulfur_value >= 0.65)"
+    },
+
+    -- Mercury shores (for stromatolites)
+    {
+        type = "noise-expression",
+        name = "tenebris_subbiome_mercury_shore",
+        expression = "(tenebris_elevation_base < 80) * (1 - tenebris_biome_any_special) * max(\z
+            (tenebris_mercury_cluster_regions > -0.2) * (tenebris_mercury_pool_value >= 0) * (tenebris_mercury_pool_value < 0.1),\z
+            (tenebris_mercury_river_master > 0.2) * (tenebris_mercury_river_value >= 0.12) * (tenebris_mercury_river_value < 0.20))"
+    },
+
+    -- Quartz edges (for cliffs and transition decoratives)
+    {
+        type = "noise-expression",
+        name = "tenebris_subbiome_quartz_edge",
+        expression = "tenebris_biome_quartz * (tenebris_quartz_pyramids > 0.1) * (tenebris_quartz_pyramids < 0.3)"
+    },
+    {
+        type = "noise-expression",
+        name = "tenebris_subbiome_quartz_plateau",
+        expression = "tenebris_biome_quartz * (tenebris_quartz_pyramids >= 0.3)"
     },
 
     --------------------------------------------------------------------------------
     -- Entity Placement Expressions
     --------------------------------------------------------------------------------
-    -- Lichen deposits: only in highlands and wastes
     {
         type = "noise-expression",
         name = "tenebris_lichen_probability",
-        expression = "0.002 * max(tenebris_highlands_mask, tenebris_wastes_mask) * (1 - tenebris_abyssal_gash) * (1 - tenebris_mercury_pool_mask)"
+        expression = "0.002 * max(tenebris_biome_highlands, tenebris_biome_wastes)"
     },
-    -- Quartz nodes (geodes): only in wastes
     {
         type = "noise-expression",
         name = "tenebris_quartz_node_probability",
-        expression = "0.003 * tenebris_wastes_mask * (1 - tenebris_abyssal_gash) * (1 - tenebris_mercury_pool_mask)"
+        expression = "0.003 * tenebris_biome_wastes"
     },
-    -- Lucifunnels: only in highlands
     {
         type = "noise-expression",
         name = "tenebris_lucifunnel_probability",
-        expression = "0.02 * tenebris_highlands_mask * (1 - tenebris_abyssal_gash)"
+        expression = "0.02 * tenebris_biome_highlands"
     },
-    -- Tenecaps: only in lowlands
     {
         type = "noise-expression",
         name = "tenebris_tenecap_probability",
-        expression = "0.04 * tenebris_lowlands_mask * (1 - tenebris_abyssal_gash)"
+        expression = "0.04 * tenebris_biome_lowlands"
     },
-    -- Sulfuric geysers: only at sulfur geyser spots, excluded from quartz forests
     {
         type = "noise-expression",
         name = "tenebris_sulfur_geyser_probability",
-        -- Low probability for sparse geyser placement, excluded from quartz forests
-        expression = "(control:sulfuric_acid_geyser:size > 0) * 0.003 * tenebris_sulfur_geyser_mask * (1 - tenebris_abyssal_gash) * (1 - tenebris_quartz_forest_mask)"
+        expression = "(control:sulfuric_acid_geyser:size > 0) * 0.003 * tenebris_biome_sulfur"
     },
     {
         type = "noise-expression",
         name = "tenebris_sulfur_geyser_richness",
-        expression = "tenebris_sulfur_geyser_mask * 500000 * control:sulfuric_acid_geyser:richness"
+        expression = "tenebris_biome_sulfur * 500000 * control:sulfuric_acid_geyser:richness"
     },
-    -- Stromatolites: ring around mercury pools only (not rivers)
     {
         type = "noise-expression",
         name = "tenebris_stromatolite_probability",
-        expression = "0.05 * tenebris_mercury_pool_shore_mask * (1 - tenebris_abyssal_gash)"
+        expression = "0.05 * tenebris_subbiome_mercury_shore"
     },
 
     --------------------------------------------------------------------------------
     -- Quartz Forest Ortet Placement
-    -- Sparse placement within quartz forest plateaus, ~500 tiles apart
-    -- Only 1 ortet per spot - use tiny radius and high threshold
     --------------------------------------------------------------------------------
     {
-        -- Plateau center favorability - higher values near pyramid peaks
-        -- Used as favorability for spot_noise to prefer plateau centers
         type = "noise-expression",
         name = "tenebris_plateau_favorability",
         expression = "tenebris_quartz_pyramids * tenebris_quartz_forest_cells"
     },
     {
-        -- Exclusion zone around spawn ortet (300, 300) - prevents spot_noise from placing there
-        -- Returns 0 within 400 tiles of spawn, fades to 1 at 450 tiles
-        -- This ensures no ortets spawn within 400 tiles of the guaranteed spawn ortet
         type = "noise-expression",
         name = "tenebris_spawn_exclusion",
         expression = "clamp((sqrt((x - 300)^2 + (y - 300)^2) - 400) / 50, 0, 1)"
     },
     {
-        -- Ortet spots using spot_noise for spacing enforcement
-        -- Uses plateau favorability to prefer centers
-        -- Large spacing (300) and low candidate count (4) to prevent clustering
-        -- Excludes area near spawn ortet to prevent doubling up
         type = "noise-expression",
         name = "tenebris_ortet_spots",
         expression = "spot_noise{x = x, y = y, seed0 = map_seed, seed1 = 3001,\z
             candidate_spot_count = 16,\z
             suggested_minimum_candidate_point_spacing = 300,\z
-            density_expression = tenebris_quartz_forest_mask * 3 * tenebris_spawn_exclusion,\z
+            density_expression = tenebris_biome_quartz * 3 * tenebris_spawn_exclusion,\z
             spot_quantity_expression = 1,\z
             spot_radius_expression = 1,\z
             spot_favorability_expression = tenebris_plateau_favorability + 0.1,\z
@@ -777,21 +708,15 @@ data:extend{
             maximum_spot_basement_radius = 1}"
     },
     {
-        -- Guaranteed ortet at spawn quartz forest center (300, 300)
-        -- Uses a tiny spot (radius 3) so only 1 ortet spawns
         type = "noise-expression",
         name = "tenebris_spawn_ortet",
         expression = "max(0, 1 - sqrt((x - 300)^2 + (y - 300)^2) / 3)"
     },
     {
-        -- Ortet probability: spot noise (with spacing) OR spawn ortet location
-        -- Lower threshold (> 0) since spot_noise returns positive values at spot centers
         type = "noise-expression",
         name = "tenebris_ortet_probability",
-        expression = "((tenebris_ortet_spots > 0) + (tenebris_spawn_ortet > 0.5)) * tenebris_quartz_forest_mask * (1 - tenebris_abyssal_gash)"
+        expression = "((tenebris_ortet_spots > 0) + (tenebris_spawn_ortet > 0.5)) * tenebris_biome_quartz"
     },
-    -- NOTE: Buds are spawned programmatically around ortets via scripts/quartz_forest/map_generation.lua
-    -- This gives us better control over spacing (50+ tiles) and count (1-10 based on distance from spawn)
 
 }
 
@@ -805,11 +730,9 @@ tenebris = function()
         {
             name = "cliff-tenebris",
             control = "tenebris_cliff",
-            -- Lowered cliff_elevation_0 to allow cliffs in more areas
-            -- Cliffs can now form at quartz forest edges and in sulfur pits
             cliff_elevation_interval = 30,
             cliff_elevation_0 = 40,
-            richness = 0.80,
+            richness = 0.95,
             cliff_smoothing = 0
         },
         property_expression_names =
@@ -817,39 +740,23 @@ tenebris = function()
             -- Core terrain properties
             elevation = "tenebris_elevation",
             aux = "tenebris_aux",
-            moisture = "tenebris_moisture",
+            moisture = "tenebris_vapor_pressure",
             temperature = "tenebris_temperature",
             cliffiness = "tenebris_cliffiness",
             cliff_elevation = "cliff_elevation_from_elevation",
             
-            -- Entity placement by biome
-            -- Note: lichen deposits use resource_autoplace for proper ore patch clustering
+            -- Entity placement
             ["entity:quartz-node:probability"] = "tenebris_quartz_node_probability",
             ["entity:sulfuric-acid-geyser:probability"] = "tenebris_sulfur_geyser_probability",
             ["entity:sulfuric-acid-geyser:richness"] = "tenebris_sulfur_geyser_richness",
             ["entity:tenebris-quartz-forest-ortet:probability"] = "tenebris_ortet_probability",
-            -- NOTE: Buds are spawned programmatically, not via autoplace
             
-            -- Tile placement by biome (using debug tiles with distinct colors)
-            -- Note: Abyssal and Mercury tiles use their own autoplace definitions
-            
-            -- Mercury pools (purple via tile definition)
+            -- Tile placement (debug tiles)
             ["tile:tenebris-mercury-tile:probability"] = "tenebris_tile_mercury",
-            
-            -- DEBUG TILES with distinct map colors
-            -- Highlands (cyan)
             ["tile:tenebris-debug-highlands:probability"] = "tenebris_tile_highlands",
-            
-            -- Lowlands (green)
             ["tile:tenebris-debug-lowlands:probability"] = "tenebris_tile_lowlands",
-            
-            -- Sulfur geysers (red)
             ["tile:tenebris-debug-sulfur:probability"] = "tenebris_tile_sulfur",
-            
-            -- Quartz forests (magenta)
             ["tile:tenebris-debug-quartz:probability"] = "tenebris_tile_quartz",
-            
-            -- Wastes (yellow/orange - default biome)
             ["tile:tenebris-debug-wastes:probability"] = "tenebris_tile_wastes",
         },
         autoplace_controls =
@@ -865,29 +772,23 @@ tenebris = function()
             {
                 settings =
                 {
-                    -- Debug tiles with distinct colors for biome visualization
-                    ["tenebris-abyssal-water"] = {},     -- Abyssal gashes (dark)
-                    ["tenebris-mercury-tile"] = {},      -- Mercury pools (silver)
-                    ["tenebris-debug-highlands"] = {},   -- Highlands (cyan)
-                    ["tenebris-debug-lowlands"] = {},    -- Lowlands (green)
-                    ["tenebris-debug-sulfur"] = {},      -- Sulfur geysers (red)
-                    ["tenebris-debug-quartz"] = {},      -- Quartz forests (magenta)
-                    ["tenebris-debug-wastes"] = {},      -- Wastes (yellow/orange)
+                    ["tenebris-abyssal-water"] = {},
+                    ["tenebris-mercury-tile"] = {},
+                    ["tenebris-debug-highlands"] = {},
+                    ["tenebris-debug-lowlands"] = {},
+                    ["tenebris-debug-sulfur"] = {},
+                    ["tenebris-debug-quartz"] = {},
+                    ["tenebris-debug-wastes"] = {},
                 }
             },
             ["decorative"] = {
                 settings = {
-                    -- Lowland decoratives
-                    ["tenebris-nerve-roots"] = {},
-                    ["tenebris-wispy-lichen"] = {},
-                    -- Mercury shore decoratives
                     ["tenebris-mercury-stain"] = {},
                     ["tenebris-mercury-coral"] = {},
-                    -- Highland decoratives
                     ["tenebris-highland-roots"] = {},
                     ["tenebris-mycelium"] = {},
-                    -- Wastes decoratives
                     ["tenebris-cracked-mud"] = {},
+                    ["tenebris-wispy-lichen"] = {},
                 }
             },
             ["entity"] =
@@ -898,7 +799,6 @@ tenebris = function()
                     ["sulfuric-acid-geyser"] = {},
                     ["quartz-node"] = {},
                     ["tenebris-quartz-forest-ortet"] = {},
-                    -- NOTE: Buds are spawned programmatically around ortets
                 }
             }
         }
@@ -906,4 +806,3 @@ tenebris = function()
 end
 
 return tenebris
-

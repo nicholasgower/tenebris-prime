@@ -147,7 +147,7 @@ debug_sulfur.absorptions_per_second = ABSORPTION.NEUTRAL
 local debug_quartz = table.deepcopy(data.raw.tile["dust-lumpy"])
 debug_quartz.name = "tenebris-debug-quartz"
 debug_quartz.order = "t[tenebris]-d[debug]-e[quartz]"
-debug_quartz.autoplace = {probability_expression = "tenebris_quartz_forest_mask"}
+debug_quartz.autoplace = {probability_expression = "tenebris_biome_quartz"}
 debug_quartz.map_color = {138, 43, 226}  -- Violet
 debug_quartz.absorptions_per_second = ABSORPTION.NEUTRAL
 

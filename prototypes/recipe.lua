@@ -349,7 +349,7 @@ local all_recipes = {
 		{
 			type = "recipe",
 			name = "tenebris-chitosan",
-			category = "chemistry",
+			category = "organic-or-chemistry",
 			subgroup = "tenebris-organic-products",
 			enabled = false,
 			energy_required = 4,
@@ -369,7 +369,7 @@ local all_recipes = {
 		{
 			type = "recipe",
 			name = "tenebris-atmosphere",
-			category = "chemistry",
+			category = "organic-or-chemistry",
 			subgroup = "tenebris-atmosphere-processing",
 			enabled = false,
 			energy_required = 20,
@@ -378,6 +378,12 @@ local all_recipes = {
 				{ type = "fluid", name = "tenebris-atmosphere", amount = 100 },
 			},
 			allow_productivity = true,
+			surface_conditions = {
+				{
+					property = "innate-energy-luminosity",
+					min = 1
+				}
+			},
 		},
 		{
 			type = "recipe",
@@ -385,7 +391,7 @@ local all_recipes = {
 			category = "oil-processing",
 			subgroup = "tenebris-atmosphere-processing",
 			enabled = false,
-			energy_required = 4,
+			energy_required = 10,
 			icons = {
 				{ icon = "__tenebris-prime__/graphics/icons/fluid/tenebris-atmosphere.png", icon_size = 64, shift = {0, -8}, scale = 0.4 },
 				{ icon = "__space-age__/graphics/icons/fluid/ammonia.png", icon_size = 64, shift = {-10, 8}, scale = 0.3 },
@@ -500,11 +506,17 @@ local all_recipes = {
 				{ type = "item", name = "tenebris-quartz-ore", amount = 120, probability = 0.0025 },
 			},
 			allow_productivity = true,
+			surface_conditions = {
+				{
+					property = "innate-energy-luminosity",
+					min = 1
+				}
+			},
 		},
 		{
 			type = "recipe",
 			name = "tenebris-quartz-slurry",
-			category = "chemistry",
+			category = "chemistry-or-cryogenics",
 			subgroup = "tenebris-minerals",
 			enabled = false,
 			energy_required = 10,
@@ -579,7 +591,7 @@ local all_recipes = {
 		{
 			type = "recipe",
 			name = "tenebris-carbon-spore-filter-cleaning",
-			category = "chemistry",
+			category = "organic-or-chemistry",
 			subgroup = "tenebris-atmosphere-filtration",
 			enabled = false,
 			hide_from_player_crafting = true,
@@ -615,7 +627,7 @@ local all_recipes = {
 		{
 			type = "recipe",
 			name = "tenebris-ceramic-filter-cleaning",
-			category = "chemistry",
+			category = "organic-or-chemistry",
 			subgroup = "tenebris-atmosphere-filtration",
 			enabled = false,
 			hide_from_player_crafting = true,
@@ -821,7 +833,6 @@ local all_recipes = {
 			},
 			results = {
 				{ type = "item", name = "carbon-fiber", amount = 1 },
-				{ type = "item", name = "sulfur", amount = 1 },
 				{ type = "fluid", name = "tenebris-mercury", amount = 10 },
 			},
 			main_product = "carbon-fiber",
@@ -1215,6 +1226,12 @@ local all_recipes = {
 			results = {
 				{ type = "item", name = "tenebris-bioinfusor", amount = 1 },
 			},
+			surface_conditions = {
+				{
+					property = "innate-energy-luminosity",
+					min = 1
+				}
+			},
 		},
 		{
 			type = "recipe",
@@ -1232,6 +1249,12 @@ local all_recipes = {
 			},
 			results = {
 				{ type = "item", name = "tenebris-biobeacon", amount = 1 },
+			},
+			surface_conditions = {
+				{
+					property = "innate-energy-luminosity",
+					min = 1
+				}
 			},
 		},
 		{
@@ -1409,6 +1432,12 @@ local all_recipes = {
 			results = {
 				{ type = "item", name = "piezoelectric-converter-capture-bot-rocket", amount = 1 },
 			},
+			surface_conditions = {
+				{
+					property = "innate-energy-luminosity",
+					min = 1
+				}
+			},
 		},
 		{
 			type = "recipe",
@@ -1538,6 +1567,13 @@ local all_recipes = {
 				{ type = "item", name = "mercurial-stromatolite", amount = 2 },
 			},
 			allow_productivity = true,
+			main_product = "mercurial-stromatolite",
+			surface_conditions = {
+				{
+					property = "innate-energy-luminosity",
+					min = 1
+				}
+			},
 		},
 		{
 			type = "recipe",
@@ -1556,6 +1592,12 @@ local all_recipes = {
 				{ type = "item", name = "overgrowth-luciferin-soil", amount = 1 },
 			},
 			allow_productivity = true,
+			surface_conditions = {
+				{
+					property = "innate-energy-luminosity",
+					min = 1
+				}
+			},
 		},
 		{
 			type = "recipe",
@@ -1574,6 +1616,12 @@ local all_recipes = {
 				{ type = "item", name = "overgrowth-tenecap-soil", amount = 1 },
 			},
 			allow_productivity = true,
+			surface_conditions = {
+				{
+					property = "innate-energy-luminosity",
+					min = 1
+				}
+			},
 		},
 
 		-- ========================================
@@ -1758,7 +1806,6 @@ local all_recipes = {
 			main_product = "tenebris-bismuth-ore",
 			allow_productivity = true,
 		},
-
 		{
 			type = "recipe",
 			name = "infected-carbonic-chunk-crushing",
@@ -1812,7 +1859,7 @@ local all_recipes = {
 
 		{
 			type = "recipe",
-			name = "tenebris-mercurial-lattice",
+			name = "tenebris-mercurial-vat",
 			category = "crafting",
 			subgroup = "tenebris-mercury-products",
 			enabled = false,
@@ -1822,7 +1869,7 @@ local all_recipes = {
 				{ type = "item", name = "carbon-fiber", amount = 1 },
 			},
 			results = {
-				{ type = "item", name = "tenebris-mercurial-lattice", amount = 1 },
+				{ type = "item", name = "tenebris-mercurial-vat", amount = 1 },
 			},
 			allow_productivity = true,
 		},
@@ -1834,7 +1881,7 @@ local all_recipes = {
 			enabled = false,
 			energy_required = 1,
 			ingredients = {
-				{ type = "item", name = "tenebris-mercurial-lattice", amount = 600 },
+				{ type = "item", name = "tenebris-mercurial-vat", amount = 600 },
 			},
 			results = {
 				{ type = "item", name = "tenebris-mercury-vii-plate", amount = 50 },
@@ -1845,7 +1892,7 @@ local all_recipes = {
 		-- ========================================
 		-- PIEZOELECTRIC HEATING
 		-- ========================================
-		-- Piezoelectric heating recipe (uses centralized constants)
+		-- Piezoelectric heating recipe (provides the heating fluid internally for the captured ortet to produce power)
 		(function()
 			return {
 				type = "recipe",
@@ -1863,6 +1910,39 @@ local all_recipes = {
 				},
 			}
 		end)(),
+
+		-- ========================================
+		-- FLARE GUN & AMMO
+		-- ========================================
+		{
+			type = "recipe",
+			name = "tenebris-flare-ammo",
+			enabled = false,
+			energy_required = 2,
+			ingredients = {
+				{ type = "item", name = "luciferin", amount = 10 },
+				{ type = "item", name = "tungsten-plate", amount = 1 },
+				{ type = "item", name = "sulfur", amount = 2 },
+			},
+			results = {
+				{ type = "item", name = "tenebris-flare-ammo", amount = 1 }
+			}
+		},
+		{
+			type = "recipe",
+			name = "tenebris-flare-gun",
+			enabled = false,
+			energy_required = 10,
+			ingredients = {
+				{ type = "item", name = "quantum-processor", amount = 10 },
+				{ type = "item", name = "tenebris-chitin", amount = 10 },
+				{ type = "item", name = "superconductor", amount = 10 },
+				{ type = "item", name = "tungsten-carbide", amount = 2 },
+			},
+			results = {
+				{ type = "item", name = "tenebris-flare-gun", amount = 1 }
+			}
+		},
 }
 
 -- Merge crystal variant recipes into all_recipes and register

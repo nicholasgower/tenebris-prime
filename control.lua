@@ -25,6 +25,8 @@ require("scripts.quartz_forest.ortet_death")
 require("scripts.thermal_diode.gui")
 require("scripts.deep_space_sensing.events")
 require("scripts.deep_space_sensing.gui_events")
+require("scripts.tenebrace_propagation.init")
+require("scripts.shield_disabler.init")
 
 -- Register Tenebris as a discoverable planet (decoupled from deep_space_sensing library)
 require("scripts.tenebris_planet_registration").register()
@@ -34,6 +36,7 @@ require("scripts.lightning_furnace.gui")
 require("scripts.thermal_diode.init")
 require("scripts.thermal_battery.gui")
 require("scripts.piezoelectric_inserter.gui")
+require("scripts.apocalypse_effect.init")
 
 -- Centipede spawning from egg rafts in space
 require("scripts.centipede_spawner.init").register_events()
@@ -49,6 +52,9 @@ require("scripts.flight_restriction.init")
 
 -- Mercury poisoning (damages players walking through mercury pools)
 require("scripts.mercury_poisoning.init")
+
+-- Lichen deposit harvesting scripted tech trigger
+require("scripts.lichen_deposit_harvesting")
 
 -- Optional: GVV debugger support
 if script.active_mods["gvv"] then require("__gvv__.gvv")() end

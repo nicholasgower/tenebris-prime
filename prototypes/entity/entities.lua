@@ -2,6 +2,11 @@ local hit_effects = require("__base__.prototypes.entity.hit-effects")
 local meld = require("meld")
 local sounds = require("__base__.prototypes.entity.sounds")
 local tenebris = require("lib.tenebris")
+local constants = require("lib.constants")
+local bioluminescent = require("lib.bioluminescent")
+
+-- Convenience alias
+local make_bioluminescent_particle = bioluminescent.make_particle
 
 
 local tenebris_bioluminescent_beacon = meld(table.deepcopy(data.raw["beacon"]["beacon"]), {

@@ -198,8 +198,9 @@ data:extend({
         },
         prerequisites = { "planet-discovery-tenebris" },
         research_trigger = {
-            type = "mine-entity",
-            entity = "tenebris-exposed-lichen-deposit"
+            type = "scripted",
+            icons = constants.LICHEN_DEPOSIT_ICONS,
+            trigger_description = {"", "Mine [entity=tenebris-exposed-lichen-deposit]", "."}
         }
     },
     {
@@ -222,6 +223,30 @@ data:extend({
         research_trigger = {
             type = "mine-entity",
             entity = "quartz-node"
+        }
+    },
+    {
+        type = "technology",
+        name = "tenebris-flare-gun",
+        icon = "__base__/graphics/icons/flamethrower.png",
+        icon_size = 64,
+        effects = {
+            { type = "unlock-recipe", recipe = "tenebris-flare-ammo" },
+            { type = "unlock-recipe", recipe = "tenebris-flare-gun" },
+        },
+        prerequisites = { "piezoelectric-interfacing", "lucifunnel-processing" },
+        unit = {
+            count = 40000,
+            ingredients = {
+                {"automation-science-pack", 1},
+                {"logistic-science-pack", 1},
+                {"military-science-pack", 1},
+                {"chemical-science-pack", 1},
+                {"utility-science-pack", 1},
+                {"agricultural-science-pack", 1},
+                {"cryogenic-science-pack", 1},
+            },
+            time = 30
         }
     },
     {
@@ -544,7 +569,8 @@ data:extend({
         prerequisites = { 
             "deep-space-discovery-tenespace", 
             "quartz-crystal-sedimentation", 
-            "tenebris-rocket-silo" 
+            "tenebris-rocket-silo",
+            "promethium-science-pack"
         },
     },
     {
@@ -574,8 +600,19 @@ data:extend({
     {
         type = "technology",
         name = "luciferin-explosives",
-        icon = "__tenebris-prime__/graphics/technology/luciferin-explosives.png",
-        icon_size = 256,
+        icons = {
+            {
+                icon = "__base__/graphics/technology/atomic-bomb.png",
+                icon_size = 256,
+                tint = tenebris.TINT.BIOLUMINESCENT_LIGHT,
+            },
+            {
+                icon = "__tenebris-prime__/graphics/technology/luciferin-explosives.png",
+                icon_size = 256,
+                scale = 0.35,
+                tint = tenebris.TINT.BIOLUMINESCENT_GLOW,
+            },
+        },
         effects = {
             {
                 type = "unlock-recipe",
@@ -985,7 +1022,7 @@ data:extend({
             },
             {
                 type = "unlock-recipe",
-                recipe = "tenebris-mercurial-lattice"
+                recipe = "tenebris-mercurial-vat"
             }
         },
         unit = {
@@ -1055,7 +1092,7 @@ data:extend({
             }
         },
         unit = {
-            count_formula = "1000*(L^1.5)",
+            count_formula = "1000*(L^1.2)",
             ingredients = {
                 { "automation-science-pack",      1 },
                 { "logistic-science-pack",        1 },

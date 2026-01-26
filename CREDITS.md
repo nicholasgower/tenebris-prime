@@ -157,6 +157,12 @@ The following starmap icons use modified graphics from third-party mods, used un
 - **File:** `graphics/icons/piezoelectric-motor.png`
 - **Original:** `motor-2.png`
 
+### Mercury VII Plate Icon
+- **Source:** Darkfrei's Auto Icon Collection from [factorio_free_graphics_for_modders](https://github.com/DarkfireHellspawn/factorio_free_graphics_for_modders) by Darkfrei
+- **License:** MIT
+- **File:** `graphics/icons/mercury-vii-plate.png`
+- **Original:** `auto_icon_007_0006.png`
+
 ---
 
 ## Technology Icons

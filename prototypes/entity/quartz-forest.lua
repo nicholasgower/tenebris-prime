@@ -139,6 +139,8 @@ data.extend({
 			{ type = "fire", percent = 100 },
 			{ type = "laser", decrease = 30, percent = 70 },
 			{ type = "electric", percent = 100 },
+			{ type = "acid", percent = 100 },
+			{ type = "poison", percent = 100 },
 		},
 		working_sound = {
 			sound = {
@@ -247,6 +249,13 @@ data.extend({
 			},
 		},
 		map_color = constants.TINT.CYAN,
+		dying_trigger_effect = {
+			{
+				type = "script",
+				effect_id = "tenebris-quartz-forest-ortet-dying-effect",
+				show_in_tooltip = true,
+			}
+		}
 	},
 
 	-- =============================================================================

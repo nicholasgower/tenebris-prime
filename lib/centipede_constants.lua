@@ -1,4 +1,4 @@
---- Centipede (Pentapod) Constants
+--- Centipede Constants
 --- Used by both prototypes and runtime scripts
 --- 
 --- To buff centipedes, modify the values here.

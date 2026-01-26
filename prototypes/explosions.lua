@@ -12,7 +12,7 @@ data:extend({
   name = "tenebris-spore-smoke",
   animation = smoke_animations.trivial_smoke_fast({
     scale = 1.0,
-    tint = TINT.TENEBRACE,
+    tint = TINT.TENEBRACE_SMOKE,
   }),
   render_layer = "smoke",
   affected_by_wind = false,

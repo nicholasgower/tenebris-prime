@@ -4,6 +4,8 @@
 
 local tile_sounds = require("__space-age__/prototypes/tile/tile-sounds")
 local base_tile_sounds = require("__base__/prototypes/tile/tile-sounds")
+local constants = require("__tenebris-prime__.lib.constants")
+local TINT = constants.TINT
 
 -- Tile layer constants
 local decal_tile_layer = 255
@@ -92,17 +94,17 @@ local tenebris_nerve_roots = {
     }
 }
 
--- Wispy lichen near lichen deposits
+-- Wispy lichen in the wastes
 local tenebris_wispy_lichen = {
     name = "tenebris-wispy-lichen",
     type = "optimized-decorative",
-    order = "t[tenebris]-a[lowland]-b[wispy-lichen]",
+    order = "t[tenebris]-d[wastes]-b[wispy-lichen]",
     collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
     collision_mask = dec_default_collision(),
     render_layer = "decorative",
     walking_sound = base_tile_sounds.walking.small_bush,
     autoplace = {
-        tile_restriction = {"tenebris-debug-lowlands"},
+        tile_restriction = {"tenebris-debug-wastes"},
         placement_density = 2,
         probability_expression = "trpi(0.08)"
     },
@@ -156,7 +158,7 @@ local tenebris_mercury_stain = {
     render_layer = "decals",
     tile_layer = decal_tile_layer - 6,
     autoplace = {
-        probability_expression = "tenebris_mercury_shore_mask * 0.1"
+        probability_expression = "tenebris_subbiome_mercury_shore * 0.1"
     },
     pictures = {
         {
@@ -248,7 +250,7 @@ local tenebris_mercury_coral = {
             filename = "__space-age__/graphics/decorative/coral-stunted-grey/coral-stunted-grey-05.png",
             width = 408,
             height = 295,
-            shift = {-2.5/32, 7.75/32},
+            shift = util.by_pixel(-2.5, 7.75),
             scale = 0.5,
             tint = MERCURY_TINT,
         },
@@ -412,10 +414,63 @@ local tenebris_cracked_mud = {
     }
 }
 
+-- Tenebrace spore cup - tinted brown-cup for tenebrace spawns
+local tenebrace_cup = {
+    name = "tenebrace-cup",
+    type = "optimized-decorative",
+    order = "t[tenebris]-a[lowland]-c[tenebrace-cup]",
+    collision_box = {{-0.4, -0.4}, {0.4, 0.4}},
+    collision_mask = dec_default_collision(),
+    walking_sound = base_tile_sounds.walking.mud,
+    render_layer = "decorative",
+    tile_restriction = {"tenebris-debug-lowlands"},
+    pictures = (function()
+        local pics = {}
+        for i = 1, 13 do
+            local idx = string.format("%02d", i)
+            table.insert(pics, {
+                filename = "__space-age__/graphics/decorative/brown-cup/brown-cup-" .. idx .. ".png",
+                width = 220,
+                height = 220,
+                scale = 0.5,
+                tint = TINT.TENEBRACE,
+            })
+        end
+        return pics
+    end)(),
+}
+
+-- Tenebrace mycelium - tinted mycelium for tenebrace spawns
+local tenebrace_mycelium = {
+    name = "tenebrace-mycelium",
+    type = "optimized-decorative",
+    order = "t[tenebris]-a[lowland]-d[tenebrace-mycelium]",
+    collision_box = {{-0.4, -0.4}, {0.4, 0.4}},
+    collision_mask = dec_default_collision(),
+    walking_sound = base_tile_sounds.walking.plant,
+    render_layer = "decals",
+    tile_layer = decal_tile_layer - 1,
+    tile_restriction = {"tenebris-debug-lowlands"},
+    pictures = (function()
+        local pics = {}
+        for i = 1, 16 do
+            local idx = string.format("%02d", i)
+            table.insert(pics, {
+                filename = "__space-age__/graphics/decorative/mycelium/mycelium-" .. idx .. ".png",
+                width = 512,
+                height = 512,
+                scale = 0.5,
+                tint = TINT.TENEBRACE,
+            })
+        end
+        return pics
+    end)(),
+}
+
 data:extend({
     -- Lowlands
-    tenebris_nerve_roots,
-    tenebris_wispy_lichen,
+    tenebrace_cup,
+    tenebrace_mycelium,
     -- Mercury shores
     tenebris_mercury_stain,
     tenebris_mercury_coral,
@@ -424,4 +479,5 @@ data:extend({
     tenebris_mycelium,
     -- Wastes
     tenebris_cracked_mud,
+    tenebris_wispy_lichen,
 })

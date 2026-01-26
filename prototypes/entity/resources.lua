@@ -1,5 +1,6 @@
 local sounds = require("__base__.prototypes.entity.sounds")
 local resource_autoplace = require("resource-autoplace")
+local constants = require("__tenebris-prime__.prototypes.constants")
 
 resource_autoplace.initialize_patch_set("tenebris-exposed-lichen-deposit", true)
 
@@ -7,20 +8,7 @@ data:extend({
   {
     type = "resource",
     name = "tenebris-exposed-lichen-deposit",
-    icons = {
-      -- Center: Spoilage (main drop)
-      { icon = "__space-age__/graphics/icons/spoilage.png", icon_size = 64, scale = 0.4 },
-      -- Top-left: Tenecap spore
-      { icon = "__tenebris-prime__/graphics/icons/tenecap-spore.png", icon_size = 64, scale = 0.25, shift = {-10, -10} },
-      -- Top-right: Stone
-      { icon = "__base__/graphics/icons/stone.png", icon_size = 64, scale = 0.25, shift = {10, -10} },
-      -- Bottom-left: Carbon
-      { icon = "__space-age__/graphics/icons/carbon.png", icon_size = 64, scale = 0.25, shift = {-10, 10} },
-      -- Bottom-right: Calcite
-      { icon = "__space-age__/graphics/icons/calcite.png", icon_size = 64, scale = 0.25, shift = {10, 10} },
-      -- Right: Chitin (rare)
-      { icon = "__tenebris-prime__/graphics/icons/chitin.png", icon_size = 64, scale = 0.2, shift = {12, 0} },
-    },
+    icons = constants.LICHEN_DEPOSIT_ICONS,
     flags = {"placeable-neutral"},
     subgroup = "tenebris-minerals",
     order="t[tenebris]-a[tenebris-exposed-lichen-deposit]",

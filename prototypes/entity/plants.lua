@@ -2,11 +2,17 @@ local plant_flags = { "placeable-neutral", "placeable-off-grid", "breaths-air" }
 local decorative_trigger_effects = require("__base__.prototypes.decorative.decorative-trigger-effects")
 local hit_effects = require ("__base__.prototypes.entity.hit-effects")
 local tile_sounds = require("__space-age__/prototypes/tile/tile-sounds")
+local sounds = require("__base__.prototypes.entity.sounds")
 local constants = require("lib.constants")
+local bioluminescent = require("lib.bioluminescent")
 local TINT = constants.TINT
 
 local seconds = 60
 local minutes = 60 * seconds
+
+-- Convenience aliases
+local make_bioluminescent_particle = bioluminescent.make_particle
+local make_bioluminescent_light = bioluminescent.make_light
 
 data:extend({
     {
@@ -23,8 +29,8 @@ data:extend({
                 { name = "luciferin", type = "item", amount_min = 0, amount_max = 2, },
             }
         },
-        mining_sound = sound_variations("__space-age__/sound/mining/axe-mining-stingfrond", 5, 0.5),
-        mined_sound = sound_variations("__space-age__/sound/mining/mined-stingfrond", 5, 0.4),
+        mining_sound = sound_variations("__space-age__/sound/mining/axe-mining-funneltrunk", 5, 0.5),
+        mined_sound = sound_variations("__space-age__/sound/mining/mined-funneltrunk", 5, 0.4),
         max_health = 50,
         collision_box = { { -0.1, -0.2 }, { 0.1, 0.1 } },
         selection_box = { { -.5, -.5 }, { .5, .5 } },
@@ -65,21 +71,20 @@ data:extend({
             }
         },
 
-        stateless_visualisation_variations = {
-            {
-                light = {
-                    intensity = 0.1,
-                    size = 16,
-                    color = { 0.6, 0.9, 0.9 }
-                }
-            }
+        -- Separate visualisations with irrational periods so they never sync
+        -- Using stateless_visualisation (not _variations) so ALL entries render simultaneously
+        stateless_visualisation = {
+            make_bioluminescent_light(8, 0.3),  -- Static ambient glow on plant
+            make_bioluminescent_particle({ 0, -0.2 },    100 * math.pi,       { 0.1, 0.3 }, 0.6, 1),
+            make_bioluminescent_particle({ -0.4, -0.5 }, 100 * math.exp(1),   { 0.1, 0.3 }, 0.6, 1),
+            make_bioluminescent_particle({ 0.4, -0.4 },  100 * math.sqrt(13), { 0.1, 0.3 }, 0.6, 1),
         },
 
         autoplace = {
             control = "tenebris_plants",
             order = "a[tree]-b[forest]-a",
             -- Glowdentale grows in highlands alongside lucifunnels
-            probability_expression = "0.03 * tenebris_highlands_mask * (1 - tenebris_abyssal_gash) * control:tenebris_plants:size",
+            probability_expression = "0.03 * tenebris_biome_highlands * control:tenebris_plants:size",
             richness_expression = "random_penalty_at(3, 1)",
             tile_restriction = {
                 "tenebris-debug-highlands",
@@ -100,8 +105,8 @@ data:extend({
                 { name = "lucifunnel", type = "item", amount_min = 10, amount_max = 30 },
             }
         },
-        mining_sound = sound_variations("__space-age__/sound/mining/axe-mining-stingfrond", 5, 0.5),
-        mined_sound = sound_variations("__space-age__/sound/mining/mined-stingfrond", 5, 0.4),
+        mining_sound = sound_variations("__space-age__/sound/mining/mining-cuttlepop", 6, 0.5),
+        mined_sound = sound_variations("__space-age__/sound/mining/mined-cuttlepop", 5, 0.4),
         max_health = 50,
         collision_box = { { -0.6, -0.8 }, { 0.6, 0.8 } },
         selection_box = { { -0.6, -0.8 }, { 0.6, 0.8 } },
@@ -142,14 +147,14 @@ data:extend({
             }
         },
 
-        stateless_visualisation_variations = {
-            {
-                light = {
-                    intensity = 0.1,
-                    size = 32,
-                    color = { 0.6, 0.9, 0.9 }
-                }
-            }
+        -- Separate visualisations with irrational periods so they never sync
+        -- Using stateless_visualisation (not _variations) so ALL entries render simultaneously
+        stateless_visualisation = {
+            make_bioluminescent_light(12, 0.4),  -- Static ambient glow on plant (larger for lucifunnel)
+            make_bioluminescent_particle({ 0, -0.3 },    150 * math.pi,                   { 0.15, 0.4 }, 1.0, 1.25, 0.2),
+            make_bioluminescent_particle({ -0.6, -0.8 }, 150 * math.exp(1),               { 0.15, 0.4 }, 1.0, 1.25, 0.2),
+            make_bioluminescent_particle({ 0.6, -0.7 },  150 * math.sqrt(13),             { 0.15, 0.4 }, 1.0, 1.25, 0.2),
+            make_bioluminescent_particle({ -0.5, 0.2 },  200 * (1 + math.sqrt(5)) / 2,    { 0.15, 0.4 }, 1.0, 1.25, 0.2),
         },
 
         autoplace = {
@@ -170,6 +175,10 @@ data:extend({
         icon = "__space-age__/graphics/icons/stingfrond.png",
         flags = plant_flags,
         growth_ticks = 2 * minutes,
+        healing_per_tick = 0.01,
+        harvest_emissions = {
+            tenecap_spore_clearance = -20
+        },
         minable =
         {
             mining_particle = "wooden-particle",
@@ -211,11 +220,14 @@ data:extend({
                 },
             },
         },
-        mining_sound = sound_variations("__space-age__/sound/mining/axe-mining-stingfrond", 5, 0.5),
-        mined_sound = sound_variations("__space-age__/sound/mining/mined-stingfrond", 5, 0.4),
+        mining_sound = sound_variations("__base__/sound/walking/shallow-water", 7, 1),
+        mined_sound = sound_variations("__base__/sound/walking/shallow-water", 7, 1),
         max_health = 50,
-        selection_box = { { -0.5, -0.5 }, { 0.5, 0.5 } },
-        collision_box = { { -0.3, -0.3 }, { 0.3, 0.3 } },
+        resistances = {
+            { type = "acid", percent = 100 },
+        },
+        selection_box = { { -0.4, -0.4 }, { 0.4, 0.4 } },
+        collision_box = { { -0.2, -0.2 }, { 0.2, 0.2 } },
         drawing_box_vertical_extension = 0.8,
         subgroup = "trees",
         order = "t[tenebris]-c[tenecap]",
@@ -266,6 +278,30 @@ data:extend({
                 "overgrowth-tenecap-soil",
             },
         },
+        created_effect = {
+            type = "direct",
+            action_delivery = {
+                type = "instant",
+                source_effects = {
+                    {
+                        type = "create-decorative",
+                        decorative = "tenebrace-cup",
+                        spawn_min = 1,
+                        spawn_max = 3,
+                        spawn_min_radius = 0,
+                        spawn_max_radius = 2,
+                    },
+                    {
+                        type = "create-decorative",
+                        decorative = "tenebrace-mycelium",
+                        spawn_min = 0,
+                        spawn_max = 2,
+                        spawn_min_radius = 0,
+                        spawn_max_radius = 3,
+                    },
+                },
+            },
+        },
     },
     -- Tenebrace - volatile fungal growths that periodically explode, releasing spores and propagating
     {
@@ -275,10 +311,14 @@ data:extend({
             { icon = "__space-age__/graphics/icons/sunnycomb.png", tint = TINT.TENEBRACE }
         },
         flags = plant_flags,
+        healing_per_tick = 0.05,
         growth_ticks = 10 * minutes,  -- Time to regrow if harvested by agricultural tower
-        max_health = 50,
+        max_health = 200,
         resistances = {
             { type = "acid", percent = 100 },  -- Immune to own spore damage
+        },
+        harvest_emissions = {
+            tenecap_spore_clearance = -130
         },
         collision_box = {{ -0.6, -0.4}, {0.6, 0.4}},  -- Similar to sunnycomb, slightly smaller for 0.3 scale
         selection_box = {{ -0.7, -2.5}, {0.7, 0.5}},  -- Tall selection for the mushroom shape
@@ -293,7 +333,8 @@ data:extend({
                 { type = "item", name = "spoilage", amount_min = 20, amount_max = 30 },
             },
         },
-        mining_sound = tile_sounds.walking.shallow_water,
+        mining_sound = sound_variations("__base__/sound/walking/shallow-water", 7, 1),
+        mined_sound = sound_variations("__base__/sound/walking/shallow-water", 7, 1),
         dying_explosion = "tenebrace-spore-explosion",
         remains_when_mined = "tenebrace-spore-explosion",
         dying_trigger_effect = {
@@ -312,20 +353,27 @@ data:extend({
                             },
                             {
                                 type = "damage",
-                                damage = {amount = 15, type = "poison"},
+                                damage = {amount = 40, type = "acid"},
                             },
                         },
                     },
                 },
             },
-            -- Chance to spawn new tenebrace nearby (propagation) - 3 attempts at 50% = ~1.5 average
-            {
-                type = "create-entity",
-                entity_name = "tenebrace",
-                probability = 0.3,
-                offset_deviation = {{-4, -4}, {4, 4}},
-                check_buildability = true,
+            -- Propagation handled by scripts/tenebrace_propagation/init.lua
+            -- This allows fire to prevent spawning
+        },
+        ambient_sounds = {
+            sound = {
+                variations = sound_variations("__space-age__/sound/world/plants/sunnycomb", 8, 0.7),
+                advanced_volume_control = {
+                    fades = {fade_in = {curve_type = "cosine", from = {control = 0.5, volume_percentage = 0.0}, to = {1.5, 100.0}}}
+                }
             },
+            radius = 7.5,
+            min_entity_count = 2,
+            max_entity_count = 10,
+            entity_to_sound_ratio = 0.3,
+            average_pause_seconds = 10
         },
         -- Sunnycomb spritesheet: 5 columns x 2 rows, 640x560 per frame
         -- Original uses shift util.by_pixel(52, -60), same as sunnycomb
@@ -353,40 +401,104 @@ data:extend({
         -- Ambient spore/smoke effect floating around the plant
         stateless_visualisation_variations = (function()
             local variations = {}
+            local period_1 = math.random(360, 440) * math.pi
+            local period_2 = math.random(100, 250) * math.pi
+            local fade_in_progress_duration_1 = math.min(40, period_1) / period_1
+            local fade_out_progress_duration_1 = math.min(40, period_1) / period_1
+            local fade_in_progress_duration_2 = math.min(40, period_2) / period_2
+            local fade_out_progress_duration_2 = math.min(40, period_2) / period_2
             for i = 1, 10 do  -- One per picture variation
-                table.insert(variations, {
-                    min_count = 1,
-                    max_count = 3,
-                    offset_x = { -0.2, 0.2 },
-                    offset_y = { -0.2, 0.2 },
-                    positions = {{ 0, -1.5 }, { -0.15, -1.4 }, { 0.15, -1.6 }},  -- Tight cluster above plant
-                    render_layer = "object",
-                    adjust_animation_speed_by_base_scale = true,
-                    scale = { 0.8, 1.2 },
-                    animation = {
-                        {
-                            filename = "__base__/graphics/entity/smoke/smoke.png",
-                            width = 152,
-                            height = 120,
-                            line_length = 5,
-                            frame_count = 60,
-                            animation_speed = 0.12,
-                            scale = 2.0,
-                            tint = TINT.TENEBRACE,
-                            shift = { 0, -1.8 },
-                            draw_as_glow = true,
+                table.insert(variations, 
+                {
+                    {
+                        min_count = 1,
+                        max_count = 3,
+                        offset_x = { -0.2, 0.2 },
+                        offset_y = { -0.2, 0.2 },
+                        positions = {{ 0, -1.5 }, { -0.15, -1.4 }, { 0.15, -1.6 }},  -- Tight cluster above plant
+                        render_layer = "smoke",
+                        adjust_animation_speed_by_base_scale = true,
+                        scale = { 0.8, 1.2 },
+                        animation = {
+                            {
+                                filename = "__base__/graphics/entity/smoke/smoke.png",
+                                width = 152,
+                                height = 120,
+                                line_length = 5,
+                                frame_count = 60,
+                                animation_speed = 0.12,
+                                scale = 2.0,
+                                tint = TINT.TENEBRACE_SMOKE,
+                                shift = { 0, -1.8 },
+                                draw_as_glow = true,
+                            },
                         },
-                    },
-                })
+                        fade_in_progress_duration = fade_in_progress_duration_1,
+                        fade_out_progress_duration = fade_out_progress_duration_1,
+                        period = period_1,
+                    }, 
+                    {
+                        min_count = 1,
+                        max_count = 3,
+                        offset_x = { -0.2, 0.2 },
+                        offset_y = { -0.2, 0.2 },
+                        positions = {{ 0, -1.5 }, { -0.15, -1.4 }, { 0.15, -1.6 }},  -- Tight cluster above plant
+                        render_layer = "smoke",
+                        adjust_animation_speed_by_base_scale = true,
+                        scale = { 0.8, 1.2 },
+                        animation = {
+                            {
+                                filename = "__base__/graphics/entity/smoke/smoke.png",
+                                width = 152,
+                                height = 120,
+                                line_length = 5,
+                                frame_count = 60,
+                                animation_speed = 0.12,
+                                scale = 2.0,
+                                tint = TINT.TENEBRACE_SMOKE,
+                                shift = { 0, -1.8 },
+                                draw_as_glow = true,
+                            },
+                        },
+                        fade_in_progress_duration = fade_in_progress_duration_2,
+                        fade_out_progress_duration = fade_out_progress_duration_2,
+                        period = period_2,
+                    }
+                }
+            )
             end
             return variations
         end)(),
         autoplace = {
             control = "tenebris_plants",
             order = "a[tree]-b[forest]-e",
-            probability_expression = "0.01 * tenebris_lowlands_mask * (1 - tenebris_abyssal_gash)",
+            probability_expression = "0.01 * tenebris_biome_lowlands",
             tile_restriction = {
                 "tenebris-debug-lowlands",
+            },
+        },
+        created_effect = {
+            type = "direct",
+            action_delivery = {
+                type = "instant",
+                source_effects = {
+                    {
+                        type = "create-decorative",
+                        decorative = "tenebrace-cup",
+                        spawn_min = 2,
+                        spawn_max = 8,
+                        spawn_min_radius = 0,
+                        spawn_max_radius = 6,
+                    },
+                    {
+                        type = "create-decorative",
+                        decorative = "tenebrace-mycelium",
+                        spawn_min = 1,
+                        spawn_max = 5,
+                        spawn_min_radius = 0,
+                        spawn_max_radius = 8,
+                    },
+                },
             },
         },
     },
@@ -422,16 +534,21 @@ data:extend({
                 { type = "item", name = "tenebris-quartz-geode", amount_min = 2, amount_max = 5 }
             }
         },
+        mining_sound = sound_variations("__space-age__/sound/mining/axe-mining-iceberg", 7, 0.6),
+        mined_sound = sound_variations("__space-age__/sound/mining/mined-iceberg", 4, 0.6),
         resistances =
         {
             {
                 type = "fire",
                 percent = 100
+            },
+            {
+                type = "acid",
+                percent = 100
             }
         },
         map_color = { 195, 195, 195 },
         count_as_rock_for_filtered_deconstruction = true,
-        mined_sound = { filename = "__base__/sound/deconstruct-bricks.ogg" },
         impact_category = "stone",
         pictures = {
             {

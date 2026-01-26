@@ -61,6 +61,11 @@ tenebris.EVENTS = {
     ON_SURFACE_CREATED = defines.events.on_surface_created,
     ON_PLAYER_CHANGED_SURFACE = defines.events.on_player_changed_surface,
     ON_PLAYER_CHANGED_POSITION = defines.events.on_player_changed_position,
+    ON_PLAYER_DRIVING_CHANGED_STATE = defines.events.on_player_driving_changed_state,
+    ON_PLAYER_PLACED_EQUIPMENT = defines.events.on_player_placed_equipment,
+    ON_PLAYER_REMOVED_EQUIPMENT = defines.events.on_player_removed_equipment,
+    ON_EQUIPMENT_INSERTED = defines.events.on_equipment_inserted,
+    ON_EQUIPMENT_REMOVED = defines.events.on_equipment_removed,
     ON_CARGO_POD_FINISHED_ASCENDING = defines.events.on_cargo_pod_finished_ascending,
     ON_CARGO_POD_FINISHED_DESCENDING = defines.events.on_cargo_pod_finished_descending,
     SCRIPT_RAISED_BUILT = defines.events.script_raised_built,
@@ -69,7 +74,8 @@ tenebris.EVENTS = {
     ON_TRIGGER_CREATED_ENTITY = defines.events.on_trigger_created_entity,
     ON_CHUNK_GENERATED = defines.events.on_chunk_generated,
     ON_ENTITY_SPAWNED = defines.events.on_entity_spawned,
-    ON_SCRIPT_RAISED_BUILT = defines.events.script_raised_built,
+    ON_SCRIPT_RAISED_BUILT = defines.events.on_script_raised_built,
+    ON_SCRIPT_TRIGGER_EFFECT = defines.events.on_script_trigger_effect,
     ON_GUI_OPENED = defines.events.on_gui_opened,
     ON_GUI_CLICK = defines.events.on_gui_click,
     ON_GUI_CLOSED = defines.events.on_gui_closed,
@@ -100,7 +106,7 @@ end
 --- See lib/piezoelectric_constants.lua for tier definitions
 tenebris.PIEZOELECTRIC = require("lib.piezoelectric_constants")
 
---- Centipede (Pentapod) constants (shared with data stage)
+--- Centipede constants (shared with data stage)
 --- See lib/centipede_constants.lua for variant definitions
 tenebris.CENTIPEDE = require("lib.centipede_constants")
 

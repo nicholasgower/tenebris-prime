@@ -2,6 +2,9 @@
 --- Status effect stickers applied to entities
 --- Note: Stickers can only attach to Unit, Character, Car, and SpiderVehicle prototypes
 
+local constants = require("__tenebris-prime__.lib.constants")
+local TINT = constants.TINT
+
 data:extend({
     -- Mercury poisoning - applied when walking through mercury pools
     {
@@ -47,14 +50,14 @@ data:extend({
             line_length = 5,
             frame_count = 60,
             animation_speed = 0.5,
-            tint = {r = 0.4, g = 0.15, b = 0.5, a = 0.6},  -- Purple spore effect
+            tint = TINT.TENEBRACE_SMOKE,
             shift = {0, -0.5},
             priority = "high",
             scale = 0.4
         },
         duration_in_ticks = 120,  -- 2 seconds
         damage_interval = 30,  -- Every 0.5 seconds
-        damage_per_tick = {amount = 3, type = "acid"},
+        damage_per_tick = {amount = 20, type = "acid"},
     },
     
     -- Atmospheric pressure - applied to players on Tenebris until mech-adaptation tech is researched
@@ -62,6 +65,8 @@ data:extend({
     {
         type = "sticker",
         name = "tenebris-atmospheric-pressure-sticker",
+        hidden = true,
+        render_layer = "smoke",
         flags = {"not-on-map"},
         order = "z-tenebris-flight-restriction",
         animation = {

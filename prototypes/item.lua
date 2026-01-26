@@ -14,12 +14,12 @@ local ticks_per_minute = 60 * 60
 local piezoelectric_science_pack = meld(
     table.deepcopy(data.raw["tool"]["automation-science-pack"]), {
         name = "piezoelectric-science-pack",
-        icon = "__space-age__/graphics/icons/promethium-science-pack.png",
+        icon = "__tenebris-prime__/graphics/icons/piezoelectric-science-pack.png",
         subgroup = "tenebris-piezoelectric-science-pack",
         pictures = meld.overwrite {
             scale = 0.5,
             size = 64,
-            filename = "__space-age__/graphics/icons/promethium-science-pack.png",
+            filename = "__tenebris-prime__/graphics/icons/piezoelectric-science-pack.png",
             draw_as_glow = true,
         }
     })
@@ -136,13 +136,14 @@ data:extend({
         name = "mercurial-stromatolite",
         subgroup = "tenebris-mercury-products",
         stack_size = 50,
-        icon = "__space-age__/graphics/icons/yumako.png", -- Placeholder
+        icon = "__tenebris-prime__/graphics/icons/mercurial-stromatolite.png",
         inventory_move_sound = item_sounds.resource_inventory_move,
         pick_sound = item_sounds.resource_inventory_pickup,
         drop_sound = item_sounds.resource_inventory_move,
         weight = 2 * kg,
         default_import_location = tenebris.PLANET.TENEBRIS,
-        plant_result = "mercurial-stromatolite"
+        plant_result = "mercurial-stromatolite",
+        place_result = "mercurial-stromatolite"
     },
     {
         type = "item",
@@ -153,7 +154,6 @@ data:extend({
             {
                 icon = "__tenebris-prime__/graphics/icons/mercurial-archaea.png",
                 icon_size = 64,
-                tint = {r = 0.85, g = 0.85, b = 0.90, a = 1.0},  -- Strong silver tint
             },
         },
         spoil_ticks = ticks_per_minute * 2, -- 2 minutes
@@ -479,12 +479,11 @@ data:extend({
     -- ========================================
     {
         type = "item",
-        name = "tenebris-mercurial-lattice",
+        name = "tenebris-mercurial-vat",
         icons = {
             {
-                icon = "__tenebris-prime__/graphics/icons/mercurial-lattice.png",
+                icon = "__tenebris-prime__/graphics/icons/mercurial-vat.png",
                 icon_size = 64,
-                tint = {r = 0.85, g = 0.85, b = 0.90, a = 1.0},  -- Silver tint to match archaea
             },
         },
         subgroup = "tenebris-mercury-products",
@@ -497,7 +496,7 @@ data:extend({
     {
         type = "item",
         name = "tenebris-mercury-vii-plate",
-        icon = "__base__/graphics/icons/steel-plate.png", -- Placeholder
+        icon = "__tenebris-prime__/graphics/icons/mercury-vii-plate.png",
         subgroup = "tenebris-mercury-products",
         stack_size = 100,
         weight = 2 * kg,
@@ -949,6 +948,75 @@ data:extend({
     -- ========================================
     -- CAPSULES & COMBAT
     -- ========================================
+    {
+        type = "ammo",
+        name = "tenebris-flare-ammo",
+        icon = "__base__/graphics/icons/flamethrower-ammo.png",
+        icons = {
+            {
+                icon = "__base__/graphics/icons/flamethrower-ammo.png",
+                icon_size = 64,
+                tint = tenebris.TINT.BIOLUMINESCENT_GLOW,
+            }
+        },
+        ammo_category = "tenebris-flare",
+        ammo_type = {
+            target_type = "position",
+            action = {
+                type = "direct",
+                action_delivery = {
+                    type = "projectile",
+                    projectile = "tenebris-flare-projectile",
+                    starting_speed = 1.5,
+                    max_range = 60,
+                    source_effects = {
+                        {
+                            type = "create-explosion",
+                            entity_name = "explosion-gunshot",
+                            only_when_visible = true
+                        }
+                    }
+                }
+            }
+        },
+        subgroup = "ammo",
+        stack_size = 20,
+        weight = 10 * kg,
+        inventory_move_sound = item_sounds.metal_small_inventory_move,
+        pick_sound = item_sounds.metal_small_inventory_pickup,
+        drop_sound = item_sounds.metal_small_inventory_move,
+    },
+    {
+        type = "gun",
+        name = "tenebris-flare-gun",
+        icon = "__base__/graphics/icons/flamethrower.png",
+        icons = {
+            {
+                icon = "__base__/graphics/icons/flamethrower.png",
+                icon_size = 64,
+                tint = tenebris.TINT.BIOLUMINESCENT_GLOW,
+            }
+        },
+        subgroup = "gun",
+        stack_size = 5,
+        weight = 1 * kg,
+        attack_parameters = {
+            type = "projectile",
+            ammo_category = "tenebris-flare",
+            cooldown = 30,
+            range = 35,
+            min_range = 0,
+            damage_modifier = 1,
+            projectile_creation_distance = 0.65,
+            fire_penalty = 10,
+            projectile_center = { 0, 0 },
+            gun_barrel_length = 0.5,
+            gun_center_shift = {0, -0.5}
+        },
+        inventory_move_sound = item_sounds.weapon_inventory_move,
+        pick_sound = item_sounds.weapon_inventory_pickup,
+        drop_sound = item_sounds.weapon_inventory_move,
+    },
     {
         type = "ammo",
         name = "piezoelectric-converter-capture-bot-rocket",

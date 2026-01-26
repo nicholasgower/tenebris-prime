@@ -79,6 +79,44 @@ data:extend({
                 starting_vertical_speed_deviation = 0.05
             }
         }
+    },
+    {
+        type = "projectile",
+        name = "tenebris-flare-projectile",
+        flags = {"not-on-map"},
+        acceleration = -0.005,
+        action =
+        {
+          type = "direct",
+          action_delivery =
+          {
+            type = "instant",
+            target_effects =
+            {
+              {
+                type = "create-entity",
+                entity_name = "explosion",
+                only_when_visible = true
+              },
+              {
+                type = "damage",
+                damage = {amount = 10, type = "fire"}
+              },
+              {
+                type = "invoke-tile-trigger",
+                repeat_count = 1
+              },
+              {
+                type = "create-entity",
+                entity_name = "luciferin-flare",
+                check_buildability = true
+              },
+            }
+          }
+        },
+        animation = require("__base__.prototypes.entity.rocket-projectile-pictures").animation({1, 0.8, 0.3}),
+        shadow = require("__base__.prototypes.entity.rocket-projectile-pictures").shadow,
+        smoke = require("__base__.prototypes.entity.rocket-projectile-pictures").smoke,
     }
 })
 

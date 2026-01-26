@@ -21,6 +21,11 @@ local function is_on_mercury(player)
         return false
     end
     
+    -- Flying players don't touch the mercury
+    if player.character.is_flying then
+        return false
+    end
+    
     local surface = player.surface
     local position = player.character.position
     

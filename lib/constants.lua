@@ -68,7 +68,10 @@ constants.TINT = {
     CYAN = {r = 0.3, g = 0.9, b = 1.0, a = 1.0},  -- Bright cyan for quartz ortet
     CYAN_DULL = {r = 0.2, g = 0.6, b = 0.7, a = 1.0},  -- Duller cyan for quartz buds
     MERCURIAL = {r = 0.7, g = 0.7, b = 0.8, a = 1.0},  -- Silvery blue-grey for mercurial entities
-    TENEBRACE = {r = 0.3, g = 0.2, b = 0.4, a = 1.0},  -- Dark violet for tenebrace spore plants
+    TENEBRACE = {r = 0.45, g = 0.38, b = 0.42, a = 1.0},  -- Brown/green with subtle purple undertone
+    TENEBRACE_SMOKE = {r = 0.3, g = 0.2, b = 0.4, a = 1.0},  -- Dark violet for spore smoke effects
+    BIOLUMINESCENT_GLOW = {r = 0.4, g = 1.0, b = 1.0, a = 0.6},  -- Bright cyan for bioluminescent particle effects
+    BIOLUMINESCENT_LIGHT = {r = 0.15, g = 0.25, b = 0.25, a = 1.0},  -- Dim cyan for ambient plant glow
 }
 
 --#endregion
