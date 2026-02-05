@@ -66,11 +66,11 @@ data:extend({
 	-- Helper Functions
 	--------------------------------------------------------------------------------
 	{
-		-- Smooth selection function: returns min-max based on input range
+		-- Smooth selection function: returns output_min-output_max based on input range
 		type = "noise-function",
 		name = "tenebris_select",
-		parameters = { "input", "from", "to", "slope", "min", "max" },
-		expression = "clamp(min(input - (from - slope), to + slope - input) / slope, min, max)",
+		parameters = { "input", "from", "to", "slope", "output_min", "output_max" },
+		expression = "clamp(min(input - (from - slope), to + slope - input) / slope, output_min, output_max)",
 	},
 	{
 		-- Decorative placement with clustering
@@ -89,47 +89,56 @@ data:extend({
 		expression = "0.8",
 	},
 	{
-		-- Random angle for starting area orientation (based on map seed)
-		type = "noise-expression",
-		name = "tenebris_starting_angle",
-		expression = "map_seed_normalized * 3600",
-	},
-	{
-		type = "noise-expression",
-		name = "tenebris_starting_direction",
-		expression = "-1 + 2 * (map_seed_small & 1)",
-	},
-	{
-		type = "noise-expression",
-		name = "tenebris_starting_highlands",
-		expression = "starting_spot_at_angle{angle = tenebris_starting_angle + 60 * tenebris_starting_direction,\z
-            distance = 200 * tenebris_starting_area_multiplier,\z
-            radius = 180 * tenebris_starting_area_multiplier,\z
-            x_distortion = tenebris_wobble_x * 12,\z
-            y_distortion = tenebris_wobble_y * 12}",
-	},
-	{
+		-- Entire starting area is wastes (simple)
 		type = "noise-expression",
 		name = "tenebris_starting_lowlands",
-		expression = "starting_spot_at_angle{angle = tenebris_starting_angle + 240 * tenebris_starting_direction,\z
-            distance = 250 * tenebris_starting_area_multiplier,\z
-            radius = 150 * tenebris_starting_area_multiplier,\z
-            x_distortion = tenebris_wobble_x * 12,\z
-            y_distortion = tenebris_wobble_y * 12}",
+		expression = "0",
 	},
 	{
+		-- Entire starting area is wastes
 		type = "noise-expression",
 		name = "tenebris_starting_wastes",
-		expression = "starting_spot_at_angle{angle = tenebris_starting_angle + 180 * tenebris_starting_direction,\z
-            distance = 20 * tenebris_starting_area_multiplier,\z
-            radius = 120 * tenebris_starting_area_multiplier,\z
-            x_distortion = tenebris_wobble_x * 8,\z
-            y_distortion = tenebris_wobble_y * 8}",
+		expression = "1",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_starting_circle",
 		expression = "if(distance < 200, 1, 0)",
+	},
+
+	--------------------------------------------------------------------------------
+	-- Biome Elevation Thresholds (define once, reference everywhere)
+	-- Base terrain is boosted by 400, so thresholds are offset accordingly
+	--------------------------------------------------------------------------------
+	{
+		type = "noise-expression",
+		name = "tenebris_elevation_base_offset",
+		expression = "400",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_lowlands_min",
+		expression = "300",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_lowlands_max",
+		expression = "440", -- Extended up for more lowlands
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_wastes_min",
+		expression = "440", -- Narrower wastes band
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_wastes_max",
+		expression = "460", -- Narrower wastes band
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_highlands_min",
+		expression = "460", -- Lowered for more highlands
 	},
 
 	--------------------------------------------------------------------------------
@@ -171,28 +180,24 @@ data:extend({
 		expression = "max(-tenebris_tri_ridge * 0.8, tenebris_peaks) * 2.4",
 	},
 	{
+		-- Large-scale elevation for biome regions
 		type = "noise-expression",
-		name = "tenebris_ridge_terrace",
-		expression = "terrace{value = clamp(45 + tenebris_ridges * 35, -20, 120), offset = 50, width = 30, strength = 0.2}",
+		name = "tenebris_elevation_large",
+		expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 5000, octaves = 3, input_scale = 1/150}",
 	},
 	{
+		-- Medium-scale detail
 		type = "noise-expression",
-		name = "tenebris_starting_elevation",
-		expression = "max(45 * min(tenebris_starting_wastes * 2, 1),\z
-                          100 * min(tenebris_starting_highlands * 2, 1),\z
-                          10 * min(tenebris_starting_lowlands * 2, 1)) + 4 * tenebris_ridges_small",
+		name = "tenebris_elevation_detail",
+		expression = "multioctave_noise{x = x, y = y, persistence = 0.6, seed0 = map_seed, seed1 = 5001, octaves = 4, input_scale = 1/40}",
 	},
 	{
 		-- BASE ELEVATION: Before any biome modifications
-		-- This is used for base terrain biome selection (highlands/lowlands/wastes)
-		-- Boosted by 300 to give headroom for sulfur pit drops (8 rings × 30 = 240 units)
-		-- This ensures deepest pits stay above elevation 0 where cliffs can't form
+		-- Combines large-scale biome regions with medium detail
+		-- Centered around 440 to balance lowlands (300-420), wastes (420-480), highlands (480+)
 		type = "noise-expression",
 		name = "tenebris_elevation_base",
-		expression = "300 + lerp(tenebris_ridge_terrace, tenebris_starting_elevation_smooth, clamp(1.5 - (distance / tenebris_starting_area_multiplier / 400), 0, 1))",
-		local_expressions = {
-			tenebris_starting_elevation_smooth = "max(45 * min(tenebris_starting_wastes * 2, 1), 100 * min(tenebris_starting_highlands * 2, 1), 10 * min(tenebris_starting_lowlands * 2, 1))",
-		},
+		expression = "tenebris_elevation_base_offset + 40 + tenebris_elevation_large * 50 + tenebris_elevation_detail * 15",
 	},
 	{
 		-- AUX: Substrate/mineral variation (0-1)
@@ -304,10 +309,10 @@ data:extend({
 		expression = "max(0, 1 - sqrt((x - 300)^2 + (y - 300)^2) / 200)",
 	},
 	{
-		-- Cell selection: high ID cells OR cells near spawn
+		-- Cell selection: top 25% of cells become quartz forests
 		type = "noise-expression",
 		name = "tenebris_quartz_forest_cells",
-		expression = "tenebris_quartz_cells > (0.75 - 0.8 * tenebris_spawn_quartz_proximity)",
+		expression = "tenebris_quartz_cells > 0.75",
 	},
 	{
 		-- Continuous value for plateau shape (used for elevation boost and edge detection)
@@ -438,46 +443,31 @@ data:extend({
 		expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 2160, octaves = 3, input_scale = 1/400}",
 	},
 	{
-		-- Lowlands indicator (elevation 200-320) - gets mercury pools
-		type = "noise-expression",
-		name = "tenebris_lowlands_indicator",
-		expression = "tenebris_select(tenebris_elevation_base, 200, 320, 10, 0, 1)",
-	},
-	{
-		-- Wastes indicator (elevation 320-380) - gets mercury rivers only
-		type = "noise-expression",
-		name = "tenebris_wastes_indicator",
-		expression = "tenebris_select(tenebris_elevation_base, 320, 380, 10, 0, 1)",
-	},
-	{
-		-- Mercury region: separated by biome
-		-- Lowlands: pools (cluster-based + generous plasma coverage)
-		-- Wastes: rivers/streams only
+		-- Mercury region: lowlands and wastes, with buffer from highlands
+		-- Pools appear where plasma noise creates depressions
 		type = "noise-expression",
 		name = "tenebris_region_mercury",
-		expression = "max(\z
-            tenebris_lowlands_indicator * max(\z
-                (tenebris_mercury_cluster_regions > 0) * (tenebris_mercury_pool_value < 0),\z
-                (tenebris_mercury_pool_value < 0.15)),\z
-            tenebris_wastes_indicator * (tenebris_mercury_river_master > 0.3) * (tenebris_mercury_river_value < 0.12))",
+		expression = "max(tenebris_region_lowlands, tenebris_region_wastes) * (1 - tenebris_region_highlands) * max(\z
+            (tenebris_mercury_cluster_regions > 0) * (tenebris_mercury_pool_value < 0),\z
+            (tenebris_mercury_pool_value < 0.1))",
 	},
 
 	-- BASE TERRAIN regions (from elevation_base)
-	-- Thresholds boosted by 300 to match elevation_base boost
+	-- Thresholds defined globally above
 	{
 		type = "noise-expression",
 		name = "tenebris_region_highlands",
-		expression = "tenebris_select(tenebris_elevation_base, 380, 1000, 10, 0, 1)",
+		expression = "tenebris_select(tenebris_elevation_base, tenebris_highlands_min, 1000, 10, 0, 1)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_region_lowlands",
-		expression = "tenebris_select(tenebris_elevation_base, 200, 320, 10, 0, 1)",
+		expression = "tenebris_select(tenebris_elevation_base, tenebris_lowlands_min, tenebris_lowlands_max, 10, 0, 1)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_region_wastes",
-		expression = "tenebris_select(tenebris_elevation_base, 320, 380, 10, 0, 1)",
+		expression = "tenebris_select(tenebris_elevation_base, tenebris_wastes_min, tenebris_wastes_max, 10, 0, 1)",
 	},
 
 	--------------------------------------------------------------------------------
@@ -504,6 +494,7 @@ data:extend({
 		expression = "tenebris_region_sulfur * (1 - tenebris_biome_abyssal) * (1 - tenebris_biome_quartz)",
 	},
 	{
+		-- Mercury: special biome that can only spawn in lowlands-elevation areas
 		type = "noise-expression",
 		name = "tenebris_biome_mercury",
 		expression = "tenebris_region_mercury * (1 - tenebris_biome_abyssal) * (1 - tenebris_biome_quartz) * (1 - tenebris_biome_sulfur)",
@@ -544,30 +535,38 @@ data:extend({
 		expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 2250, octaves = 2, input_scale = 1/40}",
 	},
 
+	-- Jagged ridge noise for highlands
+	{
+		type = "noise-expression",
+		name = "tenebris_highlands_ridges",
+		expression = "abs(multioctave_noise{x = x + tenebris_wobble_x * 15, y = y + tenebris_wobble_y * 15, persistence = 0.7, seed0 = map_seed, seed1 = 6000, octaves = 4, input_scale = 1/80})",
+	},
+
 	-- FINAL ELEVATION with biome modifications
 	{
 		type = "noise-expression",
 		name = "tenebris_elevation",
-		expression = "max(5, effective_base + highlands_boost + quartz_boost - sulfur_drop)",
+		expression = "max(5, effective_base + highlands_boost + highlands_ridges + quartz_boost - sulfur_drop)",
 		local_expressions = {
-			-- Highlands: sharp elevation boost at biome boundary (creates cliff ring)
-			-- Boost of 40 ensures at least one cliff tier (cliff_elevation_interval = 30)
+			-- Highlands: base elevation boost at biome boundary (creates cliff ring)
 			highlands_boost = "40 * tenebris_biome_highlands",
+
+			-- Highlands: jagged ridges within highlands (creates internal cliffs)
+			highlands_ridges = "50 * tenebris_highlands_ridges * tenebris_biome_highlands",
 
 			-- Quartz forests: boost elevation by 100 (creates cliff ring at edges)
 			quartz_boost = "100 * tenebris_quartz_value * tenebris_biome_quartz",
 
 			-- Sulfur pits: flatten base elevation to ensure concentric cliff rings
-			-- The base terrain varies (typically 300-380), which would cause jagged non-concentric cliffs.
+			-- The base terrain varies (typically 380-520), which would cause jagged non-concentric cliffs.
 			-- We flatten to a uniform elevation within sulfur pits so ring drops create clean rings.
 			--
 			-- Flat base of 270 chosen so that:
-			--   - It's BELOW typical terrain (300-380 range), ensuring pits are always depressions
+			--   - It's FAR BELOW typical terrain (380-520 range), creating dramatic cliff walls at pit edges
+			--   - Drop from terrain (~420-460) to pit edge (270) = 150-190 units = 5-6 cliff tiers
 			--   - Ring drops are 32 each (slightly > cliff interval of 30 to ensure threshold crossing)
-			--   - Ring 0 drops to 238, Ring 1 to 206, Ring 2 to 174, etc.
-			--   - Each drop clearly crosses one cliff threshold
-			--   - Surrounding terrain (300-380) will always be higher than pit edge (238)
-			--   - Deepest point (8 rings): 270 - 256 = 14 (safely above 0)
+			--   - Internal rings: Ring 0 drops to 238, Ring 1 to 206, Ring 2 to 174, etc.
+			--   - Deepest point (6 rings): 270 - 192 = 78 (safely above 0)
 			sulfur_flat_base = "270",
 
 			-- Hard blend: immediately flatten to uniform base at biome boundary
@@ -586,7 +585,7 @@ data:extend({
 			-- 8 rings with thresholds spread across 0-1 range
 			-- Now that gradient reaches 1.0+, we can use full range
 			-- Ring 0: entire pit (>0) - this creates the outer cliff
-			sulfur_ring_0 = "ring_drop * (tenebris_sulfur_value > 0)",
+			-- sulfur_ring_0 = "ring_drop * (tenebris_sulfur_value > 0)",
 			-- Remaining rings at ~0.14 intervals for even spacing across 0-1
 			sulfur_ring_1 = "ring_drop * (tenebris_sulfur_value > 0.06)",
 			sulfur_ring_2 = "ring_drop * (tenebris_sulfur_value > 0.15)",
@@ -597,7 +596,7 @@ data:extend({
 			-- sulfur_ring_7 = "ring_drop * (tenebris_sulfur_value > 0.98)",
 
 			-- Total drop = sum of all rings that apply
-			sulfur_total_drop = "sulfur_ring_0 + sulfur_ring_1 + sulfur_ring_2 + sulfur_ring_3 + sulfur_ring_4 + sulfur_ring_6",
+			sulfur_total_drop = "sulfur_ring_1 + sulfur_ring_2 + sulfur_ring_3 + sulfur_ring_4 + sulfur_ring_6",
 
 			-- Gate by biome ownership
 			sulfur_drop = "sulfur_total_drop * tenebris_biome_sulfur",
@@ -605,20 +604,22 @@ data:extend({
 	},
 
 	-- CLIFFINESS: biome-determined
-	-- Sulfur pits get constant 2 (like test map), others get noise-based + boosts
+	-- Sulfur pits get constant 2, highlands get high cliffiness throughout
 	-- Lowlands are flat (no cliffs) to allow mercury pools to dominate
 	{
 		type = "noise-expression",
 		name = "tenebris_cliffiness",
-		expression = "max(sulfur_cliffiness, max(highlands_edge_cliffiness, normal_cliffiness))",
+		expression = "max(sulfur_cliffiness, max(highlands_cliffiness, max(highlands_edge_cliffiness, normal_cliffiness)))",
 		local_expressions = {
 			-- Sulfur pits: constant 2, exactly like test map (no noise, no exclusions)
 			sulfur_cliffiness = "2 * tenebris_biome_sulfur",
 
-			-- Highlands edges: high cliffiness at biome boundaries
-			-- Use the raw region mask to detect edge (where biome transitions from 0 to 1)
-			highlands_edge = "tenebris_biome_highlands * (1 - tenebris_select(tenebris_elevation_base, 390, 1000, 10, 0, 1))",
-			highlands_edge_cliffiness = "3 * highlands_edge",
+			-- Highlands interior: moderate cliffiness for jagged terrain
+			highlands_cliffiness = "1.2 * tenebris_biome_highlands",
+
+			-- Highlands edges: higher cliffiness at biome boundaries
+			highlands_edge = "tenebris_biome_highlands * (1 - tenebris_select(tenebris_elevation_base, tenebris_highlands_min + 10, 1000, 10, 0, 1))",
+			highlands_edge_cliffiness = "2 * highlands_edge",
 
 			-- Normal areas: noise-based with quartz edge boost
 			base_cliffiness = "0.7 + 0.5 * multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 1300, octaves = 2, input_scale = 1/100}",
@@ -655,7 +656,8 @@ data:extend({
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_highlands",
-		expression = "tenebris_biome_highlands",
+		-- Exclude highlands from starting area (within distance 500 of spawn)
+		expression = "tenebris_biome_highlands * (distance > 500)",
 	},
 	{
 		type = "noise-expression",
@@ -785,7 +787,7 @@ data:extend({
 	{
 		type = "noise-expression",
 		name = "tenebris_quartz_node_probability",
-		expression = "0.003 * tenebris_biome_wastes",
+		expression = "0.003 * tenebris_region_wastes",
 	},
 	{
 		type = "noise-expression",

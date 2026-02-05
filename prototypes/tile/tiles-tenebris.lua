@@ -102,12 +102,91 @@ local abyssal_water = {
 -- These are temporary for biome debugging
 
 -- Highlands - Bright Cyan
-local debug_highlands = table.deepcopy(data.raw.tile["highland-dark-rock"])
-debug_highlands.name = "tenebris-debug-highlands"
-debug_highlands.order = "t[tenebris]-d[debug]-a[highlands]"
-debug_highlands.autoplace = { probability_expression = "tenebris_tile_highlands" }
-debug_highlands.map_color = { 0, 200, 255 } -- Bright cyan
-debug_highlands.absorptions_per_second = ABSORPTION.NEUTRAL
+local debug_highlands = {
+	type = "tile",
+	name = "tenebris-debug-highlands",
+	order = "t[tenebris]-d[debug]-a[highlands]",
+	subgroup = "tenebris-tiles",
+	collision_mask = tile_collision_masks.ground(),
+	autoplace = { probability_expression = "tenebris_tile_highlands" },
+	layer = 10, -- Low layer so special biomes (quartz, sulfur, etc.) override
+	sprite_usage_surface = "gleba",
+	variants = tile_variations_template_with_transitions(
+		"__space-age__/graphics/terrain/gleba/highland-dark-rock.png",
+		{
+			max_size = 4,
+			[1] = {
+				weights = {
+					0.085,
+					0.085,
+					0.085,
+					0.085,
+					0.087,
+					0.085,
+					0.065,
+					0.085,
+					0.045,
+					0.045,
+					0.045,
+					0.045,
+					0.005,
+					0.025,
+					0.045,
+					0.045,
+				},
+			},
+			[2] = {
+				probability = 1,
+				weights = {
+					0.018,
+					0.020,
+					0.015,
+					0.025,
+					0.015,
+					0.020,
+					0.025,
+					0.015,
+					0.025,
+					0.025,
+					0.010,
+					0.025,
+					0.020,
+					0.025,
+					0.025,
+					0.010,
+				},
+			},
+			[4] = {
+				probability = 0.1,
+				weights = {
+					0.018,
+					0.020,
+					0.015,
+					0.025,
+					0.015,
+					0.020,
+					0.025,
+					0.015,
+					0.025,
+					0.025,
+					0.010,
+					0.025,
+					0.020,
+					0.025,
+					0.025,
+					0.010,
+				},
+			},
+		}
+	),
+	transitions = lava_to_out_of_map_transition and { lava_to_out_of_map_transition } or nil,
+	walking_sound = tile_sounds.walking.dry_rock,
+	landing_steps_sound = tile_sounds.landing.rock,
+	map_color = { 0, 200, 255 }, -- Bright cyan
+	walking_speed_modifier = 1,
+	vehicle_friction_modifier = 1,
+	absorptions_per_second = ABSORPTION.NEUTRAL,
+}
 
 -- Lowland Cauliflower - base lowland tile with aux mixing
 local lowland_cauliflower = {
@@ -205,6 +284,7 @@ local debug_wastes = table.deepcopy(data.raw.tile["dust-lumpy"])
 debug_wastes.name = "tenebris-debug-wastes"
 debug_wastes.order = "t[tenebris]-d[debug]-c[wastes]"
 debug_wastes.autoplace = { probability_expression = "tenebris_tile_wastes" }
+debug_wastes.layer = 20 -- Explicit layer (above highlands 10, below sulfur 30)
 debug_wastes.map_color = { 255, 200, 0 } -- Bright yellow/orange
 debug_wastes.absorptions_per_second = ABSORPTION.LOW
 
