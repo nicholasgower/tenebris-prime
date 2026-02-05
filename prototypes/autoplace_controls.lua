@@ -16,8 +16,16 @@ data:extend({
       },
       {
         type = "autoplace-control",
+        name = "tenebris_cinnabar_geyser",
+        localised_name = {"", "[entity=tenebris-cinnabar-geyser] ", {"entity-name.tenebris-cinnabar-geyser"}},
+        richness = true,
+        order = "z-d",
+        category = "resource"
+      },
+      {
+        type = "autoplace-control",
         name = "tenebris_enemies",
         category = "enemy",
-        order = "z-d"
+        order = "z-e"
       }
 })

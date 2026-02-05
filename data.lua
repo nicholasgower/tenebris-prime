@@ -1,3 +1,10 @@
+-- Register our space locations with deep-space-sensing
+if deep_space_sensing_api then
+    deep_space_sensing_api.register_location("tenebris")
+    deep_space_sensing_api.register_location("iridescent-river")
+    deep_space_sensing_api.register_location("lightless-gateway")
+end
+
 require("__tenebris-prime__.prototypes.sprites")
 require("__tenebris-prime__.prototypes.ambient-sounds")
 require("__tenebris-prime__.prototypes.autoplace_controls")
@@ -23,6 +30,7 @@ require("__tenebris-prime__.prototypes.entity.quartz_roboport_interface")
 require("__tenebris-prime__.prototypes.entity.projectiles")
 require("__tenebris-prime__.prototypes.entity.luciferin_flare")
 require("__tenebris-prime__.prototypes.entity.tenespace-smoke")
+require("__tenebris-prime__.prototypes.entity.flying-robots")
 require("__tenebris-prime__.prototypes.entity.stickers")
 require("__tenebris-prime__.prototypes.explosions")
 require("__tenebris-prime__.prototypes.fluid")
@@ -41,6 +49,4 @@ require("__tenebris-prime__.prototypes.tile.tiles-tenebris")
 require("__tenebris-prime__.prototypes.tips-and-tricks")
 require("__tenebris-prime__.prototypes.ordering")
 require("__tenebris-prime__.prototypes.achievements")
-
--- DEBUG: Test planet for sulfur pit cliff debugging (remove when done)
-require("__tenebris-prime__.prototypes.planet.test_sulfur_planet")
+require("__tenebris-prime__.prototypes.sound")

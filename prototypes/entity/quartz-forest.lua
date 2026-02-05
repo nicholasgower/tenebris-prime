@@ -249,13 +249,6 @@ data.extend({
 			},
 		},
 		map_color = constants.TINT.CYAN,
-		dying_trigger_effect = {
-			{
-				type = "script",
-				effect_id = "tenebris-quartz-forest-ortet-dying-effect",
-				show_in_tooltip = true,
-			}
-		}
 	},
 
 	-- =============================================================================

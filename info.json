@@ -10,6 +10,7 @@
   "dependencies": [
     "base >= 2.0.28",
     "space-age >= 2.0.28",
+    "deep-space-sensing >= 1.0.0",
     "PlanetsLib >= 1.11.0",
     "atan-air-scrubbing >= 0.2.5",
     "? maraxsis",

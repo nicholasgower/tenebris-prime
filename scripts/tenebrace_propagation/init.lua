@@ -12,7 +12,7 @@ local TENEBRACE_SPAWN_RADIUS = 6  -- Tiles
 local function is_valid_tile_for_tenebrace(surface, position)
     local tile = surface.get_tile(position.x, position.y)
     -- Check if tile name matches tenebrace's tile_restriction
-    return tile and tile.name == "tenebris-debug-lowlands"
+    return tile and tile.name == "tenebris-lowland-cauliflower"
 end
 
 local function spawn_tenebrace_near(surface, position, force)

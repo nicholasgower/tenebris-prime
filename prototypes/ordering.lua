@@ -2,31 +2,31 @@ meld = require("meld")
 local constants = require("lib.constants")
 
 local function order_data(type_name, group_ordering, data_name, order_variable)
-    -- Guard: check if the prototype exists before trying to set its order
-    if not data.raw[type_name] or not data.raw[type_name][data_name] then
-        -- Silently skip if the prototype doesn't exist
-        return ""
-    end
-    
-    return meld(data.raw[type_name][data_name], {
-        order = string.format("t[tenebris]-%s-%s[%s]", group_ordering, order_variable, data_name)
-    })
+	-- Guard: check if the prototype exists before trying to set its order
+	if not data.raw[type_name] or not data.raw[type_name][data_name] then
+		-- Silently skip if the prototype doesn't exist
+		return ""
+	end
+
+	return meld(data.raw[type_name][data_name], {
+		order = string.format("t[tenebris]-%s-%s[%s]", group_ordering, order_variable, data_name),
+	})
 end
 
 -- For items that need to be positioned relative to base game subgroups
 -- prefix: the base game order to position after (e.g., "b" for after "energy")
 local function order_data_prefixed(type_name, prefix, group_ordering, data_name, order_variable)
-    if not data.raw[type_name] or not data.raw[type_name][data_name] then
-        return ""
-    end
-    
-    return meld(data.raw[type_name][data_name], {
-        order = string.format("%s-t[tenebris]-%s-%s[%s]", prefix, group_ordering, order_variable, data_name)
-    })
+	if not data.raw[type_name] or not data.raw[type_name][data_name] then
+		return ""
+	end
+
+	return meld(data.raw[type_name][data_name], {
+		order = string.format("%s-t[tenebris]-%s-%s[%s]", prefix, group_ordering, order_variable, data_name),
+	})
 end
 
 local function build_group_ordering(group_name, group_order)
-    return string.format("%s[%s]", group_order, group_name)
+	return string.format("%s[%s]", group_order, group_name)
 end
 
 -- Items and Recipes
@@ -93,7 +93,7 @@ order_data("recipe", organic_products, "chitosan-advanced-circuit", "f")
 order_data("recipe", organic_products, "chitin-concrete", "g")
 order_data("recipe", organic_products, "chitosan-lubricant", "h")
 order_data("recipe", organic_products, "chitosan-carbon-fiber", "i")
-order_data("recipe", organic_products, "tenebris-chitin-nutrients", "z")  -- At the end of organic products
+order_data("recipe", organic_products, "tenebris-chitin-nutrients", "z") -- At the end of organic products
 
 -- WASTE PRODUCTS
 order_data("item", waste_products, "tenebris-ferric-waste", "a")
@@ -287,13 +287,13 @@ order_data("recipe", cryogenic_process, "ammonic-acidification", "b")
 -- LUCIFERIN FUELS
 order_data("recipe", luciferin_fuels, "luciferin-solid-fuel", "a")
 order_data("recipe", luciferin_fuels, "luciferin-rocket-fuel", "b")
+order_data("item", luciferin_fuels, "luciferin-rocket-fuel", "c")
 order_data("recipe", luciferin_fuels, "tenebris-luciferin-explosives", "c")
 
 -- WEAPONRY
 order_data("gun", weaponry, "tenebris-flare-gun", "a")
 order_data("ammo", weaponry, "tenebris-flare-ammo", "b")
-
-order_data("item", orbital_harvesting, "bismuth-ore", "a")
+order_data("item", weaponry, "displacer-capsule", "c")
 
 -- SPACE CRUSHING (centipede corpses, chitin, bismuth)
 order_data("recipe", space_crushing, "tenebris-centipede-corpse-grinding", "a")
@@ -307,8 +307,8 @@ order_data("item", casting, "quartziferous-bismuthal-plate", "b")
 order_data("recipe", waste_burning, "lucifunnel-burning", "a")
 order_data("recipe", waste_burning, "chitin-burning", "b")
 
-order_data("item", deep_space_sensing, "observation-satellite", "a")
-order_data("recipe", deep_space_sensing, "observation-satellite", "b")
+order_data("item", deep_space_sensing, "deep-space-sensing-observation-satellite", "a")
+order_data("recipe", deep_space_sensing, "deep-space-sensing-observation-satellite", "b")
 
 -- Lightning furnace moved to tenebris_machines
 

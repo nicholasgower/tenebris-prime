@@ -12,31 +12,31 @@ local constants = {}
 
 --- Planet and location names
 constants.PLANET = {
-    TENEBRIS = "tenebris",
-    -- Base game planets for reference
-    NAUVIS = "nauvis",
-    VULCANUS = "vulcanus",
-    FULGORA = "fulgora",
-    GLEBA = "gleba",
-    AQUILO = "aquilo",
+	TENEBRIS = "tenebris",
+	-- Base game planets for reference
+	NAUVIS = "nauvis",
+	VULCANUS = "vulcanus",
+	FULGORA = "fulgora",
+	GLEBA = "gleba",
+	AQUILO = "aquilo",
 }
 
 --- Space locations (routes and waypoints)
 constants.SPACE_LOCATION = {
-    TENEBRIS = "tenebris",
-    IRIDESCENT_RIVER = "iridescent-river",
-    THE_NEST = "the-nest",
-    LIGHTLESS_GATEWAY = "lightless-gateway",
-    LIGHTLESS_ABYSS = "lightless-abyss",
+	TENEBRIS = "tenebris",
+	IRIDESCENT_RIVER = "iridescent-river",
+	THE_NEST = "the-nest",
+	LIGHTLESS_GATEWAY = "lightless-gateway",
+	LIGHTLESS_ABYSS = "lightless-abyss",
 }
 
 --- All Tenebris locations (for iteration)
 constants.ALL_TENEBRIS_LOCATIONS = {
-    "tenebris",
-    "iridescent-river",
-    "the-nest",
-    "lightless-gateway",
-    "lightless-abyss",
+	"tenebris",
+	"iridescent-river",
+	"the-nest",
+	"lightless-gateway",
+	"lightless-abyss",
 }
 
 --#endregion
@@ -45,9 +45,9 @@ constants.ALL_TENEBRIS_LOCATIONS = {
 
 --- Timing constants
 constants.TICKS = {
-    PER_SECOND = 60,
-    PER_MINUTE = 3600,
-    PER_HOUR = 216000
+	PER_SECOND = 60,
+	PER_MINUTE = 3600,
+	PER_HOUR = 216000,
 }
 
 --#endregion
@@ -56,22 +56,45 @@ constants.TICKS = {
 
 --- Color tints for graphics
 constants.TINT = {
-    HEAT = {r = 1.0, g = 0.6, b = 0.4, a = 1.0},  -- Reddish/orange for heated machines
-    DARK_ORANGE = {r = 0.85, g = 0.5, b = 0.2, a = 1.0},  -- Dark orange for piezoelectric inserter
-    DARK_ATMOSPHERE = {r = 0.4, g = 0.4, b = 0.5, a = 1.0},  -- Dark bluish-grey for atmosphere/gas
-    HEAT_LIGHT = {r = 1.0, g = 0.8, b = 0.65, a = 1.0},  -- Subtle warm tint for less aggressive heating
-    CHITOSAN = {r = 0.6, g = 0.45, b = 0.3, a = 1.0},  -- Brown for chitosan pipes
-    PRASIOLITE = {r = 0.7, g = 0.85, b = 0.7, a = 1.0},  -- Pale/duller green for prasiolite
-    ONYX = {r = 0.15, g = 0.15, b = 0.15, a = 1.0},  -- Near-black for onyx
-    SAPPHIRE = {r = 0.4, g = 0.5, b = 1.0, a = 1.0},  -- Blue tint for sapphire agate
-    CERAMIC = {r = 0.95, g = 0.9, b = 0.8, a = 1.0},  -- Off-white/cream for ceramic
-    CYAN = {r = 0.3, g = 0.9, b = 1.0, a = 1.0},  -- Bright cyan for quartz ortet
-    CYAN_DULL = {r = 0.2, g = 0.6, b = 0.7, a = 1.0},  -- Duller cyan for quartz buds
-    MERCURIAL = {r = 0.7, g = 0.7, b = 0.8, a = 1.0},  -- Silvery blue-grey for mercurial entities
-    TENEBRACE = {r = 0.45, g = 0.38, b = 0.42, a = 1.0},  -- Brown/green with subtle purple undertone
-    TENEBRACE_SMOKE = {r = 0.3, g = 0.2, b = 0.4, a = 1.0},  -- Dark violet for spore smoke effects
-    BIOLUMINESCENT_GLOW = {r = 0.4, g = 1.0, b = 1.0, a = 0.6},  -- Bright cyan for bioluminescent particle effects
-    BIOLUMINESCENT_LIGHT = {r = 0.15, g = 0.25, b = 0.25, a = 1.0},  -- Dim cyan for ambient plant glow
+	HEAT = { r = 1.0, g = 0.6, b = 0.4, a = 1.0 }, -- Reddish/orange for heated machines
+	DARK_ORANGE = { r = 0.85, g = 0.5, b = 0.2, a = 1.0 }, -- Dark orange for piezoelectric inserter
+	DARK_ATMOSPHERE = { r = 0.4, g = 0.4, b = 0.5, a = 1.0 }, -- Dark bluish-grey for atmosphere/gas
+	HEAT_LIGHT = { r = 1.0, g = 0.8, b = 0.65, a = 1.0 }, -- Subtle warm tint for less aggressive heating
+	CHITOSAN = { r = 0.6, g = 0.45, b = 0.3, a = 1.0 }, -- Brown for chitosan pipes
+	PRASIOLITE = { r = 0.7, g = 0.85, b = 0.7, a = 1.0 }, -- Pale/duller green for prasiolite
+	ONYX = { r = 0.15, g = 0.15, b = 0.15, a = 1.0 }, -- Near-black for onyx
+	SAPPHIRE = { r = 0.4, g = 0.5, b = 1.0, a = 1.0 }, -- Blue tint for sapphire agate
+	CERAMIC = { r = 0.95, g = 0.9, b = 0.8, a = 1.0 }, -- Off-white/cream for ceramic
+	CYAN = { r = 0.3, g = 0.9, b = 1.0, a = 1.0 }, -- Bright cyan for quartz ortet
+	CYAN_DULL = { r = 0.2, g = 0.6, b = 0.7, a = 1.0 }, -- Duller cyan for quartz buds
+	MERCURIAL = { r = 0.7, g = 0.7, b = 0.8, a = 1.0 }, -- Silvery blue-grey for mercurial entities
+	TENEBRACE = { r = 0.45, g = 0.38, b = 0.42, a = 1.0 }, -- Brown/green with subtle purple undertone
+	TENEBRACE_SMOKE = { r = 0.3, g = 0.2, b = 0.4, a = 1.0 }, -- Dark violet for spore smoke effects
+	BIOLUMINESCENT_GLOW = { r = 0.4, g = 1.0, b = 1.0, a = 0.6 }, -- Bright cyan for bioluminescent particle effects
+	BIOLUMINESCENT_LIGHT = { r = 0.15, g = 0.25, b = 0.25, a = 1.0 }, -- Dim cyan for ambient plant glow
+
+	-- Decorative biome tints
+	HIGHLAND_CYAN = { r = 0.4, g = 0.9, b = 1.0, a = 1.0 }, -- Cyan for highland decoratives (lucifunnel glow)
+	MERCURY_SHORE = { r = 0.7, g = 0.7, b = 0.75, a = 1.0 }, -- Silver tint for mercury shore decoratives
+	LOWLAND_PURPLE = { r = 0.6, g = 0.5, b = 0.7, a = 1.0 }, -- Purple tint for lowland decoratives
+	SULFUR = { r = 0.788, g = 0.627, b = 0.167, a = 1.0 }, -- Yellow sulfur tint for sulfur pit decoratives
+	CINNABAR = { r = 0.85, g = 0.25, b = 0.15, a = 1.0 }, -- Red/vermillion cinnabar (mercury sulfide) for pools/geysers
+
+	-- Gas animation base colors (use with util.multiply_color)
+	CINNABAR_GAS_OUTER = { r = 0.85, g = 0.35, b = 0.25 }, -- Outer gas plume base color
+	CINNABAR_GAS_INNER = { r = 1, g = 0.5, b = 0.35 }, -- Inner gas plume base color
+
+	-- Fire visualization tints
+	CINNABAR_FIRE = { r = 0.5, g = 0.25, b = 0.15, a = 0.7 }, -- Dark ember fire for chimney bases
+	CINNABAR_FIRE_LIGHT = { r = 0.6, g = 0.3, b = 0.2 }, -- Dark fire light color (RGB only)
+}
+
+-- Gas animation multipliers (opacity/intensity)
+constants.GAS_MULTIPLIER = {
+	CHIMNEY_OUTER = 0.15, -- Chimney outer gas opacity
+	CHIMNEY_INNER = 0.1, -- Chimney inner gas opacity
+	GEYSER_OUTER = 0.3, -- Geyser outer gas opacity
+	GEYSER_INNER = 0.5, -- Geyser inner gas opacity
 }
 
 --#endregion
@@ -81,17 +104,17 @@ constants.TINT = {
 --- Tile effect colors (0-255 RGB for tile-effects)
 --- These are used for puddle/fog effects on tiles
 constants.TILE_COLOR = {
-    -- Dark murky lowlands fog - vaguely violet, mostly dark
-    LOWLAND_FOG = { 30, 25, 42 },           -- Primary: dark violet-grey
-    LOWLAND_FOG_SECONDARY = { 18, 15, 28 }, -- Secondary: deeper darkness
-    LOWLAND_FOAM = { 12, 8, 18 },           -- Very dark purple foam
-    LOWLAND_SPECULAR = { 5, 8, 12 },        -- Barely visible blue-violet specular
-    
-    -- Mercury (liquid metal) - silvery with slight blue-green iridescence
-    MERCURY_EFFECT = { 140, 145, 155 },          -- Silvery with cool tint
-    MERCURY_EFFECT_SECONDARY = { 95, 100, 115 }, -- Darker silver-blue
-    MERCURY_FOAM = { 180, 185, 195 },            -- Bright silver foam/reflection
-    MERCURY_SPECULAR = { 45, 50, 60 },           -- Blue-grey specular
+	-- Dark murky lowlands fog - vaguely violet, mostly dark
+	LOWLAND_FOG = { 30, 25, 42 }, -- Primary: dark violet-grey
+	LOWLAND_FOG_SECONDARY = { 18, 15, 28 }, -- Secondary: deeper darkness
+	LOWLAND_FOAM = { 12, 8, 18 }, -- Very dark purple foam
+	LOWLAND_SPECULAR = { 5, 8, 12 }, -- Barely visible blue-violet specular
+
+	-- Mercury (liquid metal) - silvery with slight blue-green iridescence
+	MERCURY_EFFECT = { 140, 145, 155 }, -- Silvery with cool tint
+	MERCURY_EFFECT_SECONDARY = { 95, 100, 115 }, -- Darker silver-blue
+	MERCURY_FOAM = { 180, 185, 195 }, -- Bright silver foam/reflection
+	MERCURY_SPECULAR = { 45, 50, 60 }, -- Blue-grey specular
 }
 
 --#endregion
@@ -100,7 +123,7 @@ constants.TILE_COLOR = {
 
 --- Space connection lengths
 constants.SPACE_CONNECTION = {
-    FULGORA_TENEBRIS_LENGTH = 75000,  -- Base length for fulgora-tenebris route
+	FULGORA_TENEBRIS_LENGTH = 75000, -- Base length for fulgora-tenebris route
 }
 
 --#endregion
@@ -109,37 +132,37 @@ constants.SPACE_CONNECTION = {
 
 --- Pollution absorption rates for tenecap_spore_clearance
 constants.ABSORPTION = {
-    NEUTRAL = {tenecap_spore_clearance = 0.000002},
-    LOW = {tenecap_spore_clearance = 0.000004},
-    HIGH = {tenecap_spore_clearance = 0.00005},
-    EXTREME = {tenecap_spore_clearance = 0.01},  -- Complete sink
+	NEUTRAL = { tenecap_spore_clearance = 0.000002 },
+	LOW = { tenecap_spore_clearance = 0.000004 },
+	HIGH = { tenecap_spore_clearance = 0.00005 },
+	EXTREME = { tenecap_spore_clearance = 0.01 }, -- Complete sink
 }
 
 --- Spore clearance configuration
 constants.SPORE = {
-    -- Entity manager thresholds
-    POWER_THRESHOLD = 50,       -- Pollution above this enables entities
-    PROTECTION_THRESHOLD = 100, -- Pollution above this protects from damage
+	-- Entity manager thresholds
+	POWER_THRESHOLD = 50, -- Pollution above this enables entities
+	PROTECTION_THRESHOLD = 100, -- Pollution above this protects from damage
 }
 
 --- Cargo corrosion configuration
 constants.CARGO_CORROSION = {
-    -- Battery explosion parameters (scales with battery count)
-    EXPLOSION_RADIUS_MIN = 10,        -- Minimum explosion radius (tiles)
-    EXPLOSION_RADIUS_MAX = 30,        -- Maximum explosion radius (tiles)
-    EXPLOSION_RADIUS_PER_BATTERY = 0.1,  -- Additional radius per battery
-    EXPLOSION_DAMAGE_MIN = 100,       -- Minimum explosion damage
-    EXPLOSION_DAMAGE_MAX = 2000,      -- Maximum explosion damage
-    EXPLOSION_DAMAGE_PER_BATTERY = 5, -- Additional damage per battery
+	-- Battery explosion parameters (scales with battery count)
+	EXPLOSION_RADIUS_MIN = 10, -- Minimum explosion radius (tiles)
+	EXPLOSION_RADIUS_MAX = 30, -- Maximum explosion radius (tiles)
+	EXPLOSION_RADIUS_PER_BATTERY = 0.1, -- Additional radius per battery
+	EXPLOSION_DAMAGE_MIN = 100, -- Minimum explosion damage
+	EXPLOSION_DAMAGE_MAX = 2000, -- Maximum explosion damage
+	EXPLOSION_DAMAGE_PER_BATTERY = 5, -- Additional damage per battery
 }
 
 --- Priority ranges for event subscriptions
 constants.PRIORITY = {
-    CRITICAL = 10,      -- Core infrastructure (0-99)
-    NORMAL = 50,        -- Normal operations
-    GAMEPLAY = 100,     -- Gameplay mechanics (100-199)
-    UI = 200,           -- UI and effects (200-299)
-    LOGGING = 900       -- Logging and debugging (900-999)
+	CRITICAL = 10, -- Core infrastructure (0-99)
+	NORMAL = 50, -- Normal operations
+	GAMEPLAY = 100, -- Gameplay mechanics (100-199)
+	UI = 200, -- UI and effects (200-299)
+	LOGGING = 900, -- Logging and debugging (900-999)
 }
 
 --#endregion
@@ -148,44 +171,44 @@ constants.PRIORITY = {
 
 --- Quartz forest constants
 constants.QUARTZ_FOREST = {
-    -- Entity names
-    BUD_ENTITY = "tenebris-quartz-ortet-bud",
-    BUD_SPAWNER_ENTITY = "tenebris-quartz-ortet-bud-spawner",
-    ORTET_ENTITY = "tenebris-quartz-forest-ortet",
-    BUD_CAPTURE_PROXY = "tenebris-quartz-ortet-bud-capture-proxy",
-    ORTET_CAPTURE_PROXY = "tenebris-quartz-ortet-capture-proxy",
-    HIDDEN_SPAWN_UNIT = "tenebris-quartz-ortet-bud-hidden-spawn-unit",
-    
-    -- Growth timing
-    GROWTH_TICKS = 5 * 60 * 60,  -- 5 minutes to full maturity
-    
-    -- Spawn distance from ortet (tiles)
-    BUD_SPAWN_MIN_RADIUS = 20,
-    BUD_SPAWN_MAX_RADIUS = 40,
-    
-    -- Storage keys
-    STORAGE_BUD_SPAWN_TIMES = "tenebris_bud_spawn_times",
-    STORAGE_BUD_BY_POS = "tenebris_bud_by_position",  -- stores {spawn_tick, composite_id}
+	-- Entity names
+	BUD_ENTITY = "tenebris-quartz-ortet-bud",
+	BUD_SPAWNER_ENTITY = "tenebris-quartz-ortet-bud-spawner",
+	ORTET_ENTITY = "tenebris-quartz-forest-ortet",
+	BUD_CAPTURE_PROXY = "tenebris-quartz-ortet-bud-capture-proxy",
+	ORTET_CAPTURE_PROXY = "tenebris-quartz-ortet-capture-proxy",
+	HIDDEN_SPAWN_UNIT = "tenebris-quartz-ortet-bud-hidden-spawn-unit",
+
+	-- Growth timing
+	GROWTH_TICKS = 5 * 60 * 60, -- 5 minutes to full maturity
+
+	-- Spawn distance from ortet (tiles)
+	BUD_SPAWN_MIN_RADIUS = 20,
+	BUD_SPAWN_MAX_RADIUS = 40,
+
+	-- Storage keys
+	STORAGE_BUD_SPAWN_TIMES = "tenebris_bud_spawn_times",
+	STORAGE_BUD_BY_POS = "tenebris_bud_by_position", -- stores {spawn_tick, composite_id}
 }
 
 --- Crystal types (quartz variants)
 constants.CRYSTAL_TYPES = {
-    CITRINE = "citrine",
-    ONYX = "onyx",
-    PRASIOLITE = "prasiolite",
-    AMETHYST = "amethyst",
-    RUBY_AGATE = "ruby-agate",
-    SAPPHIRE_AGATE = "sapphire-agate"
+	CITRINE = "citrine",
+	ONYX = "onyx",
+	PRASIOLITE = "prasiolite",
+	AMETHYST = "amethyst",
+	RUBY_AGATE = "ruby-agate",
+	SAPPHIRE_AGATE = "sapphire-agate",
 }
 
 --- Ordered list of crystal types for iteration
 constants.CRYSTAL_TYPES_LIST = {
-    "citrine",
-    "onyx",
-    "prasiolite",
-    "amethyst",
-    "ruby-agate",
-    "sapphire-agate"
+	"citrine",
+	"onyx",
+	"prasiolite",
+	"amethyst",
+	"ruby-agate",
+	"sapphire-agate",
 }
 
 --#endregion
@@ -194,50 +217,49 @@ constants.CRYSTAL_TYPES_LIST = {
 
 --- Item names
 constants.ITEM = {
-    -- Science packs
-    PIEZOELECTRIC_SCIENCE_PACK = "piezoelectric-science-pack",
-    BIOLUMINESCENT_SCIENCE_PACK = "bioluminescent-science-pack",
-    
-    -- Biomaterials
-    LUCIFUNNEL = "lucifunnel",
-    LUCIFUNNEL_SEED = "lucifunnel-seed",
-    TENECAP = "tenecap",
-    TENECAP_SPORE = "tenecap-spore",
-    SULFURIC_WASTE_SPORES = "sulfuric-waste-spores",
-    CHITIN = "chitin",
-    CHITOSAN = "chitosan",
-    LUCIFERIN = "luciferin",
-    
-    -- Ores and minerals
-    QUARTZ_ORE = "quartz-ore",
-    BISMUTH_ORE = "bismuth-ore",
-    BISMUTH_ASTEROID_CHUNK = "bismuth-asteroid-chunk",
-    
-    -- Crystals
-    QUARTZ_CRYSTAL = "quartz-crystal",
-    QUARTZ_CRYSTAL_SEEDLING = "quartz-crystal-seedling",
-    PHOTONIC_CRYSTAL = "photonic-crystal",
-    BIOLUMINESCENT_CRYSTAL = "bioluminescent-crystal",
-    
-    -- Waste products
-    FERRIC_WASTE = "tenebris-ferric-waste",
-    CUPRIC_WASTE = "tenebris-cupric-waste",
-    CIRCUIT_WASTE = "tenebris-circuit-waste",
-    
-    -- Processed materials
-    QUARTZIFEROUS_BISMUTHAL_PLATE = "quartziferous-bismuthal-plate",
-    
-    -- Equipment and machines
-    OBSERVATION_SATELLITE = "observation-satellite",
-    TENEBRIS_BIOINFUSOR = "tenebris-bioinfusor",
-    TENEBRIS_BIOBEACON = "tenebris-biobeacon",
-    TENEBRIS_HEATED_ATMOSPHERE_SCRUBBER = "tenebris-heated-atmosphere-scrubber",
-    TENEBRIS_SPORE_FILTER = "tenebris-spore-filter",
-    TENEBRIS_USED_SPORE_FILTER = "tenebris-used-spore-filter",
-    LIGHTLESS_BEACON = "lightless-beacon",
-    
-    -- Modules
-    SPORE_REMOVAL_MODULE = "spore-removal-module"
+	-- Science packs
+	PIEZOELECTRIC_SCIENCE_PACK = "piezoelectric-science-pack",
+	BIOLUMINESCENT_SCIENCE_PACK = "bioluminescent-science-pack",
+
+	-- Biomaterials
+	LUCIFUNNEL = "lucifunnel",
+	LUCIFUNNEL_SEED = "lucifunnel-seed",
+	TENECAP = "tenecap",
+	TENECAP_SPORE = "tenecap-spore",
+	SULFURIC_WASTE_SPORES = "sulfuric-waste-spores",
+	CHITIN = "chitin",
+	CHITOSAN = "chitosan",
+	LUCIFERIN = "luciferin",
+
+	-- Ores and minerals
+	QUARTZ_ORE = "quartz-ore",
+	BISMUTH_ORE = "bismuth-ore",
+	BISMUTH_ASTEROID_CHUNK = "bismuth-asteroid-chunk",
+
+	-- Crystals
+	QUARTZ_CRYSTAL = "quartz-crystal",
+	QUARTZ_CRYSTAL_SEEDLING = "quartz-crystal-seedling",
+	PHOTONIC_CRYSTAL = "photonic-crystal",
+	BIOLUMINESCENT_CRYSTAL = "bioluminescent-crystal",
+
+	-- Waste products
+	FERRIC_WASTE = "tenebris-ferric-waste",
+	CUPRIC_WASTE = "tenebris-cupric-waste",
+	CIRCUIT_WASTE = "tenebris-circuit-waste",
+
+	-- Processed materials
+	QUARTZIFEROUS_BISMUTHAL_PLATE = "quartziferous-bismuthal-plate",
+
+	-- Equipment and machines
+	TENEBRIS_BIOINFUSOR = "tenebris-bioinfusor",
+	TENEBRIS_BIOBEACON = "tenebris-biobeacon",
+	TENEBRIS_HEATED_ATMOSPHERE_SCRUBBER = "tenebris-heated-atmosphere-scrubber",
+	TENEBRIS_SPORE_FILTER = "tenebris-spore-filter",
+	TENEBRIS_USED_SPORE_FILTER = "tenebris-used-spore-filter",
+	LIGHTLESS_BEACON = "lightless-beacon",
+
+	-- Modules
+	SPORE_REMOVAL_MODULE = "spore-removal-module",
 }
 
 --#endregion
@@ -246,34 +268,34 @@ constants.ITEM = {
 
 --- Entity names
 constants.ENTITY = {
-    -- Plant entities
-    QUARTZ_ORTET_BUD = "tenebris-quartz-ortet-bud",
-    QUARTZ_NODE = "quartz-node",
-    LUCIFUNNEL = "lucifunnel",
-    TENECAP = "tenecap",
-    
-    -- Quartz forest entities
-    QUARTZ_FOREST_ORTET = "tenebris-quartz-forest-ortet",
-    
-    -- Piezoelectric generator composite (main = interface, hidden = generator + pole)
-    PIEZOELECTRIC_INTERFACE_TIER_1 = "tenebris-piezoelectric-interface-tier-1",
-    PIEZOELECTRIC_INTERFACE_TIER_2 = "tenebris-piezoelectric-interface-tier-2",
-    PIEZOELECTRIC_INTERFACE_TIER_3 = "tenebris-piezoelectric-interface-tier-3",
-    PIEZOELECTRIC_INTERFACE_TIER_4 = "tenebris-piezoelectric-interface-tier-4",
-    PIEZOELECTRIC_GENERATOR_HIDDEN_TIER_1 = "tenebris-piezoelectric-generator-hidden-tier-1",
-    PIEZOELECTRIC_GENERATOR_HIDDEN_TIER_2 = "tenebris-piezoelectric-generator-hidden-tier-2",
-    PIEZOELECTRIC_GENERATOR_HIDDEN_TIER_3 = "tenebris-piezoelectric-generator-hidden-tier-3",
-    PIEZOELECTRIC_GENERATOR_HIDDEN_TIER_4 = "tenebris-piezoelectric-generator-hidden-tier-4",
-    PIEZOELECTRIC_POLE_HIDDEN_TIER_1 = "tenebris-piezoelectric-pole-hidden-tier-1",
-    PIEZOELECTRIC_POLE_HIDDEN_TIER_2 = "tenebris-piezoelectric-pole-hidden-tier-2",
-    PIEZOELECTRIC_POLE_HIDDEN_TIER_3 = "tenebris-piezoelectric-pole-hidden-tier-3",
-    PIEZOELECTRIC_POLE_HIDDEN_TIER_4 = "tenebris-piezoelectric-pole-hidden-tier-4",
-    
-    -- Machines
-    BIOBEACON = "tenebris-biobeacon",
-    BIOINFUSOR = "tenebris-bioinfusor",
-    LIGHTNING_FURNACE = "tenebris-lightning-furnace",
-    LIGHTNING_COLLECTOR_HIDDEN = "tenebris-lightning-collector-hidden"
+	-- Plant entities
+	QUARTZ_ORTET_BUD = "tenebris-quartz-ortet-bud",
+	QUARTZ_NODE = "quartz-node",
+	LUCIFUNNEL = "lucifunnel",
+	TENECAP = "tenecap",
+
+	-- Quartz forest entities
+	QUARTZ_FOREST_ORTET = "tenebris-quartz-forest-ortet",
+
+	-- Piezoelectric generator composite (main = interface, hidden = generator + pole)
+	PIEZOELECTRIC_INTERFACE_TIER_1 = "tenebris-piezoelectric-interface-tier-1",
+	PIEZOELECTRIC_INTERFACE_TIER_2 = "tenebris-piezoelectric-interface-tier-2",
+	PIEZOELECTRIC_INTERFACE_TIER_3 = "tenebris-piezoelectric-interface-tier-3",
+	PIEZOELECTRIC_INTERFACE_TIER_4 = "tenebris-piezoelectric-interface-tier-4",
+	PIEZOELECTRIC_GENERATOR_HIDDEN_TIER_1 = "tenebris-piezoelectric-generator-hidden-tier-1",
+	PIEZOELECTRIC_GENERATOR_HIDDEN_TIER_2 = "tenebris-piezoelectric-generator-hidden-tier-2",
+	PIEZOELECTRIC_GENERATOR_HIDDEN_TIER_3 = "tenebris-piezoelectric-generator-hidden-tier-3",
+	PIEZOELECTRIC_GENERATOR_HIDDEN_TIER_4 = "tenebris-piezoelectric-generator-hidden-tier-4",
+	PIEZOELECTRIC_POLE_HIDDEN_TIER_1 = "tenebris-piezoelectric-pole-hidden-tier-1",
+	PIEZOELECTRIC_POLE_HIDDEN_TIER_2 = "tenebris-piezoelectric-pole-hidden-tier-2",
+	PIEZOELECTRIC_POLE_HIDDEN_TIER_3 = "tenebris-piezoelectric-pole-hidden-tier-3",
+	PIEZOELECTRIC_POLE_HIDDEN_TIER_4 = "tenebris-piezoelectric-pole-hidden-tier-4",
+
+	-- Machines
+	BIOBEACON = "tenebris-biobeacon",
+	BIOINFUSOR = "tenebris-bioinfusor",
+	LIGHTNING_FURNACE = "tenebris-lightning-furnace",
+	LIGHTNING_COLLECTOR_HIDDEN = "tenebris-lightning-collector-hidden",
 }
 
 --#endregion
@@ -282,74 +304,74 @@ constants.ENTITY = {
 
 --- Tenespace effects and corrosion configuration
 constants.TENESPACE = {
-    -- How often to check for platforms and spawn effects (ticks)
-    UPDATE_INTERVAL = 10,
-    
-    -- How often to rebuild chunk cache while in tenespace (ticks) - 1 minute
-    -- Catches platform changes during travel
-    CACHE_REBUILD_INTERVAL = 3600,
-    
-    -- How many chunks to process per tick during incremental cache rebuild
-    CHUNKS_PER_REBUILD_TICK = 20,
-    
-    -- How many chunks to process for corrosion per tick
-    CORROSION_CHUNKS_PER_TICK = 2,
-    
-    -- How many random chunks to spawn effects in per update
-    CHUNKS_PER_UPDATE = 5,
-    
-    -- Corrosion damage configuration (max_entities uses same setting as ground system)
-    CORROSION = {
-        -- Damage amount per check (acid damage, applied every 30 seconds by default)
-        damage_amount = 20,
-        -- Damage type
-        damage_type = "acid",
-    },
-    
-    -- Cyan glow dots (small scattered particles)
-    CYAN_GLOW = {
-        spawn_chance = 0.25,           -- Always spawn
-        count_min = 4,
-        count_max = 8,
-        speed_min = 0.002,
-        speed_max = 0.01,
-    },
-    
-    -- Brighter cyan dots (fewer, slightly larger)
-    CYAN_BRIGHT = {
-        spawn_chance = 0.05,
-        count_min = 2,
-        count_max = 5,
-        speed_min = 0.001,
-        speed_max = 0.008,
-    },
-    
-    -- Small spore clouds (reduced)
-    SPORE_SMALL = {
-        spawn_chance = 0.0025,
-        count_min = 1,
-        count_max = 1,
-        speed_min = 0.002,
-        speed_max = 0.008,
-    },
-    
-    -- Large spore clouds (rare)
-    SPORE_LARGE = {
-        spawn_chance = 0.0005,
-        count_min = 1,
-        count_max = 1,
-        speed_min = 0.001,
-        speed_max = 0.003,
-    },
-    
-    -- Wispy tendrils (reduced)
-    SPORE_WISP = {
-        spawn_chance = 0.005,
-        count_min = 1,
-        count_max = 2,
-        speed_min = 0.015,
-        speed_max = 0.04,
-    },
+	-- How often to check for platforms and spawn effects (ticks)
+	UPDATE_INTERVAL = 10,
+
+	-- How often to rebuild chunk cache while in tenespace (ticks) - 1 minute
+	-- Catches platform changes during travel
+	CACHE_REBUILD_INTERVAL = 3600,
+
+	-- How many chunks to process per tick during incremental cache rebuild
+	CHUNKS_PER_REBUILD_TICK = 20,
+
+	-- How many chunks to process for corrosion per tick
+	CORROSION_CHUNKS_PER_TICK = 2,
+
+	-- How many random chunks to spawn effects in per update
+	CHUNKS_PER_UPDATE = 5,
+
+	-- Corrosion damage configuration (max_entities uses same setting as ground system)
+	CORROSION = {
+		-- Damage amount per check (acid damage, applied every 30 seconds by default)
+		damage_amount = 20,
+		-- Damage type
+		damage_type = "acid",
+	},
+
+	-- Cyan glow dots (small scattered particles)
+	CYAN_GLOW = {
+		spawn_chance = 0.25, -- Always spawn
+		count_min = 4,
+		count_max = 8,
+		speed_min = 0.002,
+		speed_max = 0.01,
+	},
+
+	-- Brighter cyan dots (fewer, slightly larger)
+	CYAN_BRIGHT = {
+		spawn_chance = 0.05,
+		count_min = 2,
+		count_max = 5,
+		speed_min = 0.001,
+		speed_max = 0.008,
+	},
+
+	-- Small spore clouds (reduced)
+	SPORE_SMALL = {
+		spawn_chance = 0.0025,
+		count_min = 1,
+		count_max = 1,
+		speed_min = 0.002,
+		speed_max = 0.008,
+	},
+
+	-- Large spore clouds (rare)
+	SPORE_LARGE = {
+		spawn_chance = 0.0005,
+		count_min = 1,
+		count_max = 1,
+		speed_min = 0.001,
+		speed_max = 0.003,
+	},
+
+	-- Wispy tendrils (reduced)
+	SPORE_WISP = {
+		spawn_chance = 0.005,
+		count_min = 1,
+		count_max = 2,
+		speed_min = 0.015,
+		speed_max = 0.04,
+	},
 }
 
 --#endregion
@@ -359,21 +381,50 @@ constants.TENESPACE = {
 --- Entity types to exclude from spore tracking and disabling
 --- These are admin/debug entities that should never be affected by the spore system
 constants.DEBUG_AND_INFINITE_ENTITY_TYPES = {
-    -- Infinity entities (admin-only items)
-    "infinity-container",
-    "infinity-pipe",
-    "infinity-cargo-wagon",
-    
-    -- Simple debug entities
-    "simple-entity",
-    "simple-entity-with-force",
-    "simple-entity-with-owner",
-    
-    -- Valve entities (flow control, hidden technical entities)
-    "valve",
+	-- Infinity entities (admin-only items)
+	"infinity-container",
+	"infinity-pipe",
+	"infinity-cargo-wagon",
+
+	-- Simple debug entities
+	"simple-entity",
+	"simple-entity-with-force",
+	"simple-entity-with-owner",
+
+	-- Valve entities (flow control, hidden technical entities)
+	"valve",
+}
+
+constants.CRYSTAL_TYPES = {
+	"citrine",
+	"onyx",
+	"prasiolite",
+	"amethyst",
+	"ruby-agate",
+	"sapphire-agate",
+}
+
+--- Exposed Lichen Deposit composite icon (shared between entity and technology)
+constants.LICHEN_DEPOSIT_ICONS = {
+	-- Center: Spoilage (main drop)
+	{ icon = "__space-age__/graphics/icons/spoilage.png", icon_size = 64, scale = 0.4 },
+	-- Top-left: Tenecap spore
+	{
+		icon = "__tenebris-prime__/graphics/icons/tenecap-spore.png",
+		icon_size = 64,
+		scale = 0.25,
+		shift = { -10, -10 },
+	},
+	-- Top-right: Stone
+	{ icon = "__base__/graphics/icons/stone.png", icon_size = 64, scale = 0.25, shift = { 10, -10 } },
+	-- Bottom-left: Carbon
+	{ icon = "__space-age__/graphics/icons/carbon.png", icon_size = 64, scale = 0.25, shift = { -10, 10 } },
+	-- Bottom-right: Calcite
+	{ icon = "__space-age__/graphics/icons/calcite.png", icon_size = 64, scale = 0.25, shift = { 10, 10 } },
+	-- Right: Chitin (rare)
+	{ icon = "__tenebris-prime__/graphics/icons/chitin.png", icon_size = 64, scale = 0.2, shift = { 12, 0 } },
 }
 
 --#endregion
 
 return constants
-

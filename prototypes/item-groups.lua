@@ -1,10 +1,5 @@
 data:extend({
-    {
-        type = "item-subgroup",
-        name = "deep-space-sensing",
-        group = "space",
-        order = "t"
-    },
+    -- deep-space-sensing subgroup moved to deep-space-sensing mod
     {
         type = "item-subgroup",
         name = "tenebris-inserter",
@@ -142,6 +137,12 @@ data:extend({
         name = "tenebris-machines",
         group = "production",
         order = "t"
+    },
+    {
+        type = "item-subgroup",
+        name = "tenebris-tiles",
+        group = "tiles",
+        order = "t[tenebris]"
     },
     {
         type = "item-subgroup",

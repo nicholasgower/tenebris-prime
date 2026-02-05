@@ -17,7 +17,7 @@ centipede.VARIANTS = {
         enraged_speed_mult = 1.5,-- Gets even faster when enraged
         damage = 500,            -- Low contact damage
         vision_distance = 50,
-        enraged_duration = 108000,  -- Half enraged duration
+        enraged_duration = 999999999,  -- Half enraged duration
         healing_per_tick = 1,
         segment_count = 5,       -- 5 body segments as requested
     },
@@ -29,7 +29,7 @@ centipede.VARIANTS = {
         enraged_speed_mult = 1,  -- Speed multiplier when enraged
         damage = 2000,           -- Contact damage
         vision_distance = 100,
-        enraged_duration = 216000,  -- Ticks enraged after taking damage
+        enraged_duration = 999999999,  -- Ticks enraged after taking damage
         healing_per_tick = 2,
         segment_count = 10,      -- Number of body segments (can be overridden by mod settings)
     },
@@ -41,7 +41,7 @@ centipede.VARIANTS = {
         enraged_speed_mult = 1,
         damage = 5000,
         vision_distance = 100,
-        enraged_duration = 216000,
+        enraged_duration = 999999999,
         healing_per_tick = 5,
         segment_count = 15,
     },
@@ -53,7 +53,7 @@ centipede.VARIANTS = {
         enraged_speed_mult = 1,
         damage = 10000,
         vision_distance = 100,
-        enraged_duration = 216000,
+        enraged_duration = 999999999,
         healing_per_tick = 10,
         segment_count = 20,
     },
@@ -65,7 +65,7 @@ centipede.VARIANTS = {
         enraged_speed_mult = 1,
         damage = 20000,
         vision_distance = 100,
-        enraged_duration = 216000,
+        enraged_duration = 999999999,
         healing_per_tick = 20,
         segment_count = 25,
     },
@@ -77,7 +77,7 @@ centipede.VARIANTS = {
         enraged_speed_mult = 1,
         damage = 50000,
         vision_distance = 100,
-        enraged_duration = 216000,
+        enraged_duration = 999999999,
         healing_per_tick = 50,
         segment_count = 30,
     },

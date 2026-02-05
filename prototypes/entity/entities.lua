@@ -12,19 +12,19 @@ local make_bioluminescent_particle = bioluminescent.make_particle
 local tenebris_bioluminescent_beacon = meld(table.deepcopy(data.raw["beacon"]["beacon"]), {
     name = "tenebris-biobeacon",
     bioluminescent = true,
-    allowed_effects = meld.overwrite { "consumption", "speed", "pollution", "productivity" },
+    allowed_effects = meld.overwrite({ "consumption", "speed", "pollution", "productivity" }),
     minable = {
         mining_time = 0.2,
         result = "tenebris-biobeacon"
     },
     integration_patch_render_layer = "light-effect",
-    integration_patch = meld.overwrite {
+    integration_patch = meld.overwrite({
         filename = "__tenebris-prime__/graphics/icons/item-glow.png",
         size = 64,
         scale = 6,
         draw_as_light = true,
-    },
-    graphics_set = meld.overwrite {
+    }),
+    graphics_set = meld.overwrite({
         animation_list = {
             {
                 animation = {
@@ -43,7 +43,12 @@ local tenebris_bioluminescent_beacon = meld(table.deepcopy(data.raw["beacon"]["b
                 },
             }
         }
-    }
+    }),
+    supply_area_distance = 1,
+    beacon_counter = "same_type",
+    distribution_effectivity = 1,
+    distribution_effectivity_bonus_per_quality_level = 0.2,
+    profile = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 })
 
 local tenebris_bioinfuser = {

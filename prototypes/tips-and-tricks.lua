@@ -8,30 +8,13 @@ data:extend({
         order = "z-[tenebris]"
     },
 
-    -- Deep Space Sensing tip - shows when the technology is researched
-    {
-        type = "tips-and-tricks-item",
-        name = "deep-space-sensing-tip",
-        tag = "[item=observation-satellite]",
-        category = "tenebris",
-        order = "a",
-        trigger = {
-            type = "research",
-            technology = "deep-space-sensing"
-        },
-        skip_trigger = {
-            type = "research",
-            technology = "planet-discovery-tenebris"
-        },
-    },
-
     -- Tenebris Briefing - shows when the planet is discovered
     {
         type = "tips-and-tricks-item",
         name = "tenebris-briefing",
         tag = "[planet=tenebris]",
         category = "tenebris",
-        order = "b",
+        order = "a",
         trigger = {
             type = "research",
             technology = "planet-discovery-tenebris"
@@ -44,7 +27,7 @@ data:extend({
         name = "tenebris-banned-entities",
         tag = "[img=utility/warning_icon]",
         category = "tenebris",
-        order = "c",
+        order = "b",
         indent = 1,
         trigger = {
             type = "dependencies-met",
@@ -58,7 +41,7 @@ data:extend({
         name = "tenebris-spore-clearance",
         tag = "[item=tenecap-spore]",
         category = "tenebris",
-        order = "d",
+        order = "c",
         indent = 1,
         trigger = {
             type = "dependencies-met",
@@ -72,7 +55,7 @@ data:extend({
         name = "tenebris-cargo-safety",
         tag = "[entity=cargo-pod]",
         category = "tenebris",
-        order = "e",
+        order = "d",
         indent = 1,
         trigger = {
             type = "dependencies-met",
@@ -86,7 +69,7 @@ data:extend({
         name = "tenebris-ortet-capture",
         tag = "[item=piezoelectric-converter-capture-bot-rocket]",
         category = "tenebris",
-        order = "f",
+        order = "e",
         indent = 1,
         trigger = {
             type = "dependencies-met",
