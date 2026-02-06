@@ -82,11 +82,14 @@ data:extend({
 		autoplace = {
 			control = "tenebris_plants",
 			order = "a[tree]-b[forest]-a",
-			-- Glowdentale grows in highlands alongside lucifunnels
-			probability_expression = "0.03 * tenebris_biome_highlands * control:tenebris_plants:size",
+			-- Glowdentale grows in highlands, with 2.5x density boost in hollows
+			probability_expression = "0.03 * tenebris_biome_highlands * (1 + tenebris_hollow_flora_boost) * control:tenebris_plants:size",
 			richness_expression = "random_penalty_at(3, 1)",
 			tile_restriction = {
-				"tenebris-debug-highlands",
+				"tenebris-debug-highlands-hollows",
+				"tenebris-debug-highlands-normal",
+				"tenebris-debug-highlands-badlands",
+				"tenebris-debug-highlands-plateaus",
 			},
 		},
 	},
@@ -162,7 +165,10 @@ data:extend({
 			probability_expression = "tenebris_lucifunnel_probability * control:tenebris_plants:size",
 			richness_expression = "random_penalty_at(3, 1)",
 			tile_restriction = {
-				"tenebris-debug-highlands",
+				"tenebris-debug-highlands-hollows",
+				"tenebris-debug-highlands-normal",
+				"tenebris-debug-highlands-badlands",
+				"tenebris-debug-highlands-plateaus",
 				"overgrowth-luciferin-soil",
 			},
 		},
@@ -527,10 +533,22 @@ data:extend({
 		autoplace = {
 			control = "tenebris_plants",
 			order = "a[landscape]-c[rock]-b[big]",
-			-- Quartz nodes (geodes) only in desolate wastes
+			-- Quartz nodes (geodes) only in quartz subbiomes
 			probability_expression = "tenebris_quartz_node_probability * control:tenebris_plants:size",
 			tile_restriction = {
-				"tenebris-debug-wastes",
+				"tenebris-wastes-exposed-quartz-01",
+				"tenebris-wastes-exposed-quartz-02",
+				"tenebris-wastes-exposed-quartz-03",
+				"tenebris-wastes-exposed-quartz-04",
+				"tenebris-wastes-exposed-quartz-05",
+				"tenebris-wastes-exposed-quartz-06",
+				"tenebris-wastes-exposed-quartz-07",
+				"tenebris-wastes-exposed-quartz-08",
+				"tenebris-wastes-exposed-quartz-09",
+				"tenebris-wastes-exposed-quartz-10",
+				"tenebris-wastes-exposed-quartz-11",
+				"tenebris-wastes-exposed-quartz-12",
+				"tenebris-wastes-shattered-quartz",
 			},
 		},
 		dying_trigger_effect = decorative_trigger_effects.big_rock(),
@@ -878,7 +896,7 @@ data:extend({
 			-- Stromatolites grow IN and AROUND mercury pools
 			probability_expression = "tenebris_stromatolite_probability * control:tenebris_plants:size",
 			richness_expression = "random_penalty_at(3, 1)",
-			-- Can spawn on mercury tiles and nearby ground
+			-- Can spawn on mercury tiles and lowland tiles only (not wastes)
 			tile_restriction = {
 				"tenebris-mercury-tile",
 				"tenebris-lowland-cauliflower",
@@ -886,7 +904,6 @@ data:extend({
 				"tenebris-lowland-infection",
 				"tenebris-lowland-vein-bulges",
 				"tenebris-lowland-vein-dead",
-				"tenebris-debug-wastes",
 			},
 		},
 	},

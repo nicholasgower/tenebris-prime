@@ -79,6 +79,7 @@ constants.TINT = {
 	LOWLAND_PURPLE = { r = 0.6, g = 0.5, b = 0.7, a = 1.0 }, -- Purple tint for lowland decoratives
 	SULFUR = { r = 0.788, g = 0.627, b = 0.167, a = 1.0 }, -- Yellow sulfur tint for sulfur pit decoratives
 	CINNABAR = { r = 0.85, g = 0.25, b = 0.15, a = 1.0 }, -- Red/vermillion cinnabar (mercury sulfide) for pools/geysers
+	DUNES_DESATURATED = { r = 0.55, g = 0.55, b = 0.55, a = 1.0 }, -- ~80% desaturation for wastes dune decals (base sand-dune-decal)
 
 	-- Gas animation base colors (use with util.multiply_color)
 	CINNABAR_GAS_OUTER = { r = 0.85, g = 0.35, b = 0.25 }, -- Outer gas plume base color

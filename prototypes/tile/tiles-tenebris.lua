@@ -188,6 +188,41 @@ local debug_highlands = {
 	absorptions_per_second = ABSORPTION.NEUTRAL,
 }
 
+-- Highlands Subbiome Debug Tiles
+-- These override the base highlands tile to show subbiome boundaries
+
+-- Hollows - Bright Green (lush flora depressions)
+local debug_highlands_hollows = table.deepcopy(debug_highlands)
+debug_highlands_hollows.name = "tenebris-debug-highlands-hollows"
+debug_highlands_hollows.order = "t[tenebris]-d[debug]-a[highlands]-a[hollows]"
+debug_highlands_hollows.autoplace = { probability_expression = "tenebris_tile_highlands_hollows" }
+debug_highlands_hollows.layer = 11 -- Above base highlands
+debug_highlands_hollows.map_color = { 50, 255, 50 } -- Bright green
+
+-- Normal Highlands - Light Cyan (smooth rolling terrain)
+local debug_highlands_normal = table.deepcopy(debug_highlands)
+debug_highlands_normal.name = "tenebris-debug-highlands-normal"
+debug_highlands_normal.order = "t[tenebris]-d[debug]-a[highlands]-b[normal]"
+debug_highlands_normal.autoplace = { probability_expression = "tenebris_tile_highlands_normal" }
+debug_highlands_normal.layer = 11 -- Above base highlands
+debug_highlands_normal.map_color = { 100, 220, 255 } -- Light cyan
+
+-- Badlands - Orange/Red (jagged, cliffy terrain)
+local debug_highlands_badlands = table.deepcopy(debug_highlands)
+debug_highlands_badlands.name = "tenebris-debug-highlands-badlands"
+debug_highlands_badlands.order = "t[tenebris]-d[debug]-a[highlands]-c[badlands]"
+debug_highlands_badlands.autoplace = { probability_expression = "tenebris_tile_highlands_badlands" }
+debug_highlands_badlands.layer = 11 -- Above base highlands
+debug_highlands_badlands.map_color = { 255, 100, 50 } -- Orange/red
+
+-- Plateaus - Purple (elevated mesas with ortets)
+local debug_highlands_plateaus = table.deepcopy(debug_highlands)
+debug_highlands_plateaus.name = "tenebris-debug-highlands-plateaus"
+debug_highlands_plateaus.order = "t[tenebris]-d[debug]-a[highlands]-d[plateaus]"
+debug_highlands_plateaus.autoplace = { probability_expression = "tenebris_tile_highlands_plateaus" }
+debug_highlands_plateaus.layer = 11 -- Above base highlands
+debug_highlands_plateaus.map_color = { 200, 50, 255 } -- Purple
+
 -- Lowland Cauliflower - base lowland tile with aux mixing
 local lowland_cauliflower = {
 	type = "tile",
@@ -295,6 +330,167 @@ debug_quartz.order = "t[tenebris]-d[debug]-e[quartz]"
 debug_quartz.autoplace = { probability_expression = "tenebris_biome_quartz" }
 debug_quartz.map_color = { 138, 43, 226 } -- Violet
 debug_quartz.absorptions_per_second = ABSORPTION.NEUTRAL
+
+-- =============================================================================
+-- Wastes Subbiome Tiles
+-- 5 subbiomes: Dust Flats (25%), Dust Dunes (20%), Lumpy Wastes (20%),
+--              Rocky Badlands (20%), Brash Fields (15%)
+-- =============================================================================
+
+-- Dust Flats (25%) - smooth flat expanses, easy to traverse
+local wastes_flats = table.deepcopy(data.raw.tile["dust-flat"])
+wastes_flats.name = "tenebris-wastes-flats"
+wastes_flats.order = "t[tenebris]-w[wastes]-a[flats]"
+wastes_flats.subgroup = "tenebris-tiles"
+wastes_flats.autoplace = { probability_expression = "tenebris_tile_wastes_flats" }
+wastes_flats.layer = 20
+wastes_flats.map_color = { 180, 160, 120 } -- Sandy tan
+wastes_flats.absorptions_per_second = ABSORPTION.LOW
+wastes_flats.sprite_usage_surface = nil
+wastes_flats.frozen_variant = nil
+
+-- Dust Dunes (20%) - wind-formed ridge patterns
+local wastes_dunes = table.deepcopy(data.raw.tile["dust-crests"])
+wastes_dunes.name = "tenebris-wastes-dunes"
+wastes_dunes.order = "t[tenebris]-w[wastes]-b[dunes]"
+wastes_dunes.subgroup = "tenebris-tiles"
+wastes_dunes.autoplace = { probability_expression = "tenebris_tile_wastes_dunes" }
+wastes_dunes.layer = 21
+wastes_dunes.map_color = { 160, 140, 100 } -- Darker tan
+wastes_dunes.absorptions_per_second = ABSORPTION.LOW
+wastes_dunes.sprite_usage_surface = nil
+wastes_dunes.frozen_variant = nil
+
+-- Lumpy Wastes - uneven, eroded terrain (part of Dunes subbiome)
+local wastes_lumpy = table.deepcopy(data.raw.tile["dust-lumpy"])
+wastes_lumpy.name = "tenebris-wastes-lumpy"
+wastes_lumpy.order = "t[tenebris]-w[wastes]-c[lumpy]"
+wastes_lumpy.subgroup = "tenebris-tiles"
+wastes_lumpy.autoplace = { probability_expression = "tenebris_tile_wastes_lumpy" }
+wastes_lumpy.layer = 22
+wastes_lumpy.map_color = { 140, 120, 90 } -- Brownish tan
+wastes_lumpy.absorptions_per_second = ABSORPTION.LOW
+wastes_lumpy.sprite_usage_surface = nil
+wastes_lumpy.frozen_variant = nil
+
+-- Patchy Wastes - varied patchy terrain (part of Dunes subbiome)
+local wastes_patchy = table.deepcopy(data.raw.tile["dust-patchy"])
+wastes_patchy.name = "tenebris-wastes-patchy"
+wastes_patchy.order = "t[tenebris]-w[wastes]-d[patchy]"
+wastes_patchy.subgroup = "tenebris-tiles"
+wastes_patchy.autoplace = { probability_expression = "tenebris_tile_wastes_patchy" }
+wastes_patchy.layer = 23
+wastes_patchy.map_color = { 150, 130, 100 } -- Mixed tan
+wastes_patchy.absorptions_per_second = ABSORPTION.LOW
+wastes_patchy.sprite_usage_surface = nil
+wastes_patchy.frozen_variant = nil
+
+-- Helper: replace picture path in variants (recursive) for custom graphics
+local function replace_tile_picture_path(tbl, old_path, new_path)
+	if type(tbl) ~= "table" then return end
+	for k, v in pairs(tbl) do
+		if type(v) == "string" and (k == "picture" or k == "filename" or k == "spritesheet") and v == old_path then
+			tbl[k] = new_path
+		elseif type(v) == "table" then
+			replace_tile_picture_path(v, old_path, new_path)
+		end
+	end
+end
+
+-- Exposed Quartz (25%) - 12 tilesets from desaturated ice-rough/ice-smooth, hue 60° steps, varied by aux
+-- Mid-light grey base (~195) with subtle hue shift per angle for minimap variation
+local EXPOSED_QUARTZ_ANGLES = { 0, 60, 120, 180, 240, 300 }
+local EXPOSED_QUARTZ_MAP_COLORS = {
+	{ 200, 195, 190 }, -- 0°   slight warm
+	{ 195, 200, 190 }, -- 60°  slight yellow-green
+	{ 190, 200, 195 }, -- 120° slight green
+	{ 190, 195, 200 }, -- 180° slight blue
+	{ 195, 190, 200 }, -- 240° slight purple
+	{ 200, 190, 195 }, -- 300° slight pink
+}
+local wastes_exposed_quartz_tiles = {}
+for i, angle in ipairs(EXPOSED_QUARTZ_ANGLES) do
+	-- Rough (1-6)
+	local rough = table.deepcopy(data.raw.tile["ice-rough"])
+	rough.name = "tenebris-wastes-exposed-quartz-" .. string.format("%02d", i)
+	rough.order = "t[tenebris]-w[wastes]-e[exposed-quartz]-" .. string.format("%02d", i)
+	rough.subgroup = "tenebris-tiles"
+	rough.autoplace = { probability_expression = "tenebris_tile_wastes_exposed_quartz_" .. string.format("%02d", i) }
+	rough.layer = 24
+	rough.map_color = EXPOSED_QUARTZ_MAP_COLORS[i]
+	rough.absorptions_per_second = ABSORPTION.LOW
+	rough.sprite_usage_surface = nil
+	rough.collision_mask = tile_collision_masks.ground()
+	replace_tile_picture_path(rough.variants, "__space-age__/graphics/terrain/aquilo/ice-rough.png",
+		"__tenebris-prime__/graphics/tile/exposed-quartz/exposed-quartz-rough-" .. angle .. ".png")
+	wastes_exposed_quartz_tiles[i] = rough
+end
+for i, angle in ipairs(EXPOSED_QUARTZ_ANGLES) do
+	-- Smooth (7-12)
+	local smooth = table.deepcopy(data.raw.tile["ice-smooth"])
+	smooth.name = "tenebris-wastes-exposed-quartz-" .. string.format("%02d", i + 6)
+	smooth.order = "t[tenebris]-w[wastes]-e[exposed-quartz]-" .. string.format("%02d", i + 6)
+	smooth.subgroup = "tenebris-tiles"
+	smooth.autoplace = { probability_expression = "tenebris_tile_wastes_exposed_quartz_" .. string.format("%02d", i + 6) }
+	smooth.layer = 24
+	smooth.map_color = EXPOSED_QUARTZ_MAP_COLORS[i]
+	smooth.absorptions_per_second = ABSORPTION.LOW
+	smooth.sprite_usage_surface = nil
+	smooth.collision_mask = tile_collision_masks.ground()
+	replace_tile_picture_path(smooth.variants, "__space-age__/graphics/terrain/aquilo/ice-smooth.png",
+		"__tenebris-prime__/graphics/tile/exposed-quartz/exposed-quartz-smooth-" .. angle .. ".png")
+	wastes_exposed_quartz_tiles[i + 6] = smooth
+end
+
+-- Shattered Quartz (15%) - broken quartz rubble with shader effect
+local wastes_shattered_quartz_effect = {
+	type = "tile-effect",
+	name = "tenebris-wastes-shattered-quartz-effect",
+	shader = "water",
+	water = {
+		shader_variation = "wetland-water",
+		textures = {
+			{
+				filename = "__space-age__/graphics/terrain/gleba/watercaustics.png",
+				width = 512,
+				height = 512,
+			},
+			{
+				filename = "__space-age__/graphics/terrain/aquilo/brash-ice.png",
+				width = 512 * 4,
+				height = 512 * 2,
+			},
+		},
+		texture_variations_columns = 1,
+		texture_variations_rows = 1,
+		secondary_texture_variations_columns = 4,
+		secondary_texture_variations_rows = 2,
+		animation_speed = 0.3, -- Slower than original
+		animation_scale = { 0.40, 0.68 },
+		tick_scale = 6,
+		specular_lightness = { 2, 5, 1 }, -- Dimmer than original
+		foam_color = { 8, 2, 2 },
+		foam_color_multiplier = 0.5,
+		dark_threshold = { 0.0, 0.2 },
+		reflection_threshold = { 3, 2 },
+		specular_threshold = { 0.0, 0.0 },
+	},
+}
+
+local wastes_shattered_quartz = table.deepcopy(data.raw.tile["brash-ice"])
+wastes_shattered_quartz.name = "tenebris-wastes-shattered-quartz"
+wastes_shattered_quartz.order = "t[tenebris]-w[wastes]-f[shattered-quartz]"
+wastes_shattered_quartz.subgroup = "tenebris-tiles"
+wastes_shattered_quartz.autoplace = { probability_expression = "tenebris_tile_wastes_shattered_quartz" }
+wastes_shattered_quartz.layer = 25
+wastes_shattered_quartz.map_color = { 100, 90, 120 } -- Dark quartz purple
+wastes_shattered_quartz.absorptions_per_second = ABSORPTION.LOW
+wastes_shattered_quartz.sprite_usage_surface = nil
+wastes_shattered_quartz.effect = "tenebris-wastes-shattered-quartz-effect"
+wastes_shattered_quartz.effect_color = { 80, 70, 100 } -- Quartz purple
+wastes_shattered_quartz.effect_color_secondary = { 50, 45, 70 }
+wastes_shattered_quartz.fluid = nil -- Remove ammoniacal-solution
+wastes_shattered_quartz.default_cover_tile = "landfill"
 
 -- =============================================================================
 -- Sulfur Pit Tiles
@@ -622,9 +818,34 @@ data:extend({
 	mercury_swamp,
 	abyssal_water,
 	debug_highlands,
+	-- Highlands subbiome debug tiles
+	debug_highlands_hollows,
+	debug_highlands_normal,
+	debug_highlands_badlands,
+	debug_highlands_plateaus,
 	lowland_cauliflower,
 	debug_wastes,
 	debug_quartz,
+	-- Wastes subbiome tiles (Dunes: 4 dust tiles, Quartz: 2 tiles)
+	wastes_flats,
+	wastes_dunes,
+	wastes_lumpy,
+	wastes_patchy,
+	-- 12 exposed-quartz tilesets (aux-varied desaturated rainbow)
+	wastes_exposed_quartz_tiles[1],
+	wastes_exposed_quartz_tiles[2],
+	wastes_exposed_quartz_tiles[3],
+	wastes_exposed_quartz_tiles[4],
+	wastes_exposed_quartz_tiles[5],
+	wastes_exposed_quartz_tiles[6],
+	wastes_exposed_quartz_tiles[7],
+	wastes_exposed_quartz_tiles[8],
+	wastes_exposed_quartz_tiles[9],
+	wastes_exposed_quartz_tiles[10],
+	wastes_exposed_quartz_tiles[11],
+	wastes_exposed_quartz_tiles[12],
+	wastes_shattered_quartz_effect,
+	wastes_shattered_quartz,
 	sulfur_pit_rock,
 	sulfur_volcanic_cracks,
 	sulfur_volcanic_cracks_warm,

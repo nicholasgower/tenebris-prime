@@ -238,14 +238,14 @@ data.extend({
 		spawn_decoration = {},
 		-- Capture creates proxy → dies → on_entity_died → Tier 4 generator
 		captured_spawner_entity = "tenebris-quartz-ortet-capture-proxy",
-		-- Autoplace: sparse placement within quartz forest plateaus
+		-- Autoplace: sparse placement within highlands plateau subbiomes
 		-- ~500 tiles apart, larger plateaus may get 2
 		autoplace = {
 			control = "tenebris_plants",
 			order = "z[tenebris]-a[ortet]",
 			probability_expression = "tenebris_ortet_probability",
 			tile_restriction = {
-				"tenebris-debug-quartz",
+				"tenebris-debug-highlands-plateaus",
 			},
 		},
 		map_color = constants.TINT.CYAN,

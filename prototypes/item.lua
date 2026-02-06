@@ -234,7 +234,11 @@ data:extend({
 			tile_condition = {
 				"tenebris-debug-highlands",
 				"tenebris-lowland-cauliflower",
-				"tenebris-debug-wastes",
+				-- Wastes dusty dunes only (quartz cannot be altered)
+				"tenebris-wastes-flats",
+				"tenebris-wastes-dunes",
+				"tenebris-wastes-lumpy",
+				"tenebris-wastes-patchy",
 			},
 		},
 		weight = 10 * kg,
@@ -257,7 +261,11 @@ data:extend({
 			tile_condition = {
 				"tenebris-debug-highlands",
 				"tenebris-lowland-cauliflower",
-				"tenebris-debug-wastes",
+				-- Wastes dusty dunes only (quartz cannot be altered)
+				"tenebris-wastes-flats",
+				"tenebris-wastes-dunes",
+				"tenebris-wastes-lumpy",
+				"tenebris-wastes-patchy",
 			},
 		},
 		weight = 10 * kg,

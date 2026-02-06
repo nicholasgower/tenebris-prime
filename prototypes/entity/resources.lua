@@ -77,10 +77,19 @@ data:extend({
 			has_starting_area_placement = true,
 			regular_rq_factor_multiplier = 1.2,
 			starting_rq_factor_multiplier = 1.5,
-			-- Restrict to highlands and wastes using spot_favorability
-			-- This makes patches favor these biomes
-			ideal_aux = 0.5,
-			aux_range = 0.5,
+			-- Restrict to highlands (all subbiomes) and wastes dusty dunes only (not quartz)
+			tile_restriction = {
+				-- Highlands subbiomes
+				"tenebris-debug-highlands-hollows",
+				"tenebris-debug-highlands-normal",
+				"tenebris-debug-highlands-badlands",
+				"tenebris-debug-highlands-plateaus",
+				-- Wastes dusty dunes only (lichen doesn't grow on quartz)
+				"tenebris-wastes-flats",
+				"tenebris-wastes-dunes",
+				"tenebris-wastes-lumpy",
+				"tenebris-wastes-patchy",
+			},
 		}),
 		stage_counts = { 0 },
 		stages = {

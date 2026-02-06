@@ -97,61 +97,11 @@ local tenebris_nerve_roots = {
 	},
 }
 
--- Wispy lichen in the wastes
-local tenebris_wispy_lichen = {
-	name = "tenebris-wispy-lichen",
-	type = "optimized-decorative",
-	order = "t[tenebris]-d[wastes]-b[wispy-lichen]",
-	collision_box = { { -0.2, -0.2 }, { 0.2, 0.2 } },
-	collision_mask = dec_default_collision(),
-	render_layer = "decorative",
-	walking_sound = base_tile_sounds.walking.small_bush,
-	autoplace = {
-		tile_restriction = { "tenebris-debug-wastes" },
-		placement_density = 2,
-		probability_expression = "trpi(0.08)",
-	},
-	pictures = {
-		{
-			filename = "__space-age__/graphics/decorative/wispy-lichen/wispy-lichen-00.png",
-			width = 120,
-			height = 80,
-			shift = { 0.08, -0.06 },
-			scale = 0.5,
-			tint = PURPLE_TINT,
-		},
-		{
-			filename = "__space-age__/graphics/decorative/wispy-lichen/wispy-lichen-01.png",
-			width = 130,
-			height = 95,
-			shift = { 0.02, -0.09 },
-			scale = 0.5,
-			tint = PURPLE_TINT,
-		},
-		{
-			filename = "__space-age__/graphics/decorative/wispy-lichen/wispy-lichen-02.png",
-			width = 122,
-			height = 76,
-			shift = { 0, 0.02 },
-			scale = 0.5,
-			tint = PURPLE_TINT,
-		},
-		{
-			filename = "__space-age__/graphics/decorative/wispy-lichen/wispy-lichen-03.png",
-			width = 121,
-			height = 75,
-			shift = { 0.09, -0.01 },
-			scale = 0.5,
-			tint = PURPLE_TINT,
-		},
-	},
-}
-
 -- =============================================================================
 -- MERCURY SHORE DECORATIVES (around mercury pools)
 -- =============================================================================
 
--- Calcite-like mineral stains around mercury
+-- Calcite-like mineral stains around mercury (lowlands and mercury pool edges only)
 local tenebris_mercury_stain = {
 	name = "tenebris-mercury-stain",
 	type = "optimized-decorative",
@@ -161,6 +111,14 @@ local tenebris_mercury_stain = {
 	render_layer = "decals",
 	tile_layer = decal_tile_layer - 6,
 	autoplace = {
+		tile_restriction = {
+			"tenebris-lowland-cauliflower",
+			"tenebris-lowland-dead-skin",
+			"tenebris-lowland-infection",
+			"tenebris-lowland-vein-bulges",
+			"tenebris-lowland-vein-dead",
+			"tenebris-mercury-tile",
+		},
 		probability_expression = "tenebris_subbiome_mercury_shore * 0.1",
 	},
 	pictures = {
@@ -275,7 +233,12 @@ local tenebris_highland_roots = {
 	render_layer = "decals",
 	tile_layer = decal_tile_layer - 1,
 	autoplace = {
-		tile_restriction = { "tenebris-debug-highlands", "tenebris-debug-quartz" },
+		tile_restriction = {
+			"tenebris-debug-highlands-hollows",
+			"tenebris-debug-highlands-normal",
+			"tenebris-debug-highlands-badlands",
+			"tenebris-debug-highlands-plateaus",
+		},
 		probability_expression = "trpi(0.03)",
 	},
 	pictures = {
@@ -333,7 +296,12 @@ local tenebris_mycelium = {
 	render_layer = "decals",
 	tile_layer = decal_tile_layer - 1,
 	autoplace = {
-		tile_restriction = { "tenebris-debug-highlands", "tenebris-debug-quartz" },
+		tile_restriction = {
+			"tenebris-debug-highlands-hollows",
+			"tenebris-debug-highlands-normal",
+			"tenebris-debug-highlands-badlands",
+			"tenebris-debug-highlands-plateaus",
+		},
 		probability_expression = "trpi(0.03)",
 	},
 	pictures = {
@@ -376,45 +344,83 @@ local tenebris_mycelium = {
 -- WASTES DECORATIVES (barren, dusty terrain)
 -- =============================================================================
 
--- Cracked mud decals for wastes
-local tenebris_cracked_mud = {
-	name = "tenebris-cracked-mud",
+-- Base game sand-dune-decal picture dimensions (00-29) for desaturated copy
+local SAN_DUNE_DECAL_SPECS = {
+	{ 212, 168, -8, 0 }, { 211, 148, 5.75, -3.5 }, { 260, 184, 3, 1 }, { 129, 181, 0.75, 1.75 },
+	{ 196, 184, -3.5, -1.5 }, { 215, 184, -1.25, -1 }, { 218, 179, 6.5, 4.25 }, { 250, 183, 17.5, 3.25 },
+	{ 260, 176, 5, 0.5 }, { 260, 184, -5.5, -1 }, { 233, 183, -13.75, 1.25 }, { 172, 184, -9.5, 2 },
+	{ 260, 166, 2.5, -6.5 }, { 259, 172, 4.75, -1 }, { 199, 184, -2.25, -2 }, { 214, 184, 8.5, -3 },
+	{ 162, 182, -8, -4.5 }, { 222, 153, -3, -0.25 }, { 247, 184, 4.25, -2.5 }, { 211, 184, -5.75, -3 },
+	{ 248, 183, -1.5, 2.25 }, { 176, 184, 6.5, 1.5 }, { 208, 185, 9, -1.75 }, { 227, 184, -3.75, -1.5 },
+	{ 158, 186, 4.5, -1 }, { 260, 184, 1.5, -1.5 }, { 134, 184, -0.5, -1 }, { 127, 165, 26.25, 1.25 },
+	{ 258, 158, -2.5, -4.5 }, { 180, 184, -3.5, -2 },
+}
+
+-- Sand-dune decals (80% desaturated via ImageMagick, in mod graphics) on wastes dunes only
+local tenebris_sand_dune_decal = {
+	name = "tenebris-sand-dune-decal",
 	type = "optimized-decorative",
-	order = "t[tenebris]-d[wastes]-a[cracked-mud]",
-	collision_box = { { -1.5, -1.5 }, { 1.5, 1.5 } },
-	collision_mask = dec_default_collision(),
+	order = "t[tenebris]-d[wastes]-a[dune-decal]",
+	collision_box = { { -1.78125, -1.34375 }, { 1.78125, 1.34375 } },
+	collision_mask = { layers = { doodad = true, water_tile = true }, not_colliding_with_itself = true },
 	render_layer = "decals",
-	tile_layer = decal_tile_layer - 2,
+	tile_layer = decal_tile_layer,
 	autoplace = {
-		tile_restriction = { "tenebris-debug-wastes" },
-		probability_expression = "trpi(0.015)",
+		tile_restriction = {
+			"tenebris-wastes-flats",
+			"tenebris-wastes-dunes",
+			"tenebris-wastes-lumpy",
+			"tenebris-wastes-patchy",
+		},
+		probability_expression = "tenebris_sand_dune_decal_probability",
 	},
-	pictures = {
-		{
-			filename = "__space-age__/graphics/decorative/grey-cracked-mud-decal/grey-cracked-mud-decal-00.png",
-			width = 474,
-			height = 337,
-			scale = 0.5,
+	pictures = (function()
+		local pics = {}
+		for i, spec in ipairs(SAN_DUNE_DECAL_SPECS) do
+			local idx = string.format("%02d", i - 1)
+			pics[i] = {
+				filename = "__tenebris-prime__/graphics/decorative/sand-dune-decal/sand-dune-decal-" .. idx .. ".png",
+				width = spec[1],
+				height = spec[2],
+				shift = util.by_pixel(spec[3], spec[4]),
+				scale = 0.5,
+			}
+		end
+		return pics
+	end)(),
+}
+
+-- Waves decal (Space Age waves-relief, no desaturation) on wastes dunes only
+local tenebris_waves_decal = {
+	name = "tenebris-waves-decal",
+	type = "optimized-decorative",
+	order = "t[tenebris]-d[wastes]-b[waves-decal]",
+	collision_box = { { -8, -8 }, { 8, 8 } },
+	collision_mask = { layers = { water_tile = true }, colliding_with_tiles_only = true },
+	render_layer = "decals",
+	tile_layer = decal_tile_layer - 1,
+	autoplace = {
+		tile_restriction = {
+			"tenebris-wastes-flats",
+			"tenebris-wastes-dunes",
+			"tenebris-wastes-lumpy",
+			"tenebris-wastes-patchy",
 		},
-		{
-			filename = "__space-age__/graphics/decorative/grey-cracked-mud-decal/grey-cracked-mud-decal-01.png",
-			width = 473,
-			height = 265,
-			scale = 0.5,
-		},
-		{
-			filename = "__space-age__/graphics/decorative/grey-cracked-mud-decal/grey-cracked-mud-decal-02.png",
-			width = 473,
-			height = 267,
-			scale = 0.5,
-		},
-		{
-			filename = "__space-age__/graphics/decorative/grey-cracked-mud-decal/grey-cracked-mud-decal-03.png",
-			width = 432,
-			height = 243,
-			scale = 0.5,
-		},
+		probability_expression = "tenebris_waves_decal_probability",
 	},
+	pictures = (function()
+		local pics = {}
+		for i = 1, 8 do
+			local idx = string.format("%02d", i)
+			pics[i] = {
+				filename = "__space-age__/graphics/decorative/waves-relief/waves-" .. idx .. ".png",
+				width = 1387,
+				height = 1387,
+				scale = 0.5,
+			}
+		end
+		return pics
+	end)(),
 }
 
 -- Tenebrace spore cup - tinted brown-cup for tenebrace spawns
@@ -1450,12 +1456,12 @@ data:extend({
 	-- Mercury shores
 	tenebris_mercury_stain,
 	tenebris_mercury_coral,
+	-- Wastes (dunes)
+	tenebris_sand_dune_decal,
+	tenebris_waves_decal,
 	-- Highlands
 	tenebris_highland_roots,
 	tenebris_mycelium,
-	-- Wastes
-	tenebris_cracked_mud,
-	tenebris_wispy_lichen,
 	-- Sulfur pits
 	tenebris_sulfur_stain,
 	tenebris_sulfur_stain_small,

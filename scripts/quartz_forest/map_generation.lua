@@ -127,10 +127,10 @@ local function spawn_bud(surface, position, ortet_id)
         return nil
     end
     
-    -- Check if on valid tile (quartz forest tile)
+    -- Check if on valid tile (any highlands subbiome tile)
     local tile = surface.get_tile(spawn_pos.x, spawn_pos.y)
-    if tile and tile.name ~= TILES.QUARTZ_FOREST then
-        return nil  -- Not on quartz forest tile
+    if tile and not TILES.HIGHLANDS_SUBBIOMES[tile.name] then
+        return nil  -- Not on highlands subbiome tile
     end
     
     -- Create the bud composite on ENEMY force (required for capture)

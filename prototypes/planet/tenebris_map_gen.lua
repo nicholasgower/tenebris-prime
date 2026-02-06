@@ -303,10 +303,10 @@ data:extend({
 		expression = "voronoi_pyramid_noise{x = tenebris_quartz_wx, y = tenebris_quartz_wy, seed0 = map_seed, seed1 = 2010, grid_size = tenebris_quartz_grid, distance_type = 'euclidean', jitter = 0.7}",
 	},
 	{
-		-- Spawn proximity for guaranteed forest near spawn
+		-- Spawn proximity for guaranteed forest near spawn (legacy, unused)
 		type = "noise-expression",
 		name = "tenebris_spawn_quartz_proximity",
-		expression = "max(0, 1 - sqrt((x - 300)^2 + (y - 300)^2) / 200)",
+		expression = "max(0, 1 - distance / 200)",
 	},
 	{
 		-- Cell selection: top 25% of cells become quartz forests
@@ -321,9 +321,10 @@ data:extend({
 		expression = "max(0, (tenebris_quartz_pyramids - 0.15) * 4) * tenebris_quartz_forest_cells",
 	},
 	{
+		-- Quartz forests disabled as standalone biome - ortets now spawn on highlands plateaus
 		type = "noise-expression",
 		name = "tenebris_region_quartz",
-		expression = "tenebris_quartz_value > 0",
+		expression = "0",
 	},
 
 	-- SULFUR PIT region
@@ -474,7 +475,8 @@ data:extend({
 	--
 	-- LAYER 3: Priority Resolution
 	-- Each biome excludes all higher-priority biomes
-	-- Priority: Abyssal (100) > Quartz (50) > Sulfur (40) > Mercury (30) > Base (10)
+	-- Priority: Abyssal (100) > Sulfur (40) > Mercury (30) > Base (10)
+	-- Note: Quartz forests removed - ortets now spawn on highlands plateaus
 	--
 	--------------------------------------------------------------------------------
 
@@ -484,26 +486,27 @@ data:extend({
 		expression = "tenebris_region_abyssal",
 	},
 	{
+		-- Quartz biome disabled - kept for compatibility but always 0
 		type = "noise-expression",
 		name = "tenebris_biome_quartz",
-		expression = "tenebris_region_quartz * (1 - tenebris_biome_abyssal)",
+		expression = "0",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_biome_sulfur",
-		expression = "tenebris_region_sulfur * (1 - tenebris_biome_abyssal) * (1 - tenebris_biome_quartz)",
+		expression = "tenebris_region_sulfur * (1 - tenebris_biome_abyssal)",
 	},
 	{
 		-- Mercury: special biome that can only spawn in lowlands-elevation areas
 		type = "noise-expression",
 		name = "tenebris_biome_mercury",
-		expression = "tenebris_region_mercury * (1 - tenebris_biome_abyssal) * (1 - tenebris_biome_quartz) * (1 - tenebris_biome_sulfur)",
+		expression = "tenebris_region_mercury * (1 - tenebris_biome_abyssal) * (1 - tenebris_biome_sulfur)",
 	},
 	{
 		-- Any special biome (for excluding base terrain)
 		type = "noise-expression",
 		name = "tenebris_biome_any_special",
-		expression = "max(tenebris_biome_abyssal, max(tenebris_biome_quartz, max(tenebris_biome_sulfur, tenebris_biome_mercury)))",
+		expression = "max(tenebris_biome_abyssal, max(tenebris_biome_sulfur, tenebris_biome_mercury))",
 	},
 	{
 		type = "noise-expression",
@@ -535,27 +538,172 @@ data:extend({
 		expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 2250, octaves = 2, input_scale = 1/40}",
 	},
 
-	-- Jagged ridge noise for highlands
+	-- Jagged ridge noise for highlands badlands
 	{
 		type = "noise-expression",
 		name = "tenebris_highlands_ridges",
 		expression = "abs(multioctave_noise{x = x + tenebris_wobble_x * 15, y = y + tenebris_wobble_y * 15, persistence = 0.7, seed0 = map_seed, seed1 = 6000, octaves = 4, input_scale = 1/80})",
 	},
 
+	--------------------------------------------------------------------------------
+	-- Highlands Subbiome Selection
+	-- Divides highlands into 4 subbiomes based on noise thresholds:
+	-- - Hollows (10%): <0.1 - depressions with dense flora
+	-- - Normal (40%): 0.1-0.5 - smooth rolling terrain
+	-- - Badlands (30%): 0.5-0.8 - jagged ridges, high cliffs
+	-- - Plateaus (20%): >0.8 - elevated mesas with ortets
+	--------------------------------------------------------------------------------
+	{
+		-- Higher input_scale = smaller features (hollows are small pockets)
+		type = "noise-expression",
+		name = "tenebris_highlands_subbiome_noise",
+		expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 7000, octaves = 3, input_scale = 1/60}",
+	},
+	{
+		-- Normalize noise from [-1,1] to [0,1] range for threshold comparison
+		type = "noise-expression",
+		name = "tenebris_highlands_subbiome_value",
+		expression = "(tenebris_highlands_subbiome_noise + 1) / 2",
+	},
+	{
+		-- Hollows: lowest 10% of noise values (< 0.1), only within highlands
+		type = "noise-expression",
+		name = "tenebris_subbiome_hollows",
+		expression = "tenebris_biome_highlands * (tenebris_highlands_subbiome_value < 0.1)",
+	},
+	{
+		-- Normal highlands: middle 40% (0.1 to 0.5), only within highlands
+		type = "noise-expression",
+		name = "tenebris_subbiome_normal",
+		expression = "tenebris_biome_highlands * (tenebris_highlands_subbiome_value >= 0.1) * (tenebris_highlands_subbiome_value < 0.5)",
+	},
+	{
+		-- Badlands: next 30% (0.5 to 0.8), only within highlands
+		type = "noise-expression",
+		name = "tenebris_subbiome_badlands",
+		expression = "tenebris_biome_highlands * (tenebris_highlands_subbiome_value >= 0.5) * (tenebris_highlands_subbiome_value < 0.8)",
+	},
+	{
+		-- Plateaus: highest 20% (>= 0.8), only within highlands
+		type = "noise-expression",
+		name = "tenebris_subbiome_plateaus",
+		expression = "tenebris_biome_highlands * (tenebris_highlands_subbiome_value >= 0.8)",
+	},
+
+	-- ========================================================================
+	-- WASTES SUBBIOMES
+	-- 3 subbiomes: Dunes (60%), Exposed Quartz (35%), Shattered Quartz (5%, small patches)
+	-- Dunes subbiome uses 4 dust tile varieties with secondary noise
+	-- ========================================================================
+	{
+		-- Subbiome selection noise (for dunes vs exposed quartz)
+		type = "noise-expression",
+		name = "tenebris_wastes_subbiome_noise",
+		expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 8500, octaves = 3, input_scale = 1/80}",
+	},
+	{
+		-- Normalize noise from [-1,1] to [0,1] range for threshold comparison
+		type = "noise-expression",
+		name = "tenebris_wastes_subbiome_value",
+		expression = "(tenebris_wastes_subbiome_noise + 1) / 2",
+	},
+	{
+		-- Fine-scale noise for shattered quartz (0.1 the wavelength = much smaller patches)
+		type = "noise-expression",
+		name = "tenebris_wastes_shattered_noise",
+		expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 8510, octaves = 2, input_scale = 1/8}",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_wastes_shattered_value",
+		expression = "(tenebris_wastes_shattered_noise + 1) / 2",
+	},
+	-- Voronoi for geometric (polygonal) exposed-quartz regions
+	{
+		type = "noise-expression",
+		name = "tenebris_wastes_exposed_grid",
+		expression = "120",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_wastes_exposed_wx",
+		expression = "x",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_wastes_exposed_wy",
+		expression = "y",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_wastes_exposed_cells",
+		expression = "voronoi_cell_id{x = tenebris_wastes_exposed_wx, y = tenebris_wastes_exposed_wy, seed0 = map_seed, seed1 = 8500, grid_size = tenebris_wastes_exposed_grid, distance_type = 'euclidean', jitter = 0.5}",
+	},
+	{
+		-- Pyramid ~0.15 at cell edges, ~1 at center (same as sulfur pits with euclidean)
+		type = "noise-expression",
+		name = "tenebris_wastes_exposed_pyramid",
+		expression = "voronoi_pyramid_noise{x = tenebris_wastes_exposed_wx, y = tenebris_wastes_exposed_wy, seed0 = map_seed, seed1 = 8500, grid_size = tenebris_wastes_exposed_grid, distance_type = 'euclidean', jitter = 0.5}",
+	},
+	-- ~35% of cells are exposed-quartz candidates (cell_id in [0.45, 0.80))
+	{
+		type = "noise-expression",
+		name = "tenebris_wastes_exposed_selected_cells",
+		expression = "(tenebris_wastes_exposed_cells >= 0.45) * (tenebris_wastes_exposed_cells < 0.80)",
+	},
+	{
+		-- Exposed Quartz: Voronoi cells (polygonal) where pyramid > 0.2 (most of cell interior), only when well inside wastes
+		type = "noise-expression",
+		name = "tenebris_subbiome_wastes_exposed_quartz",
+		expression = "tenebris_biome_wastes * (tenebris_biome_wastes >= 0.70) * tenebris_wastes_exposed_selected_cells * (tenebris_wastes_exposed_pyramid > 0.2) * (tenebris_wastes_shattered_value < 0.95)",
+	},
+	{
+		-- Shattered Quartz: same Voronoi cells, high shattered noise only
+		type = "noise-expression",
+		name = "tenebris_subbiome_wastes_shattered_quartz",
+		expression = "tenebris_biome_wastes * (tenebris_biome_wastes >= 0.70) * tenebris_wastes_exposed_selected_cells * (tenebris_wastes_exposed_pyramid > 0.2) * (tenebris_wastes_shattered_value >= 0.97)",
+	},
+	{
+		-- Dunes: everywhere in wastes that is not exposed quartz and not shattered quartz
+		type = "noise-expression",
+		name = "tenebris_subbiome_wastes_dunes",
+		expression = "tenebris_biome_wastes * (1 - tenebris_subbiome_wastes_exposed_quartz - tenebris_subbiome_wastes_shattered_quartz)",
+	},
+
+	-- ========================================================================
+	-- DUNES TILE VARIETY
+	-- Secondary noise to select between 4 dust tiles within Dunes subbiome
+	-- ========================================================================
+	{
+		-- Tile variety noise (finer scale for smaller patches)
+		type = "noise-expression",
+		name = "tenebris_wastes_dust_variety_noise",
+		expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 8600, octaves = 2, input_scale = 1/40}",
+	},
+	{
+		-- Normalize to [0,1]
+		type = "noise-expression",
+		name = "tenebris_wastes_dust_variety_value",
+		expression = "(tenebris_wastes_dust_variety_noise + 1) / 2",
+	},
+
 	-- FINAL ELEVATION with biome modifications
 	{
 		type = "noise-expression",
 		name = "tenebris_elevation",
-		expression = "max(5, effective_base + highlands_boost + highlands_ridges + quartz_boost - sulfur_drop)",
+		expression = "max(5, effective_base + highlands_boost + highlands_ridges + plateau_boost - hollow_drop - sulfur_drop)",
 		local_expressions = {
 			-- Highlands: base elevation boost at biome boundary (creates cliff ring)
 			highlands_boost = "40 * tenebris_biome_highlands",
 
-			-- Highlands: jagged ridges within highlands (creates internal cliffs)
-			highlands_ridges = "50 * tenebris_highlands_ridges * tenebris_biome_highlands",
+			-- Highlands: jagged ridges within badlands subbiome only
+			highlands_ridges = "50 * tenebris_highlands_ridges * tenebris_subbiome_badlands",
 
-			-- Quartz forests: boost elevation by 100 (creates cliff ring at edges)
-			quartz_boost = "100 * tenebris_quartz_value * tenebris_biome_quartz",
+			-- Highlands plateaus: +80 elevation boost (creates mesa cliffs)
+			plateau_boost = "80 * tenebris_subbiome_plateaus",
+
+			-- Highlands hollows: -30 depression (creates pocket valleys)
+			hollow_drop = "30 * tenebris_subbiome_hollows",
 
 			-- Sulfur pits: flatten base elevation to ensure concentric cliff rings
 			-- The base terrain varies (typically 380-520), which would cause jagged non-concentric cliffs.
@@ -603,32 +751,47 @@ data:extend({
 		},
 	},
 
-	-- CLIFFINESS: biome-determined
-	-- Sulfur pits get constant 2, highlands get high cliffiness throughout
+	-- CLIFFINESS: biome and subbiome determined
+	-- Sulfur pits get constant 2
+	-- Highlands subbiomes: badlands (high), plateaus (edge high), normal (moderate), hollows (low)
 	-- Lowlands are flat (no cliffs) to allow mercury pools to dominate
 	{
 		type = "noise-expression",
 		name = "tenebris_cliffiness",
-		expression = "max(sulfur_cliffiness, max(highlands_cliffiness, max(highlands_edge_cliffiness, normal_cliffiness)))",
+		expression = "max(sulfur_cliffiness, max(badlands_cliffiness, max(plateau_cliffiness, max(normal_highlands_cliffiness, max(hollow_cliffiness, max(highlands_edge_cliffiness, normal_cliffiness))))))",
 		local_expressions = {
 			-- Sulfur pits: constant 2, exactly like test map (no noise, no exclusions)
 			sulfur_cliffiness = "2 * tenebris_biome_sulfur",
 
-			-- Highlands interior: moderate cliffiness for jagged terrain
-			highlands_cliffiness = "1.2 * tenebris_biome_highlands",
+			-- Hard highlands mask: only where highlands is fully 1 (no gradient bleed)
+			highlands_hard = "(tenebris_biome_highlands > 0.9)",
 
-			-- Highlands edges: higher cliffiness at biome boundaries
-			highlands_edge = "tenebris_biome_highlands * (1 - tenebris_select(tenebris_elevation_base, tenebris_highlands_min + 10, 1000, 10, 0, 1))",
+			-- Highlands subbiome cliffiness (all gated by hard mask):
+			-- Badlands: high cliffiness throughout (1.5)
+			badlands_cliffiness = "1.5 * tenebris_subbiome_badlands * highlands_hard",
+
+			-- Plateaus: high edge cliffiness for mesa walls (2.5 at edges, 0.3 interior)
+			plateau_edge = "tenebris_subbiome_plateaus * (tenebris_highlands_subbiome_value < 0.9)",
+			plateau_interior = "tenebris_subbiome_plateaus * (tenebris_highlands_subbiome_value >= 0.9)",
+			plateau_cliffiness = "(2.5 * plateau_edge + 0.3 * plateau_interior) * highlands_hard",
+
+			-- Normal highlands: moderate cliffiness (0.8-1.0)
+			normal_highlands_cliffiness = "0.9 * tenebris_subbiome_normal * highlands_hard",
+
+			-- Hollows: low cliffiness for gentle slopes (0.3)
+			hollow_cliffiness = "0.3 * tenebris_subbiome_hollows * highlands_hard",
+
+			-- Highlands edges: only at the very edge of highlands (within ~5 tiles)
+			-- Use hard threshold to prevent bleeding outside biome
+			highlands_edge = "highlands_hard * (tenebris_elevation_base < tenebris_highlands_min + 15)",
 			highlands_edge_cliffiness = "2 * highlands_edge",
 
-			-- Normal areas: noise-based with quartz edge boost
+			-- Normal areas (wastes, etc.): noise-based
 			base_cliffiness = "0.7 + 0.5 * multioctave_noise{x = x, y = y, persistence = 0.7, seed0 = map_seed, seed1 = 1300, octaves = 2, input_scale = 1/100}",
-			quartz_edge_boost = "3 * tenebris_biome_quartz * (tenebris_quartz_pyramids > 0.1) * (tenebris_quartz_pyramids < 0.3)",
-			spawn_distance = "sqrt((x - 300)^2 + (y - 300)^2)",
-			spawn_exclusion = "clamp((spawn_distance - 20) / 30, 0, 1)",
+			spawn_exclusion = "clamp((distance - 20) / 30, 0, 1)",
 			-- Lowlands are flat - suppress cliffs in lowlands biome
 			lowlands_exclusion = "1 - tenebris_biome_lowlands",
-			normal_cliffiness = "max(0, base_cliffiness + quartz_edge_boost) * spawn_exclusion * lowlands_exclusion",
+			normal_cliffiness = "max(0, base_cliffiness) * spawn_exclusion * lowlands_exclusion",
 		},
 	},
 
@@ -654,10 +817,31 @@ data:extend({
 		expression = "tenebris_biome_mercury",
 	},
 	{
+		-- Base highlands tile disabled - subbiome tiles (hollows, normal, badlands, plateaus) now cover 100%
 		type = "noise-expression",
 		name = "tenebris_tile_highlands",
-		-- Exclude highlands from starting area (within distance 500 of spawn)
-		expression = "tenebris_biome_highlands * (distance > 500)",
+		expression = "0",
+	},
+	-- Highlands subbiome tiles (for debugging visualization)
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_highlands_hollows",
+		expression = "tenebris_subbiome_hollows",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_highlands_normal",
+		expression = "tenebris_subbiome_normal",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_highlands_badlands",
+		expression = "tenebris_subbiome_badlands",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_highlands_plateaus",
+		expression = "tenebris_subbiome_plateaus",
 	},
 	{
 		type = "noise-expression",
@@ -665,9 +849,98 @@ data:extend({
 		expression = "tenebris_biome_lowlands",
 	},
 	{
+		-- Base wastes tile disabled - subbiome tiles now cover 100%
 		type = "noise-expression",
 		name = "tenebris_tile_wastes",
-		expression = "tenebris_biome_wastes",
+		expression = "0",
+	},
+	-- Wastes subbiome tiles
+	-- Dunes subbiome: 4 dust tiles selected by variety noise (each 25% of dunes area)
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_flats",
+		expression = "tenebris_subbiome_wastes_dunes * (tenebris_wastes_dust_variety_value < 0.25)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_dunes",
+		expression = "tenebris_subbiome_wastes_dunes * (tenebris_wastes_dust_variety_value >= 0.25) * (tenebris_wastes_dust_variety_value < 0.50)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_lumpy",
+		expression = "tenebris_subbiome_wastes_dunes * (tenebris_wastes_dust_variety_value >= 0.50) * (tenebris_wastes_dust_variety_value < 0.75)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_patchy",
+		expression = "tenebris_subbiome_wastes_dunes * (tenebris_wastes_dust_variety_value >= 0.75)",
+	},
+	-- Quartz subbiomes: 12 exposed-quartz tiles varied by aux (desaturated rainbow)
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_01",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux < 0.08333)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_02",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.08333) * (aux < 0.16667)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_03",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.16667) * (aux < 0.25)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_04",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.25) * (aux < 0.33333)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_05",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.33333) * (aux < 0.41667)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_06",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.41667) * (aux < 0.5)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_07",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.5) * (aux < 0.58333)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_08",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.58333) * (aux < 0.66667)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_09",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.66667) * (aux < 0.75)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_10",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.75) * (aux < 0.83333)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_11",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.83333) * (aux < 0.91667)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_exposed_quartz_12",
+		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.91667)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_tile_wastes_shattered_quartz",
+		expression = "tenebris_subbiome_wastes_shattered_quartz",
 	},
 
 	--------------------------------------------------------------------------------
@@ -780,9 +1053,10 @@ data:extend({
 	-- Entity Placement Expressions
 	--------------------------------------------------------------------------------
 	{
+		-- Lichen grows in highlands (with hollow boost) and wastes
 		type = "noise-expression",
 		name = "tenebris_lichen_probability",
-		expression = "0.002 * max(tenebris_biome_highlands, tenebris_biome_wastes)",
+		expression = "0.002 * max(tenebris_biome_highlands * (1 + tenebris_hollow_flora_boost), tenebris_biome_wastes)",
 	},
 	{
 		type = "noise-expression",
@@ -790,9 +1064,10 @@ data:extend({
 		expression = "0.003 * tenebris_region_wastes",
 	},
 	{
+		-- Lucifunnels grow denser in hollows (2.5x boost)
 		type = "noise-expression",
 		name = "tenebris_lucifunnel_probability",
-		expression = "0.02 * tenebris_biome_highlands",
+		expression = "0.02 * tenebris_biome_highlands * (1 + tenebris_hollow_flora_boost)",
 	},
 	{
 		type = "noise-expression",
@@ -813,6 +1088,27 @@ data:extend({
 		type = "noise-expression",
 		name = "tenebris_stromatolite_probability",
 		expression = "0.15 * tenebris_subbiome_mercury_shore",
+	},
+	-- Shared choice noise so sand-dune and waves decals don't compete (only one type per tile)
+	{
+		type = "noise-expression",
+		name = "tenebris_wastes_decal_choice_noise",
+		expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 8620, octaves = 2, input_scale = 1/30}",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_wastes_decal_choice",
+		expression = "(tenebris_wastes_decal_choice_noise + 1) / 2",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_sand_dune_decal_probability",
+		expression = "trpi(0.003) * tenebris_subbiome_wastes_dunes * (tenebris_wastes_decal_choice < 0.5)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_waves_decal_probability",
+		expression = "trpi(0.002) * tenebris_subbiome_wastes_dunes * (tenebris_wastes_decal_choice >= 0.5)",
 	},
 
 	--------------------------------------------------------------------------------
@@ -895,25 +1191,28 @@ data:extend({
 	-- rather than being autoplaced as a separate entity
 
 	--------------------------------------------------------------------------------
-	-- Quartz Forest Ortet Placement
+	-- Highlands Plateau Ortet Placement
+	-- Ortets now spawn on highlands plateau subbiomes instead of quartz forests
 	--------------------------------------------------------------------------------
 	{
+		-- Favorability based on how deep into plateau we are (higher subbiome value = more favorable)
 		type = "noise-expression",
 		name = "tenebris_plateau_favorability",
-		expression = "tenebris_quartz_pyramids * tenebris_quartz_forest_cells",
+		expression = "tenebris_highlands_subbiome_value * tenebris_subbiome_plateaus",
 	},
 	{
+		-- Exclude spawn area from ortet placement
 		type = "noise-expression",
 		name = "tenebris_spawn_exclusion",
-		expression = "clamp((sqrt((x - 300)^2 + (y - 300)^2) - 400) / 50, 0, 1)",
+		expression = "clamp((distance - 200) / 50, 0, 1)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_ortet_spots",
 		expression = "spot_noise{x = x, y = y, seed0 = map_seed, seed1 = 3001,\z
-            candidate_spot_count = 16,\z
-            suggested_minimum_candidate_point_spacing = 300,\z
-            density_expression = tenebris_biome_quartz * 3 * tenebris_spawn_exclusion,\z
+            candidate_spot_count = 32,\z
+            suggested_minimum_candidate_point_spacing = 200,\z
+            density_expression = tenebris_subbiome_plateaus * 8 * tenebris_spawn_exclusion,\z
             spot_quantity_expression = 1,\z
             spot_radius_expression = 1,\z
             spot_favorability_expression = tenebris_plateau_favorability + 0.1,\z
@@ -922,14 +1221,21 @@ data:extend({
             maximum_spot_basement_radius = 1}",
 	},
 	{
-		type = "noise-expression",
-		name = "tenebris_spawn_ortet",
-		expression = "max(0, 1 - sqrt((x - 300)^2 + (y - 300)^2) / 3)",
-	},
-	{
+		-- Direct probability on plateaus (bypassing spot_noise for now)
+		-- 0.001 = roughly 1 ortet per 1000 tiles on plateau
 		type = "noise-expression",
 		name = "tenebris_ortet_probability",
-		expression = "((tenebris_ortet_spots > 0) + (tenebris_spawn_ortet > 0.5)) * tenebris_biome_quartz",
+		expression = "0.002 * (tenebris_subbiome_plateaus > 0.5)",
+	},
+
+	--------------------------------------------------------------------------------
+	-- Highlands Hollow Flora Boost
+	-- Dense flora probability in hollow subbiomes
+	--------------------------------------------------------------------------------
+	{
+		type = "noise-expression",
+		name = "tenebris_hollow_flora_boost",
+		expression = "2.5 * tenebris_subbiome_hollows",
 	},
 })
 
@@ -964,8 +1270,29 @@ tenebris = function()
 			-- Tile placement (debug tiles)
 			["tile:tenebris-mercury-tile:probability"] = "tenebris_tile_mercury",
 			["tile:tenebris-debug-highlands:probability"] = "tenebris_tile_highlands",
-			["tile:tenebris-debug-quartz:probability"] = "tenebris_tile_quartz",
+			["tile:tenebris-debug-highlands-hollows:probability"] = "tenebris_tile_highlands_hollows",
+			["tile:tenebris-debug-highlands-normal:probability"] = "tenebris_tile_highlands_normal",
+			["tile:tenebris-debug-highlands-badlands:probability"] = "tenebris_tile_highlands_badlands",
+			["tile:tenebris-debug-highlands-plateaus:probability"] = "tenebris_tile_highlands_plateaus",
 			["tile:tenebris-debug-wastes:probability"] = "tenebris_tile_wastes",
+			-- Wastes subbiome tiles (Dunes: 4 dust tiles, Quartz: 2 tiles)
+			["tile:tenebris-wastes-flats:probability"] = "tenebris_tile_wastes_flats",
+			["tile:tenebris-wastes-dunes:probability"] = "tenebris_tile_wastes_dunes",
+			["tile:tenebris-wastes-lumpy:probability"] = "tenebris_tile_wastes_lumpy",
+			["tile:tenebris-wastes-patchy:probability"] = "tenebris_tile_wastes_patchy",
+			["tile:tenebris-wastes-exposed-quartz-01:probability"] = "tenebris_tile_wastes_exposed_quartz_01",
+			["tile:tenebris-wastes-exposed-quartz-02:probability"] = "tenebris_tile_wastes_exposed_quartz_02",
+			["tile:tenebris-wastes-exposed-quartz-03:probability"] = "tenebris_tile_wastes_exposed_quartz_03",
+			["tile:tenebris-wastes-exposed-quartz-04:probability"] = "tenebris_tile_wastes_exposed_quartz_04",
+			["tile:tenebris-wastes-exposed-quartz-05:probability"] = "tenebris_tile_wastes_exposed_quartz_05",
+			["tile:tenebris-wastes-exposed-quartz-06:probability"] = "tenebris_tile_wastes_exposed_quartz_06",
+			["tile:tenebris-wastes-exposed-quartz-07:probability"] = "tenebris_tile_wastes_exposed_quartz_07",
+			["tile:tenebris-wastes-exposed-quartz-08:probability"] = "tenebris_tile_wastes_exposed_quartz_08",
+			["tile:tenebris-wastes-exposed-quartz-09:probability"] = "tenebris_tile_wastes_exposed_quartz_09",
+			["tile:tenebris-wastes-exposed-quartz-10:probability"] = "tenebris_tile_wastes_exposed_quartz_10",
+			["tile:tenebris-wastes-exposed-quartz-11:probability"] = "tenebris_tile_wastes_exposed_quartz_11",
+			["tile:tenebris-wastes-exposed-quartz-12:probability"] = "tenebris_tile_wastes_exposed_quartz_12",
+			["tile:tenebris-wastes-shattered-quartz:probability"] = "tenebris_tile_wastes_shattered_quartz",
 
 			-- Lowland tiles (five-tile system with aux mixing)
 			["tile:tenebris-lowland-cauliflower:probability"] = "tenebris_lowland_cauliflower_range",
@@ -978,6 +1305,10 @@ tenebris = function()
 			["tile:tenebris-sulfur-pit-rock:probability"] = "tenebris_sulfur_pit_rock_range",
 			["tile:tenebris-sulfur-volcanic-cracks:probability"] = "tenebris_sulfur_volcanic_cracks_range",
 			["tile:tenebris-sulfur-volcanic-cracks-warm:probability"] = "tenebris_sulfur_volcanic_cracks_warm_range",
+
+			-- Wastes dunes decals (base/space-age graphics)
+			["decorative:tenebris-sand-dune-decal:probability"] = "tenebris_sand_dune_decal_probability",
+			["decorative:tenebris-waves-decal:probability"] = "tenebris_waves_decal_probability",
 
 			-- Sulfur pit decoratives (Tenebris versions)
 			["decorative:tenebris-sulfur-stain:probability"] = "tenebris_sulfur_stain_probability",
@@ -1000,8 +1331,29 @@ tenebris = function()
 					["tenebris-abyssal-water"] = {},
 					["tenebris-mercury-tile"] = {},
 					["tenebris-debug-highlands"] = {},
-					["tenebris-debug-quartz"] = {},
+					["tenebris-debug-highlands-hollows"] = {},
+					["tenebris-debug-highlands-normal"] = {},
+					["tenebris-debug-highlands-badlands"] = {},
+					["tenebris-debug-highlands-plateaus"] = {},
 					["tenebris-debug-wastes"] = {},
+					-- Wastes subbiome tiles (Dunes: 4 dust tiles, Quartz: 2 tiles)
+					["tenebris-wastes-flats"] = {},
+					["tenebris-wastes-dunes"] = {},
+					["tenebris-wastes-lumpy"] = {},
+					["tenebris-wastes-patchy"] = {},
+					["tenebris-wastes-exposed-quartz-01"] = {},
+					["tenebris-wastes-exposed-quartz-02"] = {},
+					["tenebris-wastes-exposed-quartz-03"] = {},
+					["tenebris-wastes-exposed-quartz-04"] = {},
+					["tenebris-wastes-exposed-quartz-05"] = {},
+					["tenebris-wastes-exposed-quartz-06"] = {},
+					["tenebris-wastes-exposed-quartz-07"] = {},
+					["tenebris-wastes-exposed-quartz-08"] = {},
+					["tenebris-wastes-exposed-quartz-09"] = {},
+					["tenebris-wastes-exposed-quartz-10"] = {},
+					["tenebris-wastes-exposed-quartz-11"] = {},
+					["tenebris-wastes-exposed-quartz-12"] = {},
+					["tenebris-wastes-shattered-quartz"] = {},
 					-- Lowland tiles (five-tile system with aux mixing)
 					["tenebris-lowland-cauliflower"] = {},
 					["tenebris-lowland-dead-skin"] = {},
@@ -1020,8 +1372,9 @@ tenebris = function()
 					["tenebris-mercury-coral"] = {},
 					["tenebris-highland-roots"] = {},
 					["tenebris-mycelium"] = {},
-					["tenebris-cracked-mud"] = {},
-					["tenebris-wispy-lichen"] = {},
+					-- Wastes dunes decals
+					["tenebris-sand-dune-decal"] = {},
+					["tenebris-waves-decal"] = {},
 					-- Sulfur pit decoratives (Tenebris versions)
 					["tenebris-sulfur-stain"] = {},
 					["tenebris-sulfur-stain-small"] = {},

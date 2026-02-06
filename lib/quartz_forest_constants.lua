@@ -49,7 +49,15 @@ constants.ENTITIES = {
 -- =============================================================================
 
 constants.TILES = {
-	QUARTZ_FOREST = "tenebris-debug-quartz",
+	-- Ortets spawn on highlands plateau subbiome tiles
+	QUARTZ_FOREST = "tenebris-debug-highlands-plateaus",
+	-- All highlands subbiome tiles (for bud spawning around ortets)
+	HIGHLANDS_SUBBIOMES = {
+		["tenebris-debug-highlands-hollows"] = true,
+		["tenebris-debug-highlands-normal"] = true,
+		["tenebris-debug-highlands-badlands"] = true,
+		["tenebris-debug-highlands-plateaus"] = true,
+	},
 }
 
 constants.TECHNOLOGIES = {
