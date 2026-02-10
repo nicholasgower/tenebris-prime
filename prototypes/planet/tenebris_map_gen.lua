@@ -817,31 +817,14 @@ data:extend({
 		expression = "tenebris_biome_mercury",
 	},
 	{
-		-- Base highlands tile disabled - subbiome tiles (hollows, normal, badlands, plateaus) now cover 100%
 		type = "noise-expression",
-		name = "tenebris_tile_highlands",
-		expression = "0",
-	},
-	-- Highlands subbiome tiles (for debugging visualization)
-	{
-		type = "noise-expression",
-		name = "tenebris_tile_highlands_hollows",
-		expression = "tenebris_subbiome_hollows",
+		name = "tenebris_tile_blue_highlands",
+		expression = "tenebris_biome_highlands * (aux < 0.5) * (1 - tenebris_subbiome_plateaus)",
 	},
 	{
 		type = "noise-expression",
-		name = "tenebris_tile_highlands_normal",
-		expression = "tenebris_subbiome_normal",
-	},
-	{
-		type = "noise-expression",
-		name = "tenebris_tile_highlands_badlands",
-		expression = "tenebris_subbiome_badlands",
-	},
-	{
-		type = "noise-expression",
-		name = "tenebris_tile_highlands_plateaus",
-		expression = "tenebris_subbiome_plateaus",
+		name = "tenebris_tile_grey_highlands",
+		expression = "tenebris_biome_highlands * (aux >= 0.5) * (1 - tenebris_subbiome_plateaus)",
 	},
 	{
 		type = "noise-expression",
@@ -880,62 +863,62 @@ data:extend({
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_01",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux < 0.08333)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux < 0.08333)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_02",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.08333) * (aux < 0.16667)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux >= 0.08333) * (aux < 0.16667)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_03",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.16667) * (aux < 0.25)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux >= 0.16667) * (aux < 0.25)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_04",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.25) * (aux < 0.33333)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux >= 0.25) * (aux < 0.33333)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_05",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.33333) * (aux < 0.41667)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux >= 0.33333) * (aux < 0.41667)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_06",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.41667) * (aux < 0.5)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux >= 0.41667) * (aux < 0.5)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_07",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.5) * (aux < 0.58333)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux >= 0.5) * (aux < 0.58333)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_08",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.58333) * (aux < 0.66667)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux >= 0.58333) * (aux < 0.66667)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_09",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.66667) * (aux < 0.75)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux >= 0.66667) * (aux < 0.75)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_10",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.75) * (aux < 0.83333)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux >= 0.75) * (aux < 0.83333)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_11",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.83333) * (aux < 0.91667)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux >= 0.83333) * (aux < 0.91667)",
 	},
 	{
 		type = "noise-expression",
 		name = "tenebris_tile_wastes_exposed_quartz_12",
-		expression = "tenebris_subbiome_wastes_exposed_quartz * (aux >= 0.91667)",
+		expression = "(tenebris_subbiome_plateaus + tenebris_subbiome_wastes_exposed_quartz) * (aux >= 0.91667)",
 	},
 	{
 		type = "noise-expression",
@@ -1037,18 +1020,6 @@ data:extend({
             tenebris_biome_wastes * (tenebris_mercury_river_master > 0.2) * (tenebris_mercury_river_value >= 0.10) * (tenebris_mercury_river_value < 0.25))",
 	},
 
-	-- Quartz edges (for cliffs and transition decoratives)
-	{
-		type = "noise-expression",
-		name = "tenebris_subbiome_quartz_edge",
-		expression = "tenebris_biome_quartz * (tenebris_quartz_pyramids > 0.1) * (tenebris_quartz_pyramids < 0.3)",
-	},
-	{
-		type = "noise-expression",
-		name = "tenebris_subbiome_quartz_plateau",
-		expression = "tenebris_biome_quartz * (tenebris_quartz_pyramids >= 0.3)",
-	},
-
 	--------------------------------------------------------------------------------
 	-- Entity Placement Expressions
 	--------------------------------------------------------------------------------
@@ -1067,7 +1038,12 @@ data:extend({
 		-- Lucifunnels grow denser in hollows (2.5x boost)
 		type = "noise-expression",
 		name = "tenebris_lucifunnel_probability",
-		expression = "0.02 * tenebris_biome_highlands * (1 + tenebris_hollow_flora_boost)",
+		expression = "0.004 * tenebris_biome_highlands * (1 + tenebris_hollow_flora_boost) * (1 - tenebris_subbiome_plateaus)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_glowdentale_probability",
+		expression = "0.007 * tenebris_biome_highlands * (1 + tenebris_hollow_flora_boost) * (1 - tenebris_subbiome_plateaus)",
 	},
 	{
 		type = "noise-expression",
@@ -1099,6 +1075,27 @@ data:extend({
 		type = "noise-expression",
 		name = "tenebris_wastes_decal_choice",
 		expression = "(tenebris_wastes_decal_choice_noise + 1) / 2",
+	},
+	-- Shared choice noise so highland roots and mycelium decals don't compete
+	{
+		type = "noise-expression",
+		name = "tenebris_highlands_decal_choice_noise",
+		expression = "multioctave_noise{x = x, y = y, persistence = 0.5, seed0 = map_seed, seed1 = 8630, octaves = 2, input_scale = 1/30}",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_highlands_decal_choice",
+		expression = "(tenebris_highlands_decal_choice_noise + 1) / 2",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_highland_roots_probability",
+		expression = "trpi(0.03) * tenebris_biome_highlands * (1 - tenebris_subbiome_plateaus) * (tenebris_highlands_decal_choice < 0.5)",
+	},
+	{
+		type = "noise-expression",
+		name = "tenebris_mycelium_probability",
+		expression = "trpi(0.03) * tenebris_biome_highlands * (1 - tenebris_subbiome_plateaus) * (tenebris_highlands_decal_choice >= 0.5)",
 	},
 	{
 		type = "noise-expression",
@@ -1225,7 +1222,7 @@ data:extend({
 		-- 0.001 = roughly 1 ortet per 1000 tiles on plateau
 		type = "noise-expression",
 		name = "tenebris_ortet_probability",
-		expression = "0.002 * (tenebris_subbiome_plateaus > 0.5)",
+		expression = "0.0002 * (tenebris_subbiome_plateaus > 0.5) * (1 - tenebris_biome_wastes)",
 	},
 
 	--------------------------------------------------------------------------------
@@ -1235,7 +1232,7 @@ data:extend({
 	{
 		type = "noise-expression",
 		name = "tenebris_hollow_flora_boost",
-		expression = "2.5 * tenebris_subbiome_hollows",
+		expression = "12 * tenebris_subbiome_hollows",
 	},
 })
 
@@ -1269,12 +1266,8 @@ tenebris = function()
 
 			-- Tile placement (debug tiles)
 			["tile:tenebris-mercury-tile:probability"] = "tenebris_tile_mercury",
-			["tile:tenebris-debug-highlands:probability"] = "tenebris_tile_highlands",
-			["tile:tenebris-debug-highlands-hollows:probability"] = "tenebris_tile_highlands_hollows",
-			["tile:tenebris-debug-highlands-normal:probability"] = "tenebris_tile_highlands_normal",
-			["tile:tenebris-debug-highlands-badlands:probability"] = "tenebris_tile_highlands_badlands",
-			["tile:tenebris-debug-highlands-plateaus:probability"] = "tenebris_tile_highlands_plateaus",
-			["tile:tenebris-debug-wastes:probability"] = "tenebris_tile_wastes",
+			["tile:tenebris-blue-highlands:probability"] = "tenebris_tile_blue_highlands",
+			["tile:tenebris-grey-highlands:probability"] = "tenebris_tile_grey_highlands",
 			-- Wastes subbiome tiles (Dunes: 4 dust tiles, Quartz: 2 tiles)
 			["tile:tenebris-wastes-flats:probability"] = "tenebris_tile_wastes_flats",
 			["tile:tenebris-wastes-dunes:probability"] = "tenebris_tile_wastes_dunes",
@@ -1306,6 +1299,10 @@ tenebris = function()
 			["tile:tenebris-sulfur-volcanic-cracks:probability"] = "tenebris_sulfur_volcanic_cracks_range",
 			["tile:tenebris-sulfur-volcanic-cracks-warm:probability"] = "tenebris_sulfur_volcanic_cracks_warm_range",
 
+			-- Highlands decals (choice noise so roots and mycelium don't compete)
+			["decorative:tenebris-highland-roots:probability"] = "tenebris_highland_roots_probability",
+			["decorative:tenebris-mycelium:probability"] = "tenebris_mycelium_probability",
+
 			-- Wastes dunes decals (base/space-age graphics)
 			["decorative:tenebris-sand-dune-decal:probability"] = "tenebris_sand_dune_decal_probability",
 			["decorative:tenebris-waves-decal:probability"] = "tenebris_waves_decal_probability",
@@ -1330,12 +1327,8 @@ tenebris = function()
 				settings = {
 					["tenebris-abyssal-water"] = {},
 					["tenebris-mercury-tile"] = {},
-					["tenebris-debug-highlands"] = {},
-					["tenebris-debug-highlands-hollows"] = {},
-					["tenebris-debug-highlands-normal"] = {},
-					["tenebris-debug-highlands-badlands"] = {},
-					["tenebris-debug-highlands-plateaus"] = {},
-					["tenebris-debug-wastes"] = {},
+					["tenebris-blue-highlands"] = {},
+					["tenebris-grey-highlands"] = {},
 					-- Wastes subbiome tiles (Dunes: 4 dust tiles, Quartz: 2 tiles)
 					["tenebris-wastes-flats"] = {},
 					["tenebris-wastes-dunes"] = {},

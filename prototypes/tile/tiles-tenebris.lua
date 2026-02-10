@@ -102,14 +102,14 @@ local abyssal_water = {
 -- These are temporary for biome debugging
 
 -- Highlands - Bright Cyan
-local debug_highlands = {
+local blue_highlands = {
 	type = "tile",
-	name = "tenebris-debug-highlands",
-	order = "t[tenebris]-d[debug]-a[highlands]",
+	name = "tenebris-blue-highlands",
+	order = "t[tenebris]-b[blue-highlands]",
 	subgroup = "tenebris-tiles",
 	collision_mask = tile_collision_masks.ground(),
-	autoplace = { probability_expression = "tenebris_tile_highlands" },
-	layer = 10, -- Low layer so special biomes (quartz, sulfur, etc.) override
+	autoplace = { probability_expression = "tenebris_tile_blue_highlands" },
+	layer = 10,
 	sprite_usage_surface = "gleba",
 	variants = tile_variations_template_with_transitions(
 		"__space-age__/graphics/terrain/gleba/highland-dark-rock.png",
@@ -182,46 +182,97 @@ local debug_highlands = {
 	transitions = lava_to_out_of_map_transition and { lava_to_out_of_map_transition } or nil,
 	walking_sound = tile_sounds.walking.dry_rock,
 	landing_steps_sound = tile_sounds.landing.rock,
-	map_color = { 0, 200, 255 }, -- Bright cyan
+	map_color = { 50, 50, 84 },
 	walking_speed_modifier = 1,
 	vehicle_friction_modifier = 1,
 	absorptions_per_second = ABSORPTION.NEUTRAL,
 }
 
--- Highlands Subbiome Debug Tiles
--- These override the base highlands tile to show subbiome boundaries
-
--- Hollows - Bright Green (lush flora depressions)
-local debug_highlands_hollows = table.deepcopy(debug_highlands)
-debug_highlands_hollows.name = "tenebris-debug-highlands-hollows"
-debug_highlands_hollows.order = "t[tenebris]-d[debug]-a[highlands]-a[hollows]"
-debug_highlands_hollows.autoplace = { probability_expression = "tenebris_tile_highlands_hollows" }
-debug_highlands_hollows.layer = 11 -- Above base highlands
-debug_highlands_hollows.map_color = { 50, 255, 50 } -- Bright green
-
--- Normal Highlands - Light Cyan (smooth rolling terrain)
-local debug_highlands_normal = table.deepcopy(debug_highlands)
-debug_highlands_normal.name = "tenebris-debug-highlands-normal"
-debug_highlands_normal.order = "t[tenebris]-d[debug]-a[highlands]-b[normal]"
-debug_highlands_normal.autoplace = { probability_expression = "tenebris_tile_highlands_normal" }
-debug_highlands_normal.layer = 11 -- Above base highlands
-debug_highlands_normal.map_color = { 100, 220, 255 } -- Light cyan
-
--- Badlands - Orange/Red (jagged, cliffy terrain)
-local debug_highlands_badlands = table.deepcopy(debug_highlands)
-debug_highlands_badlands.name = "tenebris-debug-highlands-badlands"
-debug_highlands_badlands.order = "t[tenebris]-d[debug]-a[highlands]-c[badlands]"
-debug_highlands_badlands.autoplace = { probability_expression = "tenebris_tile_highlands_badlands" }
-debug_highlands_badlands.layer = 11 -- Above base highlands
-debug_highlands_badlands.map_color = { 255, 100, 50 } -- Orange/red
-
--- Plateaus - Purple (elevated mesas with ortets)
-local debug_highlands_plateaus = table.deepcopy(debug_highlands)
-debug_highlands_plateaus.name = "tenebris-debug-highlands-plateaus"
-debug_highlands_plateaus.order = "t[tenebris]-d[debug]-a[highlands]-d[plateaus]"
-debug_highlands_plateaus.autoplace = { probability_expression = "tenebris_tile_highlands_plateaus" }
-debug_highlands_plateaus.layer = 11 -- Above base highlands
-debug_highlands_plateaus.map_color = { 200, 50, 255 } -- Purple
+local grey_highlands = {
+	type = "tile",
+	name = "tenebris-grey-highlands",
+	order = "t[tenebris]-g[grey-highlands]",
+	subgroup = "tenebris-tiles",
+	collision_mask = tile_collision_masks.ground(),
+	autoplace = { probability_expression = "tenebris_tile_grey_highlands" },
+	layer = 10,
+	sprite_usage_surface = "gleba",
+	variants = tile_variations_template_with_transitions(
+		"__space-age__/graphics/terrain/gleba/highland-dark-rock.png",
+		{
+			max_size = 4,
+			[1] = {
+				weights = {
+					0.085,
+					0.085,
+					0.085,
+					0.085,
+					0.087,
+					0.085,
+					0.065,
+					0.085,
+					0.045,
+					0.045,
+					0.045,
+					0.045,
+					0.005,
+					0.025,
+					0.045,
+					0.045,
+				},
+			},
+			[2] = {
+				probability = 1,
+				weights = {
+					0.018,
+					0.020,
+					0.015,
+					0.025,
+					0.015,
+					0.020,
+					0.025,
+					0.015,
+					0.025,
+					0.025,
+					0.010,
+					0.025,
+					0.020,
+					0.025,
+					0.025,
+					0.010,
+				},
+			},
+			[4] = {
+				probability = 0.1,
+				weights = {
+					0.018,
+					0.020,
+					0.015,
+					0.025,
+					0.015,
+					0.020,
+					0.025,
+					0.015,
+					0.025,
+					0.025,
+					0.010,
+					0.025,
+					0.020,
+					0.025,
+					0.025,
+					0.010,
+				},
+			},
+		}
+	),
+	transitions = lava_to_out_of_map_transition and { lava_to_out_of_map_transition } or nil,
+	walking_sound = tile_sounds.walking.dry_rock,
+	landing_steps_sound = tile_sounds.landing.rock,
+	map_color = { 50, 50, 50 }, -- Grey
+	walking_speed_modifier = 1,
+	vehicle_friction_modifier = 1,
+	absorptions_per_second = ABSORPTION.NEUTRAL,
+}
 
 -- Lowland Cauliflower - base lowland tile with aux mixing
 local lowland_cauliflower = {
@@ -314,80 +365,134 @@ local lowland_cauliflower = {
 	absorptions_per_second = ABSORPTION.HIGH,
 }
 
--- Wastes - Bright Yellow/Orange
-local debug_wastes = table.deepcopy(data.raw.tile["dust-lumpy"])
-debug_wastes.name = "tenebris-debug-wastes"
-debug_wastes.order = "t[tenebris]-d[debug]-c[wastes]"
-debug_wastes.autoplace = { probability_expression = "tenebris_tile_wastes" }
-debug_wastes.layer = 20 -- Explicit layer (above highlands 10, below sulfur 30)
-debug_wastes.map_color = { 255, 200, 0 } -- Bright yellow/orange
-debug_wastes.absorptions_per_second = ABSORPTION.LOW
-
--- Quartz forests - Violet
-local debug_quartz = table.deepcopy(data.raw.tile["dust-lumpy"])
-debug_quartz.name = "tenebris-debug-quartz"
-debug_quartz.order = "t[tenebris]-d[debug]-e[quartz]"
-debug_quartz.autoplace = { probability_expression = "tenebris_biome_quartz" }
-debug_quartz.map_color = { 138, 43, 226 } -- Violet
-debug_quartz.absorptions_per_second = ABSORPTION.NEUTRAL
-
 -- =============================================================================
 -- Wastes Subbiome Tiles
 -- 5 subbiomes: Dust Flats (25%), Dust Dunes (20%), Lumpy Wastes (20%),
 --              Rocky Badlands (20%), Brash Fields (15%)
+-- Standalone definitions (no deepcopy) so you can update tilesets independently.
 -- =============================================================================
 
+-- Shared variant weights for wastes tiles (same structure as dust tiles)
+local wastes_tile_weights = {
+	max_size = 4,
+	[1] = {
+		weights = {
+			0.085, 0.085, 0.085, 0.085, 0.087, 0.085, 0.065, 0.085,
+			0.045, 0.045, 0.045, 0.045, 0.005, 0.025, 0.045, 0.045,
+		},
+	},
+	[2] = {
+		probability = 1,
+		weights = {
+			0.018, 0.020, 0.015, 0.025, 0.015, 0.020, 0.025, 0.015,
+			0.025, 0.025, 0.010, 0.025, 0.020, 0.025, 0.025, 0.010,
+		},
+	},
+	[4] = {
+		probability = 0.1,
+		weights = {
+			0.018, 0.020, 0.015, 0.025, 0.015,
+		},
+	},
+}
+
 -- Dust Flats (25%) - smooth flat expanses, easy to traverse
-local wastes_flats = table.deepcopy(data.raw.tile["dust-flat"])
-wastes_flats.name = "tenebris-wastes-flats"
-wastes_flats.order = "t[tenebris]-w[wastes]-a[flats]"
-wastes_flats.subgroup = "tenebris-tiles"
-wastes_flats.autoplace = { probability_expression = "tenebris_tile_wastes_flats" }
-wastes_flats.layer = 20
-wastes_flats.map_color = { 180, 160, 120 } -- Sandy tan
-wastes_flats.absorptions_per_second = ABSORPTION.LOW
-wastes_flats.sprite_usage_surface = nil
-wastes_flats.frozen_variant = nil
+local wastes_flats = {
+	type = "tile",
+	name = "tenebris-wastes-flats",
+	order = "t[tenebris]-w[wastes]-a[flats]",
+	subgroup = "tenebris-tiles",
+	collision_mask = tile_collision_masks.ground(),
+	autoplace = { probability_expression = "tenebris_tile_wastes_flats" },
+	layer = 20,
+	sprite_usage_surface = nil,
+	variants = tile_variations_template_with_transitions(
+		"__tenebris-prime__/graphics/tile/wastes/tenebris-dregs-flat.png",
+		wastes_tile_weights
+	),
+	transitions = lava_to_out_of_map_transition and { lava_to_out_of_map_transition } or nil,
+	walking_sound = tile_sounds.walking.dry_rock,
+	landing_steps_sound = tile_sounds.landing.rock,
+	map_color = { 180, 160, 120 }, -- Sandy tan
+	walking_speed_modifier = 1,
+	vehicle_friction_modifier = 1,
+	absorptions_per_second = ABSORPTION.LOW,
+}
 
 -- Dust Dunes (20%) - wind-formed ridge patterns
-local wastes_dunes = table.deepcopy(data.raw.tile["dust-crests"])
-wastes_dunes.name = "tenebris-wastes-dunes"
-wastes_dunes.order = "t[tenebris]-w[wastes]-b[dunes]"
-wastes_dunes.subgroup = "tenebris-tiles"
-wastes_dunes.autoplace = { probability_expression = "tenebris_tile_wastes_dunes" }
-wastes_dunes.layer = 21
-wastes_dunes.map_color = { 160, 140, 100 } -- Darker tan
-wastes_dunes.absorptions_per_second = ABSORPTION.LOW
-wastes_dunes.sprite_usage_surface = nil
-wastes_dunes.frozen_variant = nil
+local wastes_dunes = {
+	type = "tile",
+	name = "tenebris-wastes-dunes",
+	order = "t[tenebris]-w[wastes]-b[dunes]",
+	subgroup = "tenebris-tiles",
+	collision_mask = tile_collision_masks.ground(),
+	autoplace = { probability_expression = "tenebris_tile_wastes_dunes" },
+	layer = 21,
+	sprite_usage_surface = nil,
+	variants = tile_variations_template_with_transitions(
+		"__tenebris-prime__/graphics/tile/wastes/tenebris-dregs-crests.png",
+		wastes_tile_weights
+	),
+	transitions = lava_to_out_of_map_transition and { lava_to_out_of_map_transition } or nil,
+	walking_sound = tile_sounds.walking.dry_rock,
+	landing_steps_sound = tile_sounds.landing.rock,
+	map_color = { 160, 140, 100 }, -- Darker tan
+	walking_speed_modifier = 1,
+	vehicle_friction_modifier = 1,
+	absorptions_per_second = ABSORPTION.LOW,
+}
 
 -- Lumpy Wastes - uneven, eroded terrain (part of Dunes subbiome)
-local wastes_lumpy = table.deepcopy(data.raw.tile["dust-lumpy"])
-wastes_lumpy.name = "tenebris-wastes-lumpy"
-wastes_lumpy.order = "t[tenebris]-w[wastes]-c[lumpy]"
-wastes_lumpy.subgroup = "tenebris-tiles"
-wastes_lumpy.autoplace = { probability_expression = "tenebris_tile_wastes_lumpy" }
-wastes_lumpy.layer = 22
-wastes_lumpy.map_color = { 140, 120, 90 } -- Brownish tan
-wastes_lumpy.absorptions_per_second = ABSORPTION.LOW
-wastes_lumpy.sprite_usage_surface = nil
-wastes_lumpy.frozen_variant = nil
+local wastes_lumpy = {
+	type = "tile",
+	name = "tenebris-wastes-lumpy",
+	order = "t[tenebris]-w[wastes]-c[lumpy]",
+	subgroup = "tenebris-tiles",
+	collision_mask = tile_collision_masks.ground(),
+	autoplace = { probability_expression = "tenebris_tile_wastes_lumpy" },
+	layer = 22,
+	sprite_usage_surface = nil,
+	variants = tile_variations_template_with_transitions(
+		"__tenebris-prime__/graphics/tile/wastes/tenebris-dregs-lumpy.png",
+		wastes_tile_weights
+	),
+	transitions = lava_to_out_of_map_transition and { lava_to_out_of_map_transition } or nil,
+	walking_sound = tile_sounds.walking.dry_rock,
+	landing_steps_sound = tile_sounds.landing.rock,
+	map_color = { 140, 120, 90 }, -- Brownish tan
+	walking_speed_modifier = 1,
+	vehicle_friction_modifier = 1,
+	absorptions_per_second = ABSORPTION.LOW,
+}
 
 -- Patchy Wastes - varied patchy terrain (part of Dunes subbiome)
-local wastes_patchy = table.deepcopy(data.raw.tile["dust-patchy"])
-wastes_patchy.name = "tenebris-wastes-patchy"
-wastes_patchy.order = "t[tenebris]-w[wastes]-d[patchy]"
-wastes_patchy.subgroup = "tenebris-tiles"
-wastes_patchy.autoplace = { probability_expression = "tenebris_tile_wastes_patchy" }
-wastes_patchy.layer = 23
-wastes_patchy.map_color = { 150, 130, 100 } -- Mixed tan
-wastes_patchy.absorptions_per_second = ABSORPTION.LOW
-wastes_patchy.sprite_usage_surface = nil
-wastes_patchy.frozen_variant = nil
+local wastes_patchy = {
+	type = "tile",
+	name = "tenebris-wastes-patchy",
+	order = "t[tenebris]-w[wastes]-d[patchy]",
+	subgroup = "tenebris-tiles",
+	collision_mask = tile_collision_masks.ground(),
+	autoplace = { probability_expression = "tenebris_tile_wastes_patchy" },
+	layer = 23,
+	sprite_usage_surface = nil,
+	variants = tile_variations_template_with_transitions(
+		"__tenebris-prime__/graphics/tile/wastes/tenebris-dregs-patchy.png",
+		wastes_tile_weights
+	),
+	transitions = lava_to_out_of_map_transition and { lava_to_out_of_map_transition } or nil,
+	walking_sound = tile_sounds.walking.dry_rock,
+	landing_steps_sound = tile_sounds.landing.rock,
+	map_color = { 150, 130, 100 }, -- Mixed tan
+	walking_speed_modifier = 1,
+	vehicle_friction_modifier = 1,
+	absorptions_per_second = ABSORPTION.LOW,
+}
 
 -- Helper: replace picture path in variants (recursive) for custom graphics
 local function replace_tile_picture_path(tbl, old_path, new_path)
-	if type(tbl) ~= "table" then return end
+	if type(tbl) ~= "table" then
+		return
+	end
 	for k, v in pairs(tbl) do
 		if type(v) == "string" and (k == "picture" or k == "filename" or k == "spritesheet") and v == old_path then
 			tbl[k] = new_path
@@ -421,8 +526,12 @@ for i, angle in ipairs(EXPOSED_QUARTZ_ANGLES) do
 	rough.absorptions_per_second = ABSORPTION.LOW
 	rough.sprite_usage_surface = nil
 	rough.collision_mask = tile_collision_masks.ground()
-	replace_tile_picture_path(rough.variants, "__space-age__/graphics/terrain/aquilo/ice-rough.png",
-		"__tenebris-prime__/graphics/tile/exposed-quartz/exposed-quartz-rough-" .. angle .. ".png")
+	rough.walking_sound = tile_sounds.walking.smooth_ice
+	replace_tile_picture_path(
+		rough.variants,
+		"__space-age__/graphics/terrain/aquilo/ice-rough.png",
+		"__tenebris-prime__/graphics/tile/exposed-quartz/exposed-quartz-rough-" .. angle .. ".png"
+	)
 	wastes_exposed_quartz_tiles[i] = rough
 end
 for i, angle in ipairs(EXPOSED_QUARTZ_ANGLES) do
@@ -431,14 +540,19 @@ for i, angle in ipairs(EXPOSED_QUARTZ_ANGLES) do
 	smooth.name = "tenebris-wastes-exposed-quartz-" .. string.format("%02d", i + 6)
 	smooth.order = "t[tenebris]-w[wastes]-e[exposed-quartz]-" .. string.format("%02d", i + 6)
 	smooth.subgroup = "tenebris-tiles"
-	smooth.autoplace = { probability_expression = "tenebris_tile_wastes_exposed_quartz_" .. string.format("%02d", i + 6) }
+	smooth.autoplace =
+		{ probability_expression = "tenebris_tile_wastes_exposed_quartz_" .. string.format("%02d", i + 6) }
 	smooth.layer = 24
 	smooth.map_color = EXPOSED_QUARTZ_MAP_COLORS[i]
 	smooth.absorptions_per_second = ABSORPTION.LOW
 	smooth.sprite_usage_surface = nil
 	smooth.collision_mask = tile_collision_masks.ground()
-	replace_tile_picture_path(smooth.variants, "__space-age__/graphics/terrain/aquilo/ice-smooth.png",
-		"__tenebris-prime__/graphics/tile/exposed-quartz/exposed-quartz-smooth-" .. angle .. ".png")
+	smooth.walking_sound = tile_sounds.walking.smooth_ice
+	replace_tile_picture_path(
+		smooth.variants,
+		"__space-age__/graphics/terrain/aquilo/ice-smooth.png",
+		"__tenebris-prime__/graphics/tile/exposed-quartz/exposed-quartz-smooth-" .. angle .. ".png"
+	)
 	wastes_exposed_quartz_tiles[i + 6] = smooth
 end
 
@@ -456,7 +570,7 @@ local wastes_shattered_quartz_effect = {
 				height = 512,
 			},
 			{
-				filename = "__space-age__/graphics/terrain/aquilo/brash-ice.png",
+				filename = "__tenebris-prime__/graphics/tile/exposed-quartz/shattered-quartz.png",
 				width = 512 * 4,
 				height = 512 * 2,
 			},
@@ -465,10 +579,10 @@ local wastes_shattered_quartz_effect = {
 		texture_variations_rows = 1,
 		secondary_texture_variations_columns = 4,
 		secondary_texture_variations_rows = 2,
-		animation_speed = 0.3, -- Slower than original
+		animation_speed = 0.3,
 		animation_scale = { 0.40, 0.68 },
 		tick_scale = 6,
-		specular_lightness = { 2, 5, 1 }, -- Dimmer than original
+		specular_lightness = { 2, 5, 1 },
 		foam_color = { 8, 2, 2 },
 		foam_color_multiplier = 0.5,
 		dark_threshold = { 0.0, 0.2 },
@@ -477,20 +591,35 @@ local wastes_shattered_quartz_effect = {
 	},
 }
 
-local wastes_shattered_quartz = table.deepcopy(data.raw.tile["brash-ice"])
-wastes_shattered_quartz.name = "tenebris-wastes-shattered-quartz"
-wastes_shattered_quartz.order = "t[tenebris]-w[wastes]-f[shattered-quartz]"
-wastes_shattered_quartz.subgroup = "tenebris-tiles"
-wastes_shattered_quartz.autoplace = { probability_expression = "tenebris_tile_wastes_shattered_quartz" }
-wastes_shattered_quartz.layer = 25
-wastes_shattered_quartz.map_color = { 100, 90, 120 } -- Dark quartz purple
-wastes_shattered_quartz.absorptions_per_second = ABSORPTION.LOW
-wastes_shattered_quartz.sprite_usage_surface = nil
-wastes_shattered_quartz.effect = "tenebris-wastes-shattered-quartz-effect"
-wastes_shattered_quartz.effect_color = { 80, 70, 100 } -- Quartz purple
-wastes_shattered_quartz.effect_color_secondary = { 50, 45, 70 }
-wastes_shattered_quartz.fluid = nil -- Remove ammoniacal-solution
-wastes_shattered_quartz.default_cover_tile = "landfill"
+local wastes_shattered_quartz = {
+	type = "tile",
+	name = "tenebris-wastes-shattered-quartz",
+	order = "t[tenebris]-w[wastes]-g[shattered-quartz]",
+	subgroup = "tenebris-tiles",
+	collision_mask = tile_collision_masks.ground(),
+	autoplace = { probability_expression = "tenebris_tile_wastes_shattered_quartz" },
+	variants = {
+		main = {
+			{
+				picture = "__base__/graphics/terrain/deepwater/deepwater1.png",
+				count = 1,
+				scale = 0.5,
+				size = 1,
+			},
+		},
+		transition = tile_graphics.generic_masked_tile_transitions1,
+	},
+	effect = "tenebris-wastes-shattered-quartz-effect",
+	effect_color = { 60, 60, 60 },
+	effect_color_secondary = { 45, 45, 45 },
+	default_cover_tile = "landfill",
+	layer = 0,
+	walking_speed_modifier = 0.85,
+	vehicle_friction_modifier = 0.9,
+	map_color = { 90, 80, 100 },
+	sprite_usage_surface = nil,
+	walking_sound = tile_sounds.walking.smooth_ice,
+}
 
 -- =============================================================================
 -- Sulfur Pit Tiles
@@ -817,15 +946,9 @@ local lowland_vein_dead = {
 data:extend({
 	mercury_swamp,
 	abyssal_water,
-	debug_highlands,
-	-- Highlands subbiome debug tiles
-	debug_highlands_hollows,
-	debug_highlands_normal,
-	debug_highlands_badlands,
-	debug_highlands_plateaus,
+	blue_highlands,
+	grey_highlands,
 	lowland_cauliflower,
-	debug_wastes,
-	debug_quartz,
 	-- Wastes subbiome tiles (Dunes: 4 dust tiles, Quartz: 2 tiles)
 	wastes_flats,
 	wastes_dunes,

@@ -232,8 +232,8 @@ data:extend({
 			condition_size = 1,
 			condition = { layers = {} },
 			tile_condition = {
-				"tenebris-debug-highlands",
-				"tenebris-lowland-cauliflower",
+				"tenebris-blue-highlands",
+				"tenebris-grey-highlands",
 				-- Wastes dusty dunes only (quartz cannot be altered)
 				"tenebris-wastes-flats",
 				"tenebris-wastes-dunes",
@@ -259,7 +259,6 @@ data:extend({
 			condition_size = 1,
 			condition = { layers = {} },
 			tile_condition = {
-				"tenebris-debug-highlands",
 				"tenebris-lowland-cauliflower",
 				-- Wastes dusty dunes only (quartz cannot be altered)
 				"tenebris-wastes-flats",

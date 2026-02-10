@@ -80,10 +80,8 @@ data:extend({
 			-- Restrict to highlands (all subbiomes) and wastes dusty dunes only (not quartz)
 			tile_restriction = {
 				-- Highlands subbiomes
-				"tenebris-debug-highlands-hollows",
-				"tenebris-debug-highlands-normal",
-				"tenebris-debug-highlands-badlands",
-				"tenebris-debug-highlands-plateaus",
+				"tenebris-blue-highlands",
+				"tenebris-grey-highlands",
 				-- Wastes dusty dunes only (lichen doesn't grow on quartz)
 				"tenebris-wastes-flats",
 				"tenebris-wastes-dunes",

@@ -135,7 +135,7 @@ data.extend({
 		subgroup = "enemies",
 		resistances = {
 			{ type = "physical", decrease = 50, percent = 50 },
-			{ type = "explosion", decrease = 5, percent = -60 },  -- Weak to explosives
+			{ type = "explosion", decrease = 5, percent = -60 }, -- Weak to explosives
 			{ type = "fire", percent = 100 },
 			{ type = "laser", decrease = 30, percent = 70 },
 			{ type = "electric", percent = 100 },
@@ -153,11 +153,7 @@ data.extend({
 			max_sounds_per_prototype = 3,
 		},
 		dying_sound = {
-			variations = sound_variations(
-				"__base__/sound/fight/large-explosion",
-				2,
-				0.8
-			),
+			variations = sound_variations("__base__/sound/fight/large-explosion", 2, 0.8),
 			aggregation = { max_count = 2, remove = true, count_already_playing = true },
 		},
 		collision_box = { { -2.2, -2.2 }, { 2.2, 2.2 } },
@@ -243,9 +239,21 @@ data.extend({
 		autoplace = {
 			control = "tenebris_plants",
 			order = "z[tenebris]-a[ortet]",
+			force = "enemy",
 			probability_expression = "tenebris_ortet_probability",
 			tile_restriction = {
-				"tenebris-debug-highlands-plateaus",
+				"tenebris-wastes-exposed-quartz-01",
+				"tenebris-wastes-exposed-quartz-02",
+				"tenebris-wastes-exposed-quartz-03",
+				"tenebris-wastes-exposed-quartz-04",
+				"tenebris-wastes-exposed-quartz-05",
+				"tenebris-wastes-exposed-quartz-06",
+				"tenebris-wastes-exposed-quartz-07",
+				"tenebris-wastes-exposed-quartz-08",
+				"tenebris-wastes-exposed-quartz-09",
+				"tenebris-wastes-exposed-quartz-10",
+				"tenebris-wastes-exposed-quartz-11",
+				"tenebris-wastes-exposed-quartz-12",
 			},
 		},
 		map_color = constants.TINT.CYAN,

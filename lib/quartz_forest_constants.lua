@@ -4,8 +4,6 @@
 ---
 --- @module lib.quartz_forest_constants
 
-local centipede_constants = require("lib.centipede_constants")
-
 local constants = {}
 
 -- =============================================================================
@@ -49,14 +47,22 @@ constants.ENTITIES = {
 -- =============================================================================
 
 constants.TILES = {
-	-- Ortets spawn on highlands plateau subbiome tiles
-	QUARTZ_FOREST = "tenebris-debug-highlands-plateaus",
-	-- All highlands subbiome tiles (for bud spawning around ortets)
+	-- All highlands sub	biome tiles (for bud spawning around ortets)
 	HIGHLANDS_SUBBIOMES = {
-		["tenebris-debug-highlands-hollows"] = true,
-		["tenebris-debug-highlands-normal"] = true,
-		["tenebris-debug-highlands-badlands"] = true,
-		["tenebris-debug-highlands-plateaus"] = true,
+		["tenebris-blue-highlands"] = true,
+		["tenebris-grey-highlands"] = true,
+		["tenebris-wastes-exposed-quartz-01"] = true,
+		["tenebris-wastes-exposed-quartz-02"] = true,
+		["tenebris-wastes-exposed-quartz-03"] = true,
+		["tenebris-wastes-exposed-quartz-04"] = true,
+		["tenebris-wastes-exposed-quartz-05"] = true,
+		["tenebris-wastes-exposed-quartz-06"] = true,
+		["tenebris-wastes-exposed-quartz-07"] = true,
+		["tenebris-wastes-exposed-quartz-08"] = true,
+		["tenebris-wastes-exposed-quartz-09"] = true,
+		["tenebris-wastes-exposed-quartz-10"] = true,
+		["tenebris-wastes-exposed-quartz-11"] = true,
+		["tenebris-wastes-exposed-quartz-12"] = true,
 	},
 }
 
@@ -76,41 +82,43 @@ constants.ORTET_DEATH_TO_TECHNOLOGY_UNLOCK_COUNTER_MAP = {
 	[constants.TECHNOLOGIES.LUCIFERIN_KINETICS_4] = 15,
 }
 
+-- Wave tables: key = variant name (string, e.g. "medium"), value = count to spawn
+-- Unit entity name is "centipede-head-" .. variant
 constants.ORTET_DEATH_APOCALYPSE_WAVE_MEMBERSHIP = {
 	[1] = {
-		[centipede_constants.VARIANTS.medium] = 4,
-		[centipede_constants.VARIANTS.small] = 9,
-		[centipede_constants.VARIANTS.premature] = 18,
+		medium = 4,
+		small = 9,
+		premature = 18,
 	},
 	[2] = {
-		[centipede_constants.VARIANTS.large] = 1,
-		[centipede_constants.VARIANTS.medium] = 6,
-		[centipede_constants.VARIANTS.small] = 10,
-		[centipede_constants.VARIANTS.premature] = 20,
+		large = 1,
+		medium = 6,
+		small = 10,
+		premature = 20,
 	},
 	[3] = {
-		[centipede_constants.VARIANTS.large] = 3,
-		[centipede_constants.VARIANTS.medium] = 10,
-		[centipede_constants.VARIANTS.small] = 15,
-		[centipede_constants.VARIANTS.premature] = 25,
+		large = 3,
+		medium = 10,
+		small = 15,
+		premature = 25,
 	},
 	[4] = {
-		[centipede_constants.VARIANTS.large] = 5,
-		[centipede_constants.VARIANTS.medium] = 15,
-		[centipede_constants.VARIANTS.small] = 25,
-		[centipede_constants.VARIANTS.premature] = 35,
+		large = 5,
+		medium = 15,
+		small = 25,
+		premature = 35,
 	},
 	[5] = {
-		[centipede_constants.VARIANTS.large] = 8,
-		[centipede_constants.VARIANTS.medium] = 20,
-		[centipede_constants.VARIANTS.small] = 30,
-		[centipede_constants.VARIANTS.premature] = 60,
+		large = 8,
+		medium = 20,
+		small = 30,
+		premature = 60,
 	},
 	[6] = {
-		[centipede_constants.VARIANTS.large] = 12,
-		[centipede_constants.VARIANTS.medium] = 25,
-		[centipede_constants.VARIANTS.small] = 40,
-		[centipede_constants.VARIANTS.premature] = 80,
+		large = 12,
+		medium = 25,
+		small = 40,
+		premature = 80,
 	},
 }
 

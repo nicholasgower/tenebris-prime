@@ -234,12 +234,10 @@ local tenebris_highland_roots = {
 	tile_layer = decal_tile_layer - 1,
 	autoplace = {
 		tile_restriction = {
-			"tenebris-debug-highlands-hollows",
-			"tenebris-debug-highlands-normal",
-			"tenebris-debug-highlands-badlands",
-			"tenebris-debug-highlands-plateaus",
+			"tenebris-blue-highlands",
+			"tenebris-grey-highlands",
 		},
-		probability_expression = "trpi(0.03)",
+		probability_expression = "tenebris_highland_roots_probability",
 	},
 	pictures = {
 		{
@@ -297,12 +295,10 @@ local tenebris_mycelium = {
 	tile_layer = decal_tile_layer - 1,
 	autoplace = {
 		tile_restriction = {
-			"tenebris-debug-highlands-hollows",
-			"tenebris-debug-highlands-normal",
-			"tenebris-debug-highlands-badlands",
-			"tenebris-debug-highlands-plateaus",
+			"tenebris-blue-highlands",
+			"tenebris-grey-highlands",
 		},
-		probability_expression = "trpi(0.03)",
+		probability_expression = "tenebris_mycelium_probability",
 	},
 	pictures = {
 		{
@@ -346,14 +342,36 @@ local tenebris_mycelium = {
 
 -- Base game sand-dune-decal picture dimensions (00-29) for desaturated copy
 local SAN_DUNE_DECAL_SPECS = {
-	{ 212, 168, -8, 0 }, { 211, 148, 5.75, -3.5 }, { 260, 184, 3, 1 }, { 129, 181, 0.75, 1.75 },
-	{ 196, 184, -3.5, -1.5 }, { 215, 184, -1.25, -1 }, { 218, 179, 6.5, 4.25 }, { 250, 183, 17.5, 3.25 },
-	{ 260, 176, 5, 0.5 }, { 260, 184, -5.5, -1 }, { 233, 183, -13.75, 1.25 }, { 172, 184, -9.5, 2 },
-	{ 260, 166, 2.5, -6.5 }, { 259, 172, 4.75, -1 }, { 199, 184, -2.25, -2 }, { 214, 184, 8.5, -3 },
-	{ 162, 182, -8, -4.5 }, { 222, 153, -3, -0.25 }, { 247, 184, 4.25, -2.5 }, { 211, 184, -5.75, -3 },
-	{ 248, 183, -1.5, 2.25 }, { 176, 184, 6.5, 1.5 }, { 208, 185, 9, -1.75 }, { 227, 184, -3.75, -1.5 },
-	{ 158, 186, 4.5, -1 }, { 260, 184, 1.5, -1.5 }, { 134, 184, -0.5, -1 }, { 127, 165, 26.25, 1.25 },
-	{ 258, 158, -2.5, -4.5 }, { 180, 184, -3.5, -2 },
+	{ 212, 168, -8, 0 },
+	{ 211, 148, 5.75, -3.5 },
+	{ 260, 184, 3, 1 },
+	{ 129, 181, 0.75, 1.75 },
+	{ 196, 184, -3.5, -1.5 },
+	{ 215, 184, -1.25, -1 },
+	{ 218, 179, 6.5, 4.25 },
+	{ 250, 183, 17.5, 3.25 },
+	{ 260, 176, 5, 0.5 },
+	{ 260, 184, -5.5, -1 },
+	{ 233, 183, -13.75, 1.25 },
+	{ 172, 184, -9.5, 2 },
+	{ 260, 166, 2.5, -6.5 },
+	{ 259, 172, 4.75, -1 },
+	{ 199, 184, -2.25, -2 },
+	{ 214, 184, 8.5, -3 },
+	{ 162, 182, -8, -4.5 },
+	{ 222, 153, -3, -0.25 },
+	{ 247, 184, 4.25, -2.5 },
+	{ 211, 184, -5.75, -3 },
+	{ 248, 183, -1.5, 2.25 },
+	{ 176, 184, 6.5, 1.5 },
+	{ 208, 185, 9, -1.75 },
+	{ 227, 184, -3.75, -1.5 },
+	{ 158, 186, 4.5, -1 },
+	{ 260, 184, 1.5, -1.5 },
+	{ 134, 184, -0.5, -1 },
+	{ 127, 165, 26.25, 1.25 },
+	{ 258, 158, -2.5, -4.5 },
+	{ 180, 184, -3.5, -2 },
 }
 
 -- Sand-dune decals (80% desaturated via ImageMagick, in mod graphics) on wastes dunes only
