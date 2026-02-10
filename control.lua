@@ -1,65 +1,81 @@
-TENEBRIS = "tenebris"
+--- Tenebris Prime Control Script
+--- Main entry point for the mod's runtime logic.
+--- Uses the event manager system for decoupled event handling.
 
-script.on_init(function()
-    if game.surfaces[TENEBRIS] then
-        game.forces["enemy"].set_evolution_factor(0.99, game.surfaces.tenebris)
-    end
-  end)
+-- Load central namespace (provides constants and system access)
+local tenebris = require("lib.tenebris")
 
-script.on_event(defines.events.on_surface_created, function(event)
-    local surface = game.surfaces[event.surface_index]
-    if surface.name == TENEBRIS then
-        surface.freeze_daytime = true
-        surface.daytime = 0.35
-        game.forces["enemy"].set_evolution_factor(0.99, surface)
-    end
+-- Initialize event manager (already loaded via tenebris)
+local event_manager = tenebris.event_manager
+
+-- Load composite entity library and register composites
+require("scripts.lightning_furnace.composite")
+require("scripts.quartz_forest.composite")
+require("scripts.thermal_diode.composite")
+require("scripts.thermal_battery.composite")
+
+-- Load all event subscribers (they self-register)
+require("lib.composite_entity.events")
+require("scripts.entity_manager.init")
+require("scripts.quartz_forest.capture")
+require("scripts.quartz_forest.gui")
+require("scripts.quartz_forest.fluid_transfer")
+require("scripts.quartz_forest.ortet_death")
+require("scripts.thermal_diode.gui")
+require("scripts.tenebrace_propagation.init")
+require("scripts.shield_disabler.init")
+require("scripts.displacer_robot_death.init")
+
+-- Cargo corrosion and other systems
+require("scripts.cargo_corrosion.events")
+require("scripts.lightning_furnace.energy")
+require("scripts.lightning_furnace.gui")
+require("scripts.thermal_diode.init")
+require("scripts.thermal_battery.gui")
+require("scripts.piezoelectric_inserter.gui")
+
+-- Centipede spawning from egg rafts in space
+require("scripts.centipede_spawner.init").register_events()
+
+-- Quartz forest map generation (bud composites + maturity randomization)
+require("scripts.quartz_forest.map_generation").register_events()
+
+-- Tenespace ambient visual effects
+require("scripts.tenespace_effects.init")
+
+-- Flight restriction system (prevents mech hover until tech researched)
+require("scripts.flight_restriction.init")
+
+-- Mercury poisoning (damages players walking through mercury pools)
+require("scripts.mercury_poisoning.init")
+
+-- Lichen deposit harvesting scripted tech trigger
+require("scripts.lichen_deposit_harvesting")
+
+-- Optional: GVV debugger support
+if script.active_mods["gvv"] then
+	require("__gvv__.gvv")()
+end
+
+-- Tenebris-specific surface events
+event_manager.subscribe(tenebris.EVENTS.ON_SURFACE_CREATED, "tenebris_surface_setup", function(event)
+	local surface = game.surfaces[event.surface_index]
+	if surface.name == tenebris.PLANET.TENEBRIS then
+		surface.freeze_daytime = true
+		surface.daytime = 0.35
+	end
 end)
 
-script.on_event(defines.events.on_player_changed_surface, function(event)
-    if not event.surface_index then return end
+event_manager.subscribe(tenebris.EVENTS.ON_PLAYER_CHANGED_SURFACE, "tenebris_player_surface_change", function(event)
+	if not event.surface_index then
+		return
+	end
 
-    local surface = game.surfaces[event.surface_index]
+	local surface = game.surfaces[event.surface_index]
 
-    if surface.name == TENEBRIS then
-        surface.freeze_daytime = true
-        surface.daytime = 0.35
-        game.players[event.player_index].enable_flashlight()
-    end
+	if surface.name == tenebris.PLANET.TENEBRIS then
+		surface.freeze_daytime = true
+		surface.daytime = 0.35
+		game.players[event.player_index].enable_flashlight()
+	end
 end)
-
--- script.on_event(defines.events.on_script_trigger_effect, function(event)
---     if event.effect_id == "cargo-pod-spawned" then
---         if event.cause_entity == nil then return end
---         if event.cause_entity.force.technologies["planetslib-tenebris-cargo-drops"].researched then return end
-
---         if event.cause_entity.surface.name == TENEBRIS and event.cause_entity.has_items_inside() then
---             local source_inventory = event.cause_entity.get_inventory(defines.inventory.cargo_landing_pad_main)
-
---             local distance = math.random(2000, 2500)
---             local angle = math.random() * math.pi * 2
-
---             local x = math.sin(angle) * distance
---             local y = math.cos(angle) * distance
-
---             local pod = event.cause_entity.surface.create_entity {
---                 name = "cargo-pod-container", force = event.cause_entity.force, position = { x, y }
---             }
---             local target_inventory = pod.get_inventory(defines.inventory.cargo_landing_pad_main)
-
---             event.cause_entity.force.chart(event.cause_entity.surface, { { x - 10, y - 10 }, { x + 10, y + 10 } })
---             game.print("Cargo pod navigation failure, crash landed at " .. pod.gps_tag)
-
---             if source_inventory and target_inventory then
---                 for i = 1, #source_inventory do
---                     local stack = source_inventory[i]
-
---                     if stack.valid_for_read then
---                         target_inventory.insert(stack)
---                     end
---                 end
-
---                 event.cause_entity.destroy()
---             end
---         end
---     end
--- end)

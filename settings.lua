@@ -8,6 +8,14 @@ data:extend{
       },
       {
         type = "double-setting",
+        name = "tenebris-premature-centipede-length",
+        setting_type = "startup",
+        default_value = 5,
+        min = 1,
+        order = "aa",
+      },
+      {
+        type = "double-setting",
         name = "tenebris-small-centipede-length",
         setting_type = "startup",
         default_value = 12,
@@ -34,15 +42,17 @@ data:extend{
         type = "double-setting",
         name = "tenebris-giant-centipede-length",
         setting_type = "startup",
-        default_value = 60,
+        default_value = 44,
         min = 8,
         order = "ae",
       },
       {
-        type = "bool-setting",
-        name = "tenebris-allow-quality-modules-in-biobeacon",
+        type = "double-setting",
+        name = "tenebris-leviathan-centipede-length",
         setting_type = "startup",
-        default_value = false,
+        default_value = 61,  -- Factorio hard limit is 63 segments max
+        min = 10,
+        max = 61,
         order = "af",
       },
       {
@@ -52,5 +62,50 @@ data:extend{
         default_value = true,
         order = "ag",
       },
-
+      -- Spore damage settings (ground)
+      {
+        type = "int-setting",
+        name = "tenebris-spore-damage-entities-per-chunk",
+        setting_type = "runtime-global",
+        default_value = 32,
+        minimum_value = 1,
+        maximum_value = 256,
+        order = "ba",
+      },
+      {
+        type = "int-setting",
+        name = "tenebris-spore-damage-interval-seconds",
+        setting_type = "startup",
+        default_value = 30,
+        minimum_value = 30,
+        maximum_value = 300,
+        order = "bb",
+      },
+      {
+        type = "string-setting",
+        name = "tenebris-spore-damage-percent",
+        setting_type = "runtime-global",
+        default_value = "5",
+        allowed_values = {"1", "2", "5", "10", "15", "20", "25"},
+        order = "bc",
+      },
+      -- Tenespace corrosion settings (space platforms)
+      {
+        type = "int-setting",
+        name = "tenebris-tenespace-corrosion-entities-per-chunk",
+        setting_type = "runtime-global",
+        default_value = 8,
+        minimum_value = 1,
+        maximum_value = 64,
+        order = "ca",
+      },
+      {
+        type = "int-setting",
+        name = "tenebris-tenespace-particle-baseline-chunks",
+        setting_type = "runtime-global",
+        default_value = 60,
+        minimum_value = 10,
+        maximum_value = 200,
+        order = "cb",
+      },
 }
