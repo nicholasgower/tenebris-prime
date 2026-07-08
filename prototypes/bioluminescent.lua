@@ -132,7 +132,7 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
                     localised_name = { "recipe-name.bioinfuse-item", item.localised_name or { "entity-name." .. item.name } },
                     order = "x",
                     enabled = false,
-                    category = "bioinfusion",
+                    categories = {"bioinfusion"},
                     ingredients = {
                         { type = "item", name = item.name, amount = 1 },
                         -- { type = "item", name = "bioluminescent-crystal", amount = 4 }

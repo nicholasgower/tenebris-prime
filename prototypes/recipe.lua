@@ -3,7 +3,7 @@ data:extend({
     type = "recipe",
     name = "quartz-crystal",
     enabled = false,
-    category = "smelting",
+    categories = {"smelting"},
     energy_required = 3.2,
     ingredients = { { type = "item", name = "quartz-ore", amount = 8 } },
     results = { { type = "item", name = "quartz-crystal", amount = 1 } },
@@ -13,7 +13,7 @@ data:extend({
     type = "recipe",
     name = "bioluminescent-crystal",
     enabled = false,
-    category = "crafting",
+    categories = {"crafting"},
     ingredients = { { type = "item", name = "quartz-crystal", amount = 1 }, { type = "item", name = "luciferin", amount = 16 } },
     results = { { type = "item", name = "bioluminescent-crystal", amount = 1 } },
     energy_required = 3.2,
@@ -25,7 +25,7 @@ data:extend({
     subgroup = "agriculture-processes",
     enabled = false,
     icon = "__tenebris-prime__/graphics/icons/lucifunnel-processing.png",
-    category = "crafting",
+    categories = {"crafting"},
     ingredients = { { type = "item", name = "lucifunnel", amount = 1 } },
     results = {
       { type = "item", name = "lucifunnel-seed", amount = 1, probability = 0.1 },
@@ -40,7 +40,7 @@ data:extend({
     subgroup = "agriculture-processes",
     enabled = false,
     icon = "__tenebris-prime__/graphics/icons/tenecap-processing.png",
-    category = "crafting",
+    categories = {"crafting"},
     ingredients = { { type = "item", name = "tenecap", amount = 1 } },
     results = {
       { type = "item", name = "tenecap-spore", amount = 1 },
@@ -102,7 +102,7 @@ data:extend({
     type = "recipe",
     name = "biopolymer",
     enabled = false,
-    category = "organic",
+    categories = {"organic"},
     ingredients = {
       { type = "item", name = "chitin", amount = 1 },
     },
@@ -123,7 +123,7 @@ data:extend({
     type = "recipe",
     name = "chitosan",
     enabled = false,
-    category = "chemistry",
+    categories = {"chemistry"},
     ingredients = {
       { type = "item",  name = "chitin",        amount = 8 },
       { type = "fluid", name = "sulfuric-acid", amount = 50 }
@@ -145,7 +145,7 @@ data:extend({
     type = "recipe",
     name = "bioluminescent-science-pack",
     enabled = false,
-    category = "crafting",
+    categories = {"crafting"},
     ingredients = {
       { type = "item", name = "bioluminescent-crystal", amount = 1 },
       { type = "item", name = "chitosan",               amount = 1 }
@@ -165,7 +165,7 @@ data:extend({
     type = "recipe",
     name = "bioinfusor",
     enabled = false,
-    category = "crafting",
+    categories = {"crafting"},
     ingredients = {
       { type = "item", name = "bioluminescent-crystal", amount = 4 },
       { type = "item", name = "steel-plate",            amount = 10 },
@@ -187,7 +187,7 @@ data:extend({
     name = "chitin-concrete",
     enabled = false,
     auto_recycle = false,
-    category = "crafting-with-fluid",
+    categories = {"crafting-with-fluid"},
     ingredients = {
       { type = "item",  name = "stone-brick",   amount = 5 },
       { type = "item",  name = "iron-ore",      amount = 1 },
@@ -209,7 +209,7 @@ data:extend({
     type = "recipe",
     name = "chitosan-lubricant",
     enabled = false,
-    category = "chemistry",
+    categories = {"chemistry"},
     subgroup = "fluid-recipes",
     ingredients = {
       { type = "item",  name = "chitosan",      amount = 1 },
@@ -230,7 +230,7 @@ data:extend({
     type = "recipe",
     name = "luciferin-rocket-fuel",
     enabled = false,
-    category = "crafting-with-fluid",
+    categories = {"crafting-with-fluid"},
     auto_recycle = false,
     ingredients = {
       { type = "item",  name = "luciferin",     amount = 8 },
@@ -251,7 +251,7 @@ data:extend({
     type = "recipe",
     name = "biobeacon",
     enabled = false,
-    category = "crafting",
+    categories = {"crafting"},
     ingredients = {
       { type = "item", name = "bioluminescent-crystal", amount = 16 },
       { type = "item", name = "supercapacitor",         amount = 8 },
@@ -272,7 +272,7 @@ data:extend({
   {
     type = "recipe",
     name = "sulfur-from-acid",
-    category = "chemistry",
+    categories = {"chemistry"},
     energy_required = 6,
     enabled = false,
     ingredients =
