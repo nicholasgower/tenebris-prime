@@ -97,7 +97,7 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
                         draw_as_light = true,
                     },
                     minable = { mining_time = 0.2, result = "bioluminescent-" .. entity.minable.result },
-                    surface_conditions = meld.overwrite {
+                    surface_conditions =  {
                         {
                             property = "pressure",
                             min = 3000,
@@ -121,8 +121,8 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
                     subgroup = "bioluminescent-" .. (item.subgroup or "default"),
                     order = "z[bioluminescent-" .. item.name .. "]",
                     place_result = "bioluminescent-" .. item.name,
-                    icons = meld.overwrite(build_item_icons(item)),
-                    pictures = meld.overwrite {
+                    icons = (build_item_icons(item)),
+                    pictures =  {
                         layers = icons_to_layers(item)
                     }
                 }),

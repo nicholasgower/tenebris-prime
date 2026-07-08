@@ -56,7 +56,7 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
     local head_overrides = {
         name = "centipede-head-" .. name,
         localised_name = { "entity-name.centipede-" .. name },
-        update_effects = meld.overwrite {
+        update_effects =  {
             {
                 distance_cooldown = 5,
                 effect =
@@ -83,7 +83,7 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
                 }
             }
         },
-        update_effects_while_enraged = meld.overwrite {
+        update_effects_while_enraged =  {
             {
                 effect = {
                     type = "create-entity",
@@ -93,25 +93,25 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
                 initial_distance_cooldown = 10,
             }
         },
-        dying_trigger_effect = meld.overwrite {
+        dying_trigger_effect =  {
             {
                 type = "create-entity",
                 entity_name = "centipede-corpse"
             }
         },
-        autoplace = meld.overwrite {
+        autoplace =  {
             control = "tenebris_enemies",
             order = "a[tenebris]-b[centipede]-"..name,
             force = "enemy",
             probability_expression = "clamp(distance - " .. min_spawn_distance .. ", 0, 1) * 0.00005",
         },
-        resistances = meld.overwrite {
+        resistances =  {
             {
                 type = "poison",
                 percent = 100,
             }
         },
-        working_sound = meld.overwrite {
+        working_sound =  {
             sound =
             {
                 category = "enemy",
@@ -142,10 +142,10 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
         acceleration_rate = 1,
         render_layer = "object",
         collision_mask = { layers = { item = true, meltable = true, object = true, player = true, water_tile = true, is_object = true, is_lower_object = true } },
-        segment_engine = meld.overwrite {
+        segment_engine =  {
             segments = segments
         },
-        animation = meld.overwrite {
+        animation =  {
             layers = {
                 {
                     direction_count = 64,
@@ -235,13 +235,13 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
         render_layer = "object",
         max_health = 10000,
         healing_per_tick = 1,
-        resistances = meld.overwrite {
+        resistances =  {
             {
                 type = "poison",
                 percent = 100,
             }
         },
-        working_sound = meld.overwrite {
+        working_sound =  {
             sound =
             {
                 category = "enemy",
@@ -253,7 +253,7 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
             fade_in_ticks = 4,
             fade_out_ticks = 20
         },
-        animation = meld.overwrite {
+        animation =  {
             direction_count = 64,
             frame_count = 5,
             dice = 0,
@@ -305,7 +305,7 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
         render_layer = "object",
         max_health = 10000,
         healing_per_tick = 1,
-        working_sound = meld.overwrite {
+        working_sound =  {
             sound =
             {
                 category = "enemy",
@@ -317,13 +317,13 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
             fade_in_ticks = 4,
             fade_out_ticks = 20
         },
-        resistances = meld.overwrite {
+        resistances =  {
             {
                 type = "poison",
                 percent = 100,
             }
         },
-        animation = meld.overwrite({
+        animation = ({
             layers = {
                 {
                     animation_speed = 0.4,
