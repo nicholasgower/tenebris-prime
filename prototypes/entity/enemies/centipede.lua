@@ -12,8 +12,8 @@ local function create_centipede_segment(health, still_frame, segment_overrides)
     local variant = PlanetsLib.rro.merge(table.deepcopy(data.raw["segment"]["small-demolisher-segment-x0_64"]), segment_overrides)
     variant.name = "centipede-body-" .. health .. "-" .. still_frame
     variant.max_health = health
-    variant.animation.layers[1].frame_sequence = generate_frame_sequence(still_frame)
-    variant.animation.layers[2].frame_sequence = generate_frame_sequence(still_frame)
+    --variant.animation.layers[1].frames = generate_frame_sequence(still_frame)
+    --variant.animation.layers[2].frames = generate_frame_sequence(still_frame)
     return variant
 end
 
