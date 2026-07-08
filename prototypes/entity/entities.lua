@@ -1,6 +1,6 @@
 local meld = require("meld")
 
-local bioluminescent_beacon = meld(table.deepcopy(data.raw["beacon"]["beacon"]), {
+local bioluminescent_beacon = PlanetsLib.rro.merge(table.deepcopy(data.raw["beacon"]["beacon"]), {
     name = "biobeacon",
     bioluminescent = true,
     allowed_effects = meld.overwrite { "consumption", "speed", "pollution", "productivity" },

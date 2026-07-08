@@ -20,7 +20,7 @@ local function build_item_icons(item)
     end
 
     if item.icons then
-        meld(icons, item.icons)
+        PlanetsLib.rro.merge(icons, item.icons)
     end
 
     return icons
@@ -84,7 +84,7 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
 
             local name = "bioluminescent-" .. entity.name
             result[name] =
-                meld(table.deepcopy(entity), {
+                PlanetsLib.rro.merge(table.deepcopy(entity), {
                     name = name,
                     bioluminescent = true,
                     localised_name = { "entity-name.bioluminescent-entity", entity.localised_name or { "entity-name." .. entity.name } },
@@ -109,13 +109,13 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
                 })
 
             if entity_mod then
-                result[name] = meld(result[name], entity_mod(result[name]))
+                result[name] = PlanetsLib.rro.merge(result[name], entity_mod(result[name]))
             end
 
             unique_subgroups[item.subgroup or "default"] = true
 
             data:extend({
-                meld(table.deepcopy(item), {
+                PlanetsLib.rro.merge(table.deepcopy(item), {
                     name = "bioluminescent-" .. item.name,
                     icon = meld.delete(),
                     subgroup = "bioluminescent-" .. (item.subgroup or "default"),

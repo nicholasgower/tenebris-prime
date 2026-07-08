@@ -9,7 +9,7 @@ local function generate_frame_sequence(start)
 end
 
 local function create_centipede_segment(health, still_frame, segment_overrides)
-    local variant = meld(table.deepcopy(data.raw["segment"]["small-demolisher-segment-x0_64"]), segment_overrides)
+    local variant = PlanetsLib.rro.merge(table.deepcopy(data.raw["segment"]["small-demolisher-segment-x0_64"]), segment_overrides)
     variant.name = "centipede-body-" .. health .. "-" .. still_frame
     variant.max_health = health
     variant.animation.layers[1].frame_sequence = generate_frame_sequence(still_frame)
@@ -399,14 +399,14 @@ local function create_centipede(name, scale, length, health, speed, damage, min_
     end
 
 
-    local centipede_tail = meld(table.deepcopy(data.raw["segment"]["small-demolisher-segment-x0_64"]),
+    local centipede_tail = PlanetsLib.rro.merge(table.deepcopy(data.raw["segment"]["small-demolisher-segment-x0_64"]),
         tail_segment_overrides)
     centipede_tail.name = "centipede-tail-" .. health
     centipede_tail.max_health = health
     data:extend({ centipede_tail })
 
 
-    data:extend({ meld(table.deepcopy(data.raw["segmented-unit"]["small-demolisher"]), head_overrides) })
+    data:extend({ PlanetsLib.rro.merge(table.deepcopy(data.raw["segmented-unit"]["small-demolisher"]), head_overrides) })
 end
 --create_centipede(name, scale, length, health, speed, damage, min_spawn_distance)
 -- create_centipede("small", 0.2, settings.startup["tenebris-small-centipede-length"].value, 2000, 0.1, 100, 50)

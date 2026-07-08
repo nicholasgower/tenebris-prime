@@ -47,7 +47,7 @@ local tenebris = {
     ticks_between_player_effects = 2
 }
 
-tenebris = meld(table.deepcopy(data.raw["planet"]["gleba"]), tenebris)
+tenebris = PlanetsLib.rro.merge(table.deepcopy(data.raw["planet"]["gleba"]), tenebris)
 tenebris.distance = nil
 tenebris.orientation = nil
 PlanetsLib:extend({tenebris})

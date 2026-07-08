@@ -10,7 +10,7 @@ local meld = require("meld")
 ---@param extra table? Extra parameters to set?
 ---@return table
 local function quick_item(name, stack_size, weight, glow, extra)
-    return meld({
+    return PlanetsLib.rro.merge({
         type = "item",
         name = name,
         subgroup = "intermediate-product",
@@ -29,7 +29,7 @@ local function quick_item(name, stack_size, weight, glow, extra)
     }, extra or {})
 end
 
-local bioluminescent_science_pack = meld(
+local bioluminescent_science_pack = PlanetsLib.rro.merge(
     table.deepcopy(data.raw["tool"]["automation-science-pack"]), {
         name = "bioluminescent-science-pack",
         icon = "__tenebris-prime__/graphics/icons/bioluminescent-science-pack.png",
