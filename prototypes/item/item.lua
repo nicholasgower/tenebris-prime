@@ -30,7 +30,7 @@ local function quick_item(name, stack_size, weight, glow, extra)
 end
 
 local bioluminescent_science_pack = PlanetsLib.rro.merge(
-    table.deepcopy(data.raw["tool"]["automation-science-pack"]), {
+    table.deepcopy(data.raw["item"]["automation-science-pack"]), {
         name = "bioluminescent-science-pack",
         icon = "__tenebris-prime__/graphics/icons/bioluminescent-science-pack.png",
         order = "k[bioluminescent_science_pack]",
