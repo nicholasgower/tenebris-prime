@@ -31,7 +31,7 @@ local tenebris = {
     surface_properties =
     {
         ["day-night-cycle"] = 20 * 60,
-        ["magnetic-field"] = meld.delete(),
+        --["magnetic-field"] = meld.delete(),
         pressure = 3000,
         ["solar-power"] = 0,
         gravity = 30

@@ -55,7 +55,7 @@ data:extend({
         research_trigger =
         {
             type = "mine-entity",
-            entity = "quartz-node"
+            entities = {"quartz-node"}
         },
         prerequisites = { "planet-discovery-tenebris" },
     },
@@ -78,7 +78,7 @@ data:extend({
         research_trigger =
         {
             type = "mine-entity",
-            entity = "lucifunnel"
+            entities = {"lucifunnel"}
         },
         prerequisites = { "planet-discovery-tenebris" },
     },
@@ -97,7 +97,7 @@ data:extend({
         research_trigger =
         {
             type = "mine-entity",
-            entity = "tenecap"
+            entities = {"tenecap"}
         },
         prerequisites = { "planet-discovery-tenebris" },
     },
