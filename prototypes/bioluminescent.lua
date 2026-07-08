@@ -196,17 +196,17 @@ local biolum_types = flatten {
     end),
     create_bioluminescent_entity(table.deepcopy(data.raw["locomotive"]), 30.0, function(entity)
         return {
-            max_speed = entity.max_speed * 2
+            max_speed = entity.max_speed and (entity.max_speed * 2) or nil
         }
     end),
     create_bioluminescent_entity(table.deepcopy(data.raw["cargo-wagon"]), 0.1, function(entity)
         return {
-            max_speed = entity.max_speed * 2
+            max_speed = entity.max_speed and (entity.max_speed * 2) or nil
         }
     end),
     create_bioluminescent_entity(table.deepcopy(data.raw["fluid-wagon"]), 0.1, function(entity)
         return {
-            max_speed = entity.max_speed * 2
+            max_speed = entity.max_speed and (entity.max_speed * 2) or nil
         }
     end),
     create_bioluminescent_entity(table.deepcopy(data.raw["transport-belt"]), 0.1, nil, nil, 2),
