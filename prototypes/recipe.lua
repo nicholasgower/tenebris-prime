@@ -28,7 +28,7 @@ data:extend({
     categories = {"crafting"},
     ingredients = { { type = "item", name = "lucifunnel", amount = 1 } },
     results = {
-      { type = "item", name = "lucifunnel-seed", amount = 1, probability = 0.1 },
+      { type = "item", name = "lucifunnel-seed", amount = 1, independent_probability = 0.1 },
       { type = "item", name = "luciferin",       amount = 1 },
     },
     energy_required = 1,
