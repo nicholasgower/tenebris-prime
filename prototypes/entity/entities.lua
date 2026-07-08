@@ -51,6 +51,8 @@ data:extend({
         type = "furnace",
         name = "bioinfusor",
         icon = "__tenebris-prime__/graphics/icons/bioinfusor.png",
+        flags = {"placeable-neutral", "placeable-player", "player-creation"},
+        max_health = 300,
         bioluminescent = true,
         working_sound = {
             sound = { filename = "__tenebris-prime__/sound/bioinfusor.ogg", volume = 0.5 },
@@ -61,12 +63,13 @@ data:extend({
         crafting_categories = { "bioinfusion" },
         crafting_speed = 4.0,
         energy_usage = "180kW",
+        heating_energy = "100kW",
         source_inventory_size = 1,
         result_inventory_size = 1,
         module_slots = 4,
         allowed_effects = { "speed", "productivity", "quality", "consumption" },
-        collision_box = { { -2, -2 }, { 2, 2 } },
-        selection_box = { { -2, -2 }, { 2, 2 } },
+        collision_box = {{-1.7, -1.7}, {1.7, 1.7}},
+        selection_box = {{-2, -2}, {2, 2}},
         minable = {
             mining_time = 0.2,
             result = "bioinfusor"
