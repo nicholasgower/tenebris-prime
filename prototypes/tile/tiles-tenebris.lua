@@ -1,6 +1,5 @@
 local tile_collision_masks = require("__base__/prototypes/tile/tile-collision-masks")
 local tile_graphics = require("__base__/prototypes/tile/tile-graphics")
-local lava_to_out_of_map_transition = space_age_tiles_util.lava_to_out_of_map_transition
 space_age_tiles_util = space_age_tiles_util or {}
 local tile_trigger_effects = require("__base__.prototypes.tile.tile-trigger-effects")
 local tile_sounds = require("__space-age__/prototypes/tile/tile-sounds")
@@ -64,7 +63,7 @@ data:extend({
           },
           empty_transitions=true,
         },
-        transitions = {lava_to_out_of_map_transition},
+        transitions = data.raw.tile["lava"].transitions,
         transitions_between_transitions = data.raw.tile["water"].transitions_between_transitions,
         walking_sound = sound_variations("__base__/sound/walking/shallow-water", 7, 1),
         landing_steps_sound = tile_sounds.landing.wet,
