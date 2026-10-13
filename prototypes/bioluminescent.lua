@@ -117,6 +117,13 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
                 result[name] = PlanetsLib.rro.merge(result[name], entity_mod(result[name]))
             end
 
+            -- The base machine already stands for its copy in the "Made in" row of recipe tooltips (#4).
+            local flags = result[name].flags or {}
+            if not contains(flags, "not-in-made-in") then
+                table.insert(flags, "not-in-made-in")
+            end
+            result[name].flags = flags
+
             unique_subgroups[item.subgroup or "default"] = true
 
             data:extend({
