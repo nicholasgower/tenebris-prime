@@ -1,0 +1,72 @@
+-- The bioluminescent copies are made in the data stage (prototypes/bioluminescent.lua), so they miss what other mods
+-- change in their bases later. Two things are fixed here:
+--
+-- 1. A copy keeps the crafting categories its base had when it was copied. Every copy takes the categories its base
+--    has now, so it can still make what the base makes.
+--
+-- 2. A copy runs at the pressure of Tenebris even when its base is bound to another place (#10): a machine that its mod
+--    allows only on its own planet or in space, by pressure, gravity, dust and so on. Its copy would take it to
+--    Tenebris anyway. The bioinfusion recipe of such a copy is hidden and loses its unlock, so the copy can no longer be
+--    had. Recipes written by hand for a copy (bio-agricultural-tower: the agricultural tower that grows the plants of
+--    Tenebris) are left alone, they are meant to be. The item and the entity stay: other mods build recycling and
+--    similar recipes that name the item, and a copy built before keeps working.
+
+require("__tenebris-prime__.util")
+
+local tenebris = data.raw["planet"]["tenebris"]
+if not tenebris then return end
+
+local function property_value(property)
+    local own = tenebris.surface_properties and tenebris.surface_properties[property]
+    if own ~= nil then
+        return own
+    end
+
+    local prototype = data.raw["surface-property"][property]
+    return prototype and prototype.default_value or 0
+end
+
+local function allowed_on_tenebris(conditions)
+    for _, condition in pairs(conditions or {}) do
+        local value = property_value(condition.property)
+        if (condition.min and value < condition.min) or (condition.max and value > condition.max) then
+            return false
+        end
+    end
+
+    return true
+end
+
+local hidden_recipes = {}
+
+for _, entries in pairs(data.raw) do
+    for name, copy in pairs(entries) do
+        local base_name = type(copy) == "table" and copy.bioluminescent and name:match("^bioluminescent%-(.+)$")
+        local base = base_name and entries[base_name]
+
+        if base then
+            if base.crafting_categories and copy.crafting_categories then
+                copy.crafting_categories = table.deepcopy(base.crafting_categories)
+            end
+
+            -- The bioinfusion recipe has the name of the copy (prototypes/bioluminescent.lua).
+            local recipe = data.raw["recipe"][name]
+            if recipe and not recipe.hidden and contains(recipe.categories or {}, "bioinfusion")
+                and not allowed_on_tenebris(base.surface_conditions) then
+                recipe.hidden = true
+                recipe.enabled = false
+                hidden_recipes[name] = true
+            end
+        end
+    end
+end
+
+for _, technology in pairs(data.raw["technology"]) do
+    local effects = technology.effects or {}
+    for index = #effects, 1, -1 do
+        local effect = effects[index]
+        if effect.type == "unlock-recipe" and hidden_recipes[effect.recipe] then
+            table.remove(effects, index)
+        end
+    end
+end

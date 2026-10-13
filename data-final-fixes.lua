@@ -43,4 +43,5 @@ end
 
 table.insert(data.raw["item"]["foundation"].place_as_tile.tile_condition, "sulfuric-acid-tile"); --From ams-acid-landfill
 
+require("__tenebris-prime__.prototypes.bioluminescent-final-fixes")
 require("__tenebris-prime__.compat.canal-excavator-data-final-fixes")
