@@ -66,6 +66,11 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
             goto skip
         end
 
+        -- Already made by an earlier pass (data.lua): only machines added since then get a copy.
+        if data.raw[entity.type]["bioluminescent-" .. entity.name] then
+            goto skip
+        end
+
         if mods["wood-logistics"] and mods["Age-of-Production"] and entity.name == "lumber-mill" then
             -- fixing issue loading for lumber-mill since if wood-logistics is enabled, age of production mods will remove it and replace it with aop version.
             goto skip
@@ -162,67 +167,78 @@ local function create_bioluminescent_entity(entities, cost, entity_mod, exclude,
     return result
 end
 
-local biolum_types = flatten {
-    create_bioluminescent_entity(table.deepcopy(data.raw["inserter"]), 10.0, function(entity)
-        return {
-            rotation_speed = entity.rotation_speed * 1.5
-        }
-    end),
-    create_bioluminescent_entity(table.deepcopy(data.raw["assembling-machine"]), 15.0, function(entity)
-        return {
-            crafting_speed = entity.crafting_speed * 1.5
-        }
-    end, {"crusher"}),
-    create_bioluminescent_entity(table.deepcopy(data.raw["furnace"]), 15.0, function(entity)
-        return {
-            crafting_speed = entity.crafting_speed * 1.5
-        }
-    end),
-    create_bioluminescent_entity(table.deepcopy(data.raw["mining-drill"]), 10.0, function(entity)
-        return {
-            mining_speed = entity.mining_speed * 1.5
-        }
-    end),
-    create_bioluminescent_entity(table.deepcopy(data.raw["agricultural-tower"]), 15.0),
-    create_bioluminescent_entity(table.deepcopy(data.raw["roboport"]), 30.0),
-    create_bioluminescent_entity(table.deepcopy(data.raw["constant-combinator"]), 3.0),
-    create_bioluminescent_entity(table.deepcopy(data.raw["arithmetic-combinator"]), 3.0),
-    create_bioluminescent_entity(table.deepcopy(data.raw["decider-combinator"]), 3.0),
-    create_bioluminescent_entity(table.deepcopy(data.raw["selector-combinator"]), 3.0),
-    create_bioluminescent_entity(table.deepcopy(data.raw["rocket-silo"]), 100.0, function(entity)
-        return {
-            crafting_speed = entity.crafting_speed * 2
-        }
-    end),
-    create_bioluminescent_entity(table.deepcopy(data.raw["locomotive"]), 30.0, function(entity)
-        return {
-            max_speed = entity.max_speed and (entity.max_speed * 2) or nil
-        }
-    end),
-    create_bioluminescent_entity(table.deepcopy(data.raw["cargo-wagon"]), 0.1, function(entity)
-        return {
-            max_speed = entity.max_speed and (entity.max_speed * 2) or nil
-        }
-    end),
-    create_bioluminescent_entity(table.deepcopy(data.raw["fluid-wagon"]), 0.1, function(entity)
-        return {
-            max_speed = entity.max_speed and (entity.max_speed * 2) or nil
-        }
-    end),
-    create_bioluminescent_entity(table.deepcopy(data.raw["transport-belt"]), 0.1, nil, nil, 2),
-}
+-- Called from data.lua and again from data-updates.lua. A second require of this file would return the cached module
+-- and run nothing, so the file returns a function: the second call copies the machines of the mods that load after
+-- this one.
+return function()
+    unique_subgroups = {}
 
-data:extend(biolum_types)
+    local biolum_types = flatten {
+        create_bioluminescent_entity(table.deepcopy(data.raw["inserter"]), 10.0, function(entity)
+            return {
+                rotation_speed = entity.rotation_speed * 1.5
+            }
+        end),
+        create_bioluminescent_entity(table.deepcopy(data.raw["assembling-machine"]), 15.0, function(entity)
+            return {
+                crafting_speed = entity.crafting_speed * 1.5
+            }
+        end, {"crusher"}),
+        create_bioluminescent_entity(table.deepcopy(data.raw["furnace"]), 15.0, function(entity)
+            return {
+                crafting_speed = entity.crafting_speed * 1.5
+            }
+        end),
+        create_bioluminescent_entity(table.deepcopy(data.raw["mining-drill"]), 10.0, function(entity)
+            return {
+                mining_speed = entity.mining_speed * 1.5
+            }
+        end),
+        create_bioluminescent_entity(table.deepcopy(data.raw["agricultural-tower"]), 15.0),
+        create_bioluminescent_entity(table.deepcopy(data.raw["roboport"]), 30.0),
+        create_bioluminescent_entity(table.deepcopy(data.raw["constant-combinator"]), 3.0),
+        create_bioluminescent_entity(table.deepcopy(data.raw["arithmetic-combinator"]), 3.0),
+        create_bioluminescent_entity(table.deepcopy(data.raw["decider-combinator"]), 3.0),
+        create_bioluminescent_entity(table.deepcopy(data.raw["selector-combinator"]), 3.0),
+        create_bioluminescent_entity(table.deepcopy(data.raw["rocket-silo"]), 100.0, function(entity)
+            return {
+                crafting_speed = entity.crafting_speed * 2
+            }
+        end),
+        create_bioluminescent_entity(table.deepcopy(data.raw["locomotive"]), 30.0, function(entity)
+            return {
+                max_speed = entity.max_speed and (entity.max_speed * 2) or nil
+            }
+        end),
+        create_bioluminescent_entity(table.deepcopy(data.raw["cargo-wagon"]), 0.1, function(entity)
+            return {
+                max_speed = entity.max_speed and (entity.max_speed * 2) or nil
+            }
+        end),
+        create_bioluminescent_entity(table.deepcopy(data.raw["fluid-wagon"]), 0.1, function(entity)
+            return {
+                max_speed = entity.max_speed and (entity.max_speed * 2) or nil
+            }
+        end),
+        create_bioluminescent_entity(table.deepcopy(data.raw["transport-belt"]), 0.1, nil, nil, 2),
+    }
 
-for subgroup, _ in pairs(unique_subgroups) do
-    local old = data.raw["item-subgroup"][subgroup]
+    -- The second call finds nothing new when no machine was added since the first one, and data:extend refuses an
+    -- empty list.
+    if #biolum_types > 0 then
+        data:extend(biolum_types)
+    end
 
-    data:extend({
-        {
-            type = "item-subgroup",
-            name = "bioluminescent-" .. subgroup,
-            group = "bioluminescent",
-            order = "z[bioluminescent-" .. subgroup .. "]"
-        }
-    })
+    for subgroup, _ in pairs(unique_subgroups) do
+        local old = data.raw["item-subgroup"][subgroup]
+
+        data:extend({
+            {
+                type = "item-subgroup",
+                name = "bioluminescent-" .. subgroup,
+                group = "bioluminescent",
+                order = "z[bioluminescent-" .. subgroup .. "]"
+            }
+        })
+    end
 end
