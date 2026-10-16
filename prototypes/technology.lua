@@ -44,7 +44,6 @@ data:extend({
         type = "technology",
         name = "quartz-crystal",
         icon = "__tenebris-prime__/graphics/icons/quartz-crystal.png",
-        essential = true,
         effects =
         {
             {
@@ -63,7 +62,6 @@ data:extend({
         type = "technology",
         name = "lucifunnel-processing",
         icon = "__tenebris-prime__/graphics/icons/lucifunnel.png",
-        essential = true,
         effects =
         {
             {
@@ -86,7 +84,6 @@ data:extend({
         type = "technology",
         name = "tenecap-processing",
         icon = "__tenebris-prime__/graphics/icons/tenecap.png",
-        essential = true,
         effects =
         {
             {
@@ -105,7 +102,6 @@ data:extend({
         type = "technology",
         name = "bioluminescent-crystal",
         icon = "__tenebris-prime__/graphics/icons/bioluminescent-crystal.png",
-        essential = true,
         effects =
         {
             {
@@ -123,7 +119,6 @@ data:extend({
         type = "technology",
         name = "chitin-processing",
         icon = "__tenebris-prime__/graphics/icons/chitin.png",
-        essential = true,
         effects =
         {
             {
@@ -158,7 +153,6 @@ data:extend({
         name = "bioinfusor",
         icon = "__tenebris-prime__/graphics/technology/bioinfusor.png",
         icon_size = 256,
-        essential = true,
         effects =
         {
             {
@@ -196,7 +190,6 @@ data:extend({
         name = "bioluminescent-agricultural-tower",
         icon = "__space-age__/graphics/technology/agriculture.png",
         icon_size = 256,
-        essential = true,
         effects =
         {
             {
@@ -216,7 +209,6 @@ data:extend({
         name = "biobeacon",
         icon = "__tenebris-prime__/graphics/technology/biobeacon.png",
         icon_size = 256,
-        essential = true,
         effects =   
         {
             {
