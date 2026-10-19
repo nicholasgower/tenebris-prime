@@ -8,9 +8,8 @@ local bioluminescent_beacon = PlanetsLib.rro.merge(table.deepcopy(data.raw["beac
         mining_time = 0.2,
         result = "biobeacon"
     },
-    -- energy_source =  {
-    --     type = "void"
-    -- },
+    -- Tenebris has no electric network, so the beacon runs on the bioluminescence of its home.
+    energy_source = { type = "void" },
     integration_patch_render_layer = "light-effect",
     integration_patch =  {
         filename = "__tenebris-prime__/graphics/icons/item-glow.png",
