@@ -16,5 +16,12 @@
     "! tenebris_sulfur",
     "! tenebris",
     "? canal-excavator >= 1.12"
-  ]
+  ],
+  "quality_required": false,
+  "rail_bridges_required": true,
+  "space_travel_required": true,
+  "spoiling_required": true,
+  "freezing_required": true,
+  "segmented_units_required": true,
+  "expansion_shaders_required": true
 }
