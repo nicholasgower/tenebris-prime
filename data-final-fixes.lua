@@ -45,6 +45,7 @@ table.insert(data.raw["item"]["foundation"].place_as_tile.tile_condition, "sulfu
 
 require("__tenebris-prime__.prototypes.bioluminescent-final-fixes")
 require("__tenebris-prime__.compat.canal-excavator-data-final-fixes")
+require("__tenebris-prime__.compat.alien-module")
 
 -- The map generation of Tenebris used the noise expression names of Terra Palus (terrapalus_*), so with Terra Palus
 -- installed one planet got the other's terrain. Tenebris has its own tenebris_* names now; the old names stay for
