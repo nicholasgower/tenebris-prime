@@ -190,7 +190,11 @@ return function()
             return {
                 crafting_speed = entity.crafting_speed * 1.5
             }
-        end, {"crusher"}),
+        end, {
+            "crusher",
+            -- Carna only tracks the original spire by name; a copy would mark the surface and crash its spire tick
+            "carnan-spire",
+        }),
         create_bioluminescent_entity(table.deepcopy(data.raw["furnace"]), 15.0, function(entity)
             return {
                 crafting_speed = entity.crafting_speed * 1.5
