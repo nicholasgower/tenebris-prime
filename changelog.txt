@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.3.19
+Date: 2026-10-24
+  Bugfixes:
+    - bioluminescent copies no longer upgrade to a copy that does not exist
+  Changes:
+    - add FUnit suite for the bioluminescent upgrade chains ([#39](https://github.com/nicholasgower/tenebris-prime/issues/39))
+---------------------------------------------------------------------------------------------------
 Version: 1.3.18
 Date: 2026-10-22
   Compatibility:
