@@ -17,6 +17,8 @@ holds runtime scripting.
 - `locale/<lang>/` — localization.
 - `migrations/` — save migrations.
 - `util.lua` — shared helpers.
+- `test-mods/tenebris-prime-funit/` — development-only FUnit suite, excluded
+  from release zips. See its README for the runner and fixtures.
 
 ## Conventions
 
@@ -45,7 +47,15 @@ allowed commit types are defined in `.releaserc` and include `fix`, `feat`,
 
 ## Verification
 
-There is no automated test suite.
+The FUnit suite in `test-mods/tenebris-prime-funit/` runs headless against the
+current worktree:
+
+```sh
+test-mods/tenebris-prime-funit/run.sh
+```
+
+Add `WITH_MULUNA=1 MULUNA_DIR=<checkout>` to also test against the real Muluna
+machines. `DATA_ONLY=1` stops after the data stage.
 
 - Check Lua syntax when a Lua compiler is available: `luac -p <file>`.
 - Trace every referenced prototype name to its definition.
