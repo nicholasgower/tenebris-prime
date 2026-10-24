@@ -1,0 +1,16 @@
+{
+  "name": "tenebris-prime-funit",
+  "version": "0.0.1",
+  "title": "Tenebris Prime FUnit test suite",
+  "author": "nicholasgower",
+  "description": "Development-only FUnit fixtures and scenario for tenebris-prime. Not shipped with the mod.",
+  "factorio_version": "2.1",
+  "dependencies": [
+    "base >= 2.1.20",
+    "space-age >= 2.1.9",
+    "? quality",
+    "tenebris-prime",
+    "funit",
+    "PlanetsLib >= 1.20.5"
+  ]
+}

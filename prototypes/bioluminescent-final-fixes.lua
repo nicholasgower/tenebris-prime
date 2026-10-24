@@ -10,6 +10,10 @@
 --    had. Recipes written by hand for a copy (bio-agricultural-tower: the agricultural tower that grows the plants of
 --    Tenebris) are left alone, they are meant to be. The item and the entity stay: other mods build recycling and
 --    similar recipes that name the item, and a copy built before keeps working.
+--
+-- 3. An upgrade of a copy points to the copy of the machine it upgrades to. That copy does not always exist: the
+--    crusher and Carna's spire are left out of the copies, and a base machine may have no copy of its own. The chain of
+--    a copy ends at the last copy that exists, so the game does not reject a missing name (#39).
 
 require("__tenebris-prime__.util")
 
@@ -67,6 +71,16 @@ for _, technology in pairs(data.raw["technology"]) do
         local effect = effects[index]
         if effect.type == "unlock-recipe" and hidden_recipes[effect.recipe] then
             table.remove(effects, index)
+        end
+    end
+end
+
+-- Muluna's steam crusher, for example, upgrades to the crusher, whose copy is left out on purpose: without this the
+-- game fails to load with "entity with name 'bioluminescent-crusher' does not exist" (#39).
+for _, entries in pairs(data.raw) do
+    for _, copy in pairs(entries) do
+        if type(copy) == "table" and copy.bioluminescent and copy.next_upgrade and not entries[copy.next_upgrade] then
+            copy.next_upgrade = nil
         end
     end
 end
