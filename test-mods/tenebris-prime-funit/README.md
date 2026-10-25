@@ -51,6 +51,31 @@ the fix disabled, the fixture also reports the missing
 When `planet-muluna` is active, the suite additionally checks the real
 `muluna-steam-crusher` and its copy.
 
+The second suite is the regression test for the Heat Management conflict with
+TFMG Thermal's radiators. TFMG Thermal makes `ground-radiator` with the fixed
+recipe `TFMG-heat-radiation` in the `radiator` category. Heat Management, in
+data-updates, clears that fixed recipe and moves the radiator to the
+`radiator-coolant` category with fluid boxes. Tenebris Prime had already copied
+the radiator, and its data-final-fixes took only the new categories, so the
+copy kept a fixed recipe its categories no longer allowed:
+
+```text
+Error while running setup for entity prototype "bioluminescent-ground-radiator" (assembling-machine):
+fixed_recipe="TFMG-heat-radiation" cannot be used on this machine. Reason=DifferentCategory
+```
+
+The fixtures reproduce that shape without requiring either mod. A fixture
+machine is made in data.lua with a fixed recipe, a data-updates fixture then
+clears it and changes the categories and fluid boxes, and data-final-fixes
+asserts that:
+
+- the copy no longer has the fixed recipe its base dropped;
+- the copy takes the categories and fluid boxes of its base;
+- every bioluminescent copy with a fixed recipe allows a category of that recipe.
+
+If the fix is removed, the data stage aborts with the error above before FUnit
+can run.
+
 ## Running
 
 From the repository root:
@@ -120,6 +145,7 @@ The scenario is started with:
 ```text
 info.json, settings.lua     companion-mod metadata and fixture setting
 data.lua                    creates the result bag, runs data.lua fixtures
+data-updates.lua            runs data-updates fixtures (after Tenebris Prime's copy pass)
 data-final-fixes.lua        data-final-fixes fixtures (after Tenebris Prime)
 prototypes/fixtures/        prototype-level checks, grouped by feature
 lib/results.lua             records fixture results in mod-data
@@ -138,8 +164,10 @@ run.sh                      headless runner
    `tests/manifest.lua`, and use `runner.test` / `runner.assert`.
 3. Fixtures that **define** prototypes must run in `data.lua` so
    tenebris-prime's data-updates pass (which copies machines added by later
-   mods) sees them. Assertions about the final state belong in
-   `data-final-fixes.lua`, after tenebris-prime's own final fixes.
+   mods) sees them. A fixture that changes such a machine afterwards, the way a
+   mod changes its own prototypes in data-updates, belongs in `data-updates.lua`.
+   Assertions about the final state belong in `data-final-fixes.lua`, after
+   tenebris-prime's own final fixes.
 4. Prefix every test prototype with `funit-`, and verify the suite passes both
    with and without `WITH_MULUNA=1` before opening a pull request.
 

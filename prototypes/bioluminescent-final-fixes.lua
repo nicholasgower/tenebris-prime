@@ -1,8 +1,10 @@
 -- The bioluminescent copies are made in the data stage (prototypes/bioluminescent.lua), so they miss what other mods
--- change in their bases later. Two things are fixed here:
+-- change in their bases later. Three things are fixed here:
 --
--- 1. A copy keeps the crafting categories its base had when it was copied. Every copy takes the categories its base
---    has now, so it can still make what the base makes.
+-- 1. A copy keeps the crafting categories, fixed recipe and fluid boxes its base had when it was copied. Every copy
+--    takes the ones its base has now, so it can still make what the base makes. Heat Management, for example, clears
+--    the fixed recipe of TFMG Thermal's radiators and changes their categories and fluid boxes in data-updates; a copy
+--    that missed that kept a fixed recipe its new categories no longer allowed and the game refused to load it.
 --
 -- 2. A copy runs at the pressure of Tenebris even when its base is bound to another place (#10): a machine that its mod
 --    allows only on its own planet or in space, by pressure, gravity, dust and so on. Its copy would take it to
@@ -51,6 +53,15 @@ for _, entries in pairs(data.raw) do
         if base then
             if base.crafting_categories and copy.crafting_categories then
                 copy.crafting_categories = table.deepcopy(base.crafting_categories)
+            end
+
+            -- A fixed recipe has to use one of the categories of its machine. Heat Management, for example, clears
+            -- the fixed heat-radiation recipe of TFMG Thermal's radiators and moves them to a coolant category in
+            -- data-updates, after the copies were made. Taking both from the base now keeps the copy loadable instead
+            -- of failing with "fixed_recipe=... cannot be used on this machine. Reason=DifferentCategory".
+            copy.fixed_recipe = base.fixed_recipe
+            if base.fluid_boxes then
+                copy.fluid_boxes = table.deepcopy(base.fluid_boxes)
             end
 
             -- The bioinfusion recipe has the name of the copy (prototypes/bioluminescent.lua).
