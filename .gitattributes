@@ -14,4 +14,3 @@ README.md export-ignore
 .gitattributes export-ignore
 .releaserc export-ignore
 test-mods export-ignore
-screenshots/ export-ignore
