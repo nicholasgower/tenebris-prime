@@ -225,7 +225,7 @@ return function()
             return {
                 max_speed = entity.max_speed and (entity.max_speed * 2) or nil
             }
-        end),
+        end, { "vehicle-wagon" }),
         create_bioluminescent_entity(table.deepcopy(data.raw["fluid-wagon"]), 0.1, function(entity)
             return {
                 max_speed = entity.max_speed and (entity.max_speed * 2) or nil
